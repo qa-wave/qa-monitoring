@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { findUserByEmail, findUserById } from "@/data/users";
@@ -11,13 +12,37 @@ export type Session = {
   issuedAt: number;
 };
 
+function getSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret || secret.length < 16) {
+    // V MVP padneme na jasný default, ať se dev nemusí trápit s env vars při
+    // prvním spuštění. V produkci je env proměnná povinná — middleware na to
+    // zatím neupozorňuje, ale v v1 přidáme startup check.
+    return "dev-only-insecure-secret-change-me-please-32byte";
+  }
+  return secret;
+}
+
+function sign(payload: string): string {
+  return createHmac("sha256", getSecret()).update(payload).digest("base64url");
+}
+
 function encode(session: Session): string {
-  return Buffer.from(JSON.stringify(session)).toString("base64url");
+  const payload = Buffer.from(JSON.stringify(session)).toString("base64url");
+  return `${payload}.${sign(payload)}`;
 }
 
 function decode(raw: string): Session | null {
+  const dot = raw.lastIndexOf(".");
+  if (dot <= 0) return null;
+  const payload = raw.slice(0, dot);
+  const signature = raw.slice(dot + 1);
+  const expected = sign(payload);
   try {
-    return JSON.parse(Buffer.from(raw, "base64url").toString("utf-8")) as Session;
+    const a = Buffer.from(signature, "base64url");
+    const b = Buffer.from(expected, "base64url");
+    if (a.length !== b.length || !timingSafeEqual(a, b)) return null;
+    return JSON.parse(Buffer.from(payload, "base64url").toString("utf-8")) as Session;
   } catch {
     return null;
   }
