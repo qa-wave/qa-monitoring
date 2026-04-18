@@ -1,30 +1,19 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { users } from "@/data/users";
+import { getSessionUser } from "@/lib/auth";
+import { listUsers } from "@/lib/users/store";
+import { UsersAdminClient } from "./UsersAdminClient";
 
-export default function AdminUsersPage() {
+export const dynamic = "force-dynamic";
+
+export default async function AdminUsersPage() {
+  const [users, me] = await Promise.all([listUsers(), getSessionUser()]);
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Uživatelé"
-        description="Správa uživatelů a rolí (v MVP jen pro čtení)."
+        title="Uživatelé a role"
+        description="Spravuj, kdo se kam dostane. Role viewer vidí dashboard, role admin má navíc přístup do Nastavení."
       />
-      <Card>
-        <CardHeader>
-          <CardTitle>Registrovaní uživatelé ({users.length})</CardTitle>
-        </CardHeader>
-        <CardContent className="divide-y divide-border/60 pt-0 text-sm">
-          {users.map((u) => (
-            <div key={u.id} className="flex items-center gap-3 py-2">
-              <span className="w-48 font-medium">{u.name}</span>
-              <span className="flex-1 font-mono text-xs text-muted-foreground">{u.email}</span>
-              <Badge variant={u.role === "admin" ? "info" : "outline"}>{u.role}</Badge>
-              <Badge variant="outline">{u.personaPreference}</Badge>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+      <UsersAdminClient initialUsers={users} currentUserId={me?.id ?? ""} />
     </div>
   );
 }
