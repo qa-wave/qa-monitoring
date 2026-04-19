@@ -1,5 +1,12 @@
 import type { User } from "@/lib/types";
 
+/**
+ * Defaultní heslo pro všechny seed demo účty. Při prvním seedu store.ts
+ * přes bcrypt zahashuje a uloží do `.data/users.json`. V produkci by seed
+ * neměl obsahovat známé heslo — je to jen dev-bootstrap.
+ */
+export const DEMO_SEED_PASSWORD = "demo";
+
 export const users: User[] = [
   {
     id: "u-1",
@@ -44,11 +51,3 @@ export const users: User[] = [
     personaPreference: "tester",
   },
 ];
-
-export function findUserByEmail(email: string): User | undefined {
-  return users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-}
-
-export function findUserById(id: string): User | undefined {
-  return users.find((u) => u.id === id);
-}

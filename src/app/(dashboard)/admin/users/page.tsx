@@ -1,12 +1,13 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { getSessionUser } from "@/lib/auth";
-import { listUsers } from "@/lib/users/store";
+import { listPublicUsers } from "@/lib/users/store";
 import { UsersAdminClient } from "./UsersAdminClient";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminUsersPage() {
-  const [users, me] = await Promise.all([listUsers(), getSessionUser()]);
+  // listPublicUsers() vrací uživatele bez passwordHash — bezpečné pro klienta.
+  const [users, me] = await Promise.all([listPublicUsers(), getSessionUser()]);
   return (
     <div className="space-y-6">
       <PageHeader

@@ -20,11 +20,11 @@ export default function LoginPage({
       <div className="w-full rounded-lg border border-border bg-card p-6 shadow-sm">
         <h1 className="text-xl font-semibold tracking-tight">Přihlásit se</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Přihlas se demo účtem. MVP nekontroluje hesla — jakékoliv projde.
+          Přihlas se demo účtem. Heslo je <span className="font-mono">demo</span>.
         </p>
         <LoginFormWrapper searchParams={searchParams} />
         <div className="mt-6 space-y-2 border-t border-border pt-4 text-xs text-muted-foreground">
-          <p>Demo účty:</p>
+          <p>Demo účty (heslo <span className="font-mono">demo</span>):</p>
           <ul className="space-y-1">
             <li>
               <span className="font-mono">viewer@example.com</span> — role viewer

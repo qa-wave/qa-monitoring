@@ -175,7 +175,16 @@ export interface User {
   role: UserRole;
   personaPreference: PersonaKey;
   avatarUrl?: string;
+  /**
+   * Bcrypt hash hesla. Na klienta se nikdy neposílá — API ho před odesláním
+   * strip-uje v `toPublicUser()`. Volitelné jen pro zpětnou kompatibilitu se
+   * staršími fixturami; při signIn se uživatel bez hashe **nepřihlásí**.
+   */
+  passwordHash?: string;
 }
+
+/** Verze User bezpečná pro odeslání klientovi (bez hashe). */
+export type PublicUser = Omit<User, "passwordHash">;
 
 export interface IntegrationConfig {
   id: string;

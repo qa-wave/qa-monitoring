@@ -21,10 +21,13 @@ npm run dev
 
 Demo přihlášení:
 
-- **viewer** — `viewer@example.com` / cokoliv
-- **admin** — `admin@example.com` / cokoliv
+- **viewer** — `viewer@example.com` / `demo`
+- **admin** — `admin@example.com` / `demo`
 
-V MVP se hesla nekontrolují — jakékoliv heslo projde.
+Hesla jsou hashována přes bcrypt (10 rounds). Seed vytvoří `.data/users.json`
+s bcrypt hashem `demo` pro všech 6 fixture účtů; v admin UI (viz
+`/admin/users`) lze heslo změnit nebo vytvořit nového uživatele s vlastním
+heslem (min. 6 znaků).
 
 ## Dostupné skripty
 

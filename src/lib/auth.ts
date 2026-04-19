@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import { findUserByEmail, findUserById } from "@/lib/users/store";
+import { findUserByEmail, findUserById, verifyPassword } from "@/lib/users/store";
 import type { User } from "@/lib/types";
 
 const COOKIE = "qa_session";
@@ -48,10 +48,11 @@ function decode(raw: string): Session | null {
   }
 }
 
-export async function signIn(email: string, _password: string): Promise<User | null> {
-  // MVP: password se nekontroluje. V produkci nahradit bcrypt ověřením.
+export async function signIn(email: string, password: string): Promise<User | null> {
   const user = await findUserByEmail(email);
   if (!user) return null;
+  const ok = await verifyPassword(user, password);
+  if (!ok) return null;
 
   const cookieStore = await cookies();
   cookieStore.set(COOKIE, encode({ userId: user.id, issuedAt: Date.now() }), {

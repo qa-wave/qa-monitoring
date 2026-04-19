@@ -1,11 +1,13 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { randomUUID } from "node:crypto";
-import { users as seedUsers } from "@/data/users";
-import type { PersonaKey, User, UserRole } from "@/lib/types";
+import bcrypt from "bcryptjs";
+import { DEMO_SEED_PASSWORD, users as seedUsers } from "@/data/users";
+import type { PersonaKey, PublicUser, User, UserRole } from "@/lib/types";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const STORE_FILE = path.join(DATA_DIR, "users.json");
+const BCRYPT_ROUNDS = 10;
 
 // Záměrně žádný in-memory cache — v Next.js dev modu HMR vytváří víc
 // modulových instancí, které by se mohly rozejít. Pro MVP stačí číst pokaždé.
@@ -15,7 +17,12 @@ async function ensureFile(): Promise<void> {
     await fs.mkdir(DATA_DIR, { recursive: true });
     await fs.access(STORE_FILE);
   } catch {
-    await fs.writeFile(STORE_FILE, JSON.stringify(seedUsers, null, 2), "utf-8");
+    // Seed: zahashuj DEMO_SEED_PASSWORD pro každý fixture účet, ať je login
+    // funkční v dev bez ručního setupu. Hash se počítá jednou při prvním
+    // spuštění a uloží se do .data/users.json.
+    const hash = await bcrypt.hash(DEMO_SEED_PASSWORD, BCRYPT_ROUNDS);
+    const seeded: User[] = seedUsers.map((u) => ({ ...u, passwordHash: hash }));
+    await fs.writeFile(STORE_FILE, JSON.stringify(seeded, null, 2), "utf-8");
   }
 }
 
@@ -34,8 +41,20 @@ async function writeAll(items: User[]): Promise<void> {
   await fs.writeFile(STORE_FILE, JSON.stringify(items, null, 2), "utf-8");
 }
 
+/** Odebere `passwordHash` před odesláním na klienta. */
+export function toPublicUser(user: User): PublicUser {
+  const { passwordHash: _hash, ...rest } = user;
+  void _hash;
+  return rest;
+}
+
 export async function listUsers(): Promise<User[]> {
   return readAll();
+}
+
+export async function listPublicUsers(): Promise<PublicUser[]> {
+  const all = await readAll();
+  return all.map(toPublicUser);
 }
 
 export async function findUserByEmail(email: string): Promise<User | undefined> {
@@ -48,11 +67,18 @@ export async function findUserById(id: string): Promise<User | undefined> {
   return all.find((u) => u.id === id);
 }
 
+/** Ověří heslo proti bcrypt hashi. Vrací true pokud OK. */
+export async function verifyPassword(user: User, password: string): Promise<boolean> {
+  if (!user.passwordHash || user.passwordHash.length === 0) return false;
+  return bcrypt.compare(password, user.passwordHash);
+}
+
 export type CreateUserInput = {
   email: string;
   name: string;
   role: UserRole;
   personaPreference: PersonaKey;
+  password: string;
 };
 
 export class UserStoreError extends Error {
@@ -67,18 +93,31 @@ export async function createUser(input: CreateUserInput): Promise<User> {
   if (all.some((u) => u.email.toLowerCase() === input.email.toLowerCase())) {
     throw new UserStoreError("email_exists", "Uživatel s tímto e-mailem už existuje.");
   }
+  if (!input.password || input.password.length < 6) {
+    throw new UserStoreError(
+      "password_too_short",
+      "Heslo musí mít alespoň 6 znaků."
+    );
+  }
+  const passwordHash = await bcrypt.hash(input.password, BCRYPT_ROUNDS);
   const created: User = {
     id: `u-${randomUUID().slice(0, 8)}`,
     email: input.email.trim(),
     name: input.name.trim(),
     role: input.role,
     personaPreference: input.personaPreference,
+    passwordHash,
   };
   await writeAll([...all, created]);
   return created;
 }
 
-export type UpdateUserInput = Partial<Pick<User, "name" | "role" | "personaPreference">>;
+export type UpdateUserInput = Partial<
+  Pick<User, "name" | "role" | "personaPreference">
+> & {
+  /** Nové plain-text heslo; pokud je uvedeno, bude nahrazen hash. */
+  password?: string;
+};
 
 export async function updateUser(
   id: string,
@@ -90,7 +129,6 @@ export async function updateUser(
   if (idx === -1) throw new UserStoreError("not_found", "Uživatel neexistuje.");
 
   const current = all[idx];
-  const next: User = { ...current, ...patch };
 
   // Guard: admin nesmí degradovat sám sebe, pokud by zůstal systém bez admina.
   if (patch.role && patch.role !== current.role) {
@@ -106,6 +144,18 @@ export async function updateUser(
         throw new UserStoreError("self_demote", "Sama/sám sobě nemůžeš odebrat admin roli.");
       }
     }
+  }
+
+  const { password, ...rest } = patch;
+  const next: User = { ...current, ...rest };
+  if (password !== undefined) {
+    if (password.length < 6) {
+      throw new UserStoreError(
+        "password_too_short",
+        "Heslo musí mít alespoň 6 znaků."
+      );
+    }
+    next.passwordHash = await bcrypt.hash(password, BCRYPT_ROUNDS);
   }
 
   const copy = [...all];

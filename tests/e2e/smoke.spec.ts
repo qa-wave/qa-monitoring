@@ -28,6 +28,15 @@ test("Přihlášení jako viewer zobrazí Přehled", async ({ page }) => {
   await expect(page.getByRole("link", { name: "Nastavení" })).toHaveCount(0);
 });
 
+test("Špatné heslo vrátí chybovou hlášku a zůstane na /login", async ({ page }) => {
+  await page.goto("/login");
+  await page.getByLabel("E-mail").fill("admin@example.com");
+  await page.getByLabel("Heslo").fill("this-is-wrong");
+  await page.getByRole("button", { name: /Přihlásit/i }).click();
+  await expect(page.getByText(/neexistuje|nesprávné|selhalo|chyba/i)).toBeVisible();
+  await expect(page).toHaveURL(/\/login/);
+});
+
 test("Admin vidí Nastavení a může otevřít /admin/integrations", async ({ page }) => {
   await page.goto("/login");
   await page.getByLabel("E-mail").fill("admin@example.com");

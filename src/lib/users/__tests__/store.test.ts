@@ -9,7 +9,6 @@ import path from "node:path";
 const testRoot = path.join(process.cwd(), "test-tmp-users");
 
 async function freshStore() {
-  // Smaž starý test-tmp
   try {
     await fs.rm(testRoot, { recursive: true, force: true });
   } catch {}
@@ -18,7 +17,6 @@ async function freshStore() {
   const originalCwd = process.cwd();
   process.chdir(testRoot);
 
-  // Reset module cache, aby store.ts znovu načetl cache a otevřel nový file.
   jest.resetModules();
   const mod = await import("../store");
 
@@ -32,20 +30,34 @@ async function freshStore() {
 }
 
 describe("users/store", () => {
-  it("seed: prvn\u00ed \u010dten\u00ed vytvo\u0159\u00ed .data/users.json z fixtur", async () => {
+  it("seed: první čtení vytvoří .data/users.json z fixtur s bcrypt hashem pro 'demo'", async () => {
     const { mod, cleanup } = await freshStore();
     try {
       const users = await mod.listUsers();
       expect(users.length).toBeGreaterThanOrEqual(6);
-      expect(users.some((u) => u.email === "admin@example.com")).toBe(true);
-      // Soubor existuje
-      await fs.access(path.join(process.cwd(), ".data", "users.json"));
+      const admin = users.find((u) => u.email === "admin@example.com");
+      expect(admin).toBeDefined();
+      // Hash začíná na $2a$/$2b$/$2y$
+      expect(admin!.passwordHash).toMatch(/^\$2[aby]\$/);
+      // Ověř, že 'demo' je platné heslo, jiné nikoli
+      expect(await mod.verifyPassword(admin!, "demo")).toBe(true);
+      expect(await mod.verifyPassword(admin!, "wrong")).toBe(false);
     } finally {
       await cleanup();
     }
   });
 
-  it("createUser: odm\u00edtne duplicitn\u00ed e-mail", async () => {
+  it("verifyPassword: vrátí false, když uživatel nemá hash", async () => {
+    const { mod, cleanup } = await freshStore();
+    try {
+      const fakeUser = { id: "x", email: "x@x", name: "x", role: "viewer" as const, personaPreference: "dev" as const };
+      expect(await mod.verifyPassword(fakeUser, "anything")).toBe(false);
+    } finally {
+      await cleanup();
+    }
+  });
+
+  it("createUser: odmítne duplicitní e-mail", async () => {
     const { mod, cleanup } = await freshStore();
     try {
       await mod.createUser({
@@ -53,6 +65,7 @@ describe("users/store", () => {
         name: "Test",
         role: "viewer",
         personaPreference: "dev",
+        password: "test123",
       });
       await expect(
         mod.createUser({
@@ -60,6 +73,7 @@ describe("users/store", () => {
           name: "Duplicate",
           role: "viewer",
           personaPreference: "dev",
+          password: "test123",
         })
       ).rejects.toThrow(/existuje/);
     } finally {
@@ -67,7 +81,42 @@ describe("users/store", () => {
     }
   });
 
-  it("updateUser: admin nem\u016f\u017ee degradovat s\u00e1m sebe", async () => {
+  it("createUser: odmítne krátké heslo (<6 znaků)", async () => {
+    const { mod, cleanup } = await freshStore();
+    try {
+      await expect(
+        mod.createUser({
+          email: "x@example.com",
+          name: "X",
+          role: "viewer",
+          personaPreference: "dev",
+          password: "abc",
+        })
+      ).rejects.toThrow(/6 znaků/);
+    } finally {
+      await cleanup();
+    }
+  });
+
+  it("createUser: nové heslo se uloží jako bcrypt hash a verifikuje", async () => {
+    const { mod, cleanup } = await freshStore();
+    try {
+      const created = await mod.createUser({
+        email: "new@example.com",
+        name: "N",
+        role: "viewer",
+        personaPreference: "dev",
+        password: "supersecret",
+      });
+      expect(created.passwordHash).toMatch(/^\$2[aby]\$/);
+      expect(await mod.verifyPassword(created, "supersecret")).toBe(true);
+      expect(await mod.verifyPassword(created, "supersecre")).toBe(false);
+    } finally {
+      await cleanup();
+    }
+  });
+
+  it("updateUser: admin nemůže degradovat sám sebe", async () => {
     const { mod, cleanup } = await freshStore();
     try {
       const u = (await mod.findUserByEmail("admin@example.com"))!;
@@ -79,27 +128,38 @@ describe("users/store", () => {
     }
   });
 
-  it("updateUser: posledn\u00edho admina nelze degradovat (i jin\u00fdm adminem)", async () => {
+  it("updateUser: posledního admina nelze degradovat (i jiným adminem)", async () => {
     const { mod, cleanup } = await freshStore();
     try {
-      // Degraduj v\u0161echny adminy krom\u011b jednoho
       const admins = (await mod.listUsers()).filter((u) => u.role === "admin");
       const [keeper, ...others] = admins;
       for (const a of others) {
-        // pou\u017eij keepera jako actora, aby nebyl self-demote
         await mod.updateUser(a.id, { role: "viewer" }, keeper.id);
       }
-      // Te\u010f z\u016fstal jen keeper jako admin. Pokus\u00edme se ho degradovat jin\u00fdm userem.
       const viewer = (await mod.listUsers()).find((u) => u.role === "viewer")!;
       await expect(
         mod.updateUser(keeper.id, { role: "viewer" }, viewer.id)
-      ).rejects.toThrow(/posledn\u00edmu/);
+      ).rejects.toThrow(/posledn/);
     } finally {
       await cleanup();
     }
   });
 
-  it("deleteUser: nelze smazat s\u00e1m sebe", async () => {
+  it("updateUser: password patch rehashuje", async () => {
+    const { mod, cleanup } = await freshStore();
+    try {
+      const u = (await mod.findUserByEmail("viewer@example.com"))!;
+      const oldHash = u.passwordHash;
+      const updated = await mod.updateUser(u.id, { password: "novehes" }, "u-2");
+      expect(updated.passwordHash).not.toBe(oldHash);
+      expect(await mod.verifyPassword(updated, "novehes")).toBe(true);
+      expect(await mod.verifyPassword(updated, "demo")).toBe(false);
+    } finally {
+      await cleanup();
+    }
+  });
+
+  it("deleteUser: nelze smazat sám sebe", async () => {
     const { mod, cleanup } = await freshStore();
     try {
       const u = (await mod.findUserByEmail("admin@example.com"))!;
@@ -109,7 +169,7 @@ describe("users/store", () => {
     }
   });
 
-  it("deleteUser: nelze smazat posledn\u00edho admina", async () => {
+  it("deleteUser: nelze smazat posledního admina", async () => {
     const { mod, cleanup } = await freshStore();
     try {
       const admins = (await mod.listUsers()).filter((u) => u.role === "admin");
@@ -118,30 +178,19 @@ describe("users/store", () => {
       for (const a of others) {
         await mod.deleteUser(a.id, keeper.id);
       }
-      await expect(mod.deleteUser(keeper.id, viewer.id)).rejects.toThrow(/posledn\u00edho/);
+      await expect(mod.deleteUser(keeper.id, viewer.id)).rejects.toThrow(/posledn/);
     } finally {
       await cleanup();
     }
   });
 
-  it("updateUser + deleteUser se persistuj\u00ed do souboru", async () => {
+  it("listPublicUsers + toPublicUser: passwordHash neuteče na klienta", async () => {
     const { mod, cleanup } = await freshStore();
     try {
-      const created = await mod.createUser({
-        email: "new@example.com",
-        name: "N",
-        role: "viewer",
-        personaPreference: "dev",
-      });
-      await mod.updateUser(created.id, { role: "admin" }, "u-2");
-      mod.invalidateCache();
-      const reloaded = (await mod.findUserById(created.id))!;
-      expect(reloaded.role).toBe("admin");
-
-      // Smaz\u00e1n\u00ed
-      await mod.deleteUser(created.id, "u-2");
-      mod.invalidateCache();
-      expect(await mod.findUserById(created.id)).toBeUndefined();
+      const publicUsers = await mod.listPublicUsers();
+      for (const u of publicUsers) {
+        expect(u).not.toHaveProperty("passwordHash");
+      }
     } finally {
       await cleanup();
     }

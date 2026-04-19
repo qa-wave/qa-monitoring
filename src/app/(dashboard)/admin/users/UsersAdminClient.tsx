@@ -15,7 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { PersonaKey, User, UserRole } from "@/lib/types";
+import type { PersonaKey, PublicUser, UserRole } from "@/lib/types";
+
+type User = PublicUser;
 import { personaLabel } from "@/lib/personas";
 
 type ToastState = { kind: "ok" | "error"; message: string } | null;
@@ -267,18 +269,23 @@ function AddUserForm({
   const [email, setEmail] = React.useState("");
   const [role, setRole] = React.useState<UserRole>("viewer");
   const [persona, setPersona] = React.useState<PersonaKey>("dev");
+  const [password, setPassword] = React.useState("");
   const [pending, setPending] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (password.length < 6) {
+      setError("Heslo musí mít alespoň 6 znaků.");
+      return;
+    }
     setPending(true);
     setError(null);
     try {
       const res = await fetch("/api/users", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, role, personaPreference: persona }),
+        body: JSON.stringify({ name, email, role, personaPreference: persona, password }),
       });
       const body = (await res.json().catch(() => ({}))) as { id?: string; error?: string };
       if (!res.ok) {
@@ -315,6 +322,22 @@ function AddUserForm({
           onChange={(e) => setEmail(e.target.value)}
           placeholder="jana@example.com"
         />
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="new-password">Počáteční heslo</Label>
+        <Input
+          id="new-password"
+          type="password"
+          required
+          minLength={6}
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="minimálně 6 znaků"
+          autoComplete="new-password"
+        />
+        <p className="text-xs text-muted-foreground">
+          Uživatel si ho po prvním přihlášení může změnit (feature v1).
+        </p>
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div className="space-y-2">
