@@ -7,54 +7,65 @@
   --card-foreground: 222 47% 11%;
   --popover: 0 0% 100%;
   --popover-foreground: 222 47% 11%;
-  --primary: 222 47% 11%;
-  --primary-foreground: 210 40% 98%;
-  --secondary: 210 40% 96%;
-  --secondary-foreground: 222 47% 11%;
+  --primary: 212 68% 40%;             /* ČEPS dark blue #2162AD */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 209 56% 95%;            /* světlé pozadí derivované z ČEPS blue */
+  --secondary-foreground: 212 68% 25%;
   --muted: 210 40% 96%;
   --muted-foreground: 215 16% 47%;
-  --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
-  --destructive: 0 72% 51%;
-  --destructive-foreground: 210 40% 98%;
+  --accent: 199 83% 94%;
+  --accent-foreground: 212 68% 25%;
+  --destructive: 356 64% 46%;          /* ČEPS red #BF2A34 */
+  --destructive-foreground: 0 0% 100%;
   --border: 214 32% 91%;
   --input: 214 32% 91%;
-  --ring: 222 47% 11%;
+  --ring: 212 68% 40%;
   --radius: 0.5rem;
 
-  /* Status semantiky */
-  --status-ok: 142 71% 45%;        /* emerald-500 */
-  --status-warn: 38 92% 50%;       /* amber-500 */
-  --status-down: 0 84% 60%;        /* red-500 */
-  --status-info: 217 91% 60%;      /* blue-500 */
+  /* Brand barvy — výchozí preset „ČEPS". Admin může v /admin/branding přepsat. */
+  --brand-primary: 212 68% 40%;        /* #2162AD ČEPS dark blue */
+  --brand-secondary: 209 56% 56%;      /* #4F91CE ČEPS blue */
+  --brand-tertiary: 199 83% 68%;       /* #6BC7F1 ČEPS light blue */
+  --brand-primary-foreground: 0 0% 100%;
+
+  /* Status semantiky — sladěno s ČEPS paletou. */
+  --status-ok: 147 100% 23%;           /* #007736 ČEPS green */
+  --status-warn: 36 100% 50%;          /* #FF9700 ČEPS orange */
+  --status-down: 356 64% 46%;          /* #BF2A34 ČEPS red */
+  --status-info: 209 56% 56%;          /* #4F91CE ČEPS blue */
   --status-muted: 215 16% 47%;
 }
 
 .dark {
-  --background: 222 47% 4%;
+  --background: 215 35% 6%;
   --foreground: 210 40% 98%;
-  --card: 222 47% 6%;
+  --card: 215 35% 8%;
   --card-foreground: 210 40% 98%;
-  --popover: 222 47% 6%;
+  --popover: 215 35% 8%;
   --popover-foreground: 210 40% 98%;
-  --primary: 210 40% 98%;
-  --primary-foreground: 222 47% 11%;
-  --secondary: 217 33% 17%;
+  --primary: 209 56% 56%;              /* #4F91CE — pop proti tmavému pozadí */
+  --primary-foreground: 0 0% 100%;
+  --secondary: 215 30% 15%;
   --secondary-foreground: 210 40% 98%;
-  --muted: 217 33% 17%;
+  --muted: 215 30% 14%;
   --muted-foreground: 215 20% 65%;
-  --accent: 217 33% 17%;
+  --accent: 212 68% 22%;
   --accent-foreground: 210 40% 98%;
-  --destructive: 0 62% 40%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 217 33% 17%;
-  --input: 217 33% 17%;
-  --ring: 213 27% 84%;
+  --destructive: 356 64% 46%;
+  --destructive-foreground: 0 0% 100%;
+  --border: 215 30% 18%;
+  --input: 215 30% 18%;
+  --ring: 209 56% 56%;
 
-  --status-ok: 142 71% 45%;
-  --status-warn: 38 92% 50%;
-  --status-down: 0 84% 60%;
-  --status-info: 217 91% 60%;
+  --brand-primary: 209 56% 56%;        /* světlejší v dark, aby svítila */
+  --brand-secondary: 199 83% 68%;
+  --brand-tertiary: 212 68% 40%;
+  --brand-primary-foreground: 0 0% 100%;
+
+  --status-ok: 147 60% 45%;            /* zesvětlený green pro tmavý bg */
+  --status-warn: 36 100% 55%;
+  --status-down: 356 70% 58%;
+  --status-info: 199 83% 68%;
   --status-muted: 215 20% 65%;
 }
 
@@ -84,6 +95,11 @@
   --color-status-down: hsl(var(--status-down));
   --color-status-info: hsl(var(--status-info));
   --color-status-muted: hsl(var(--status-muted));
+
+  --color-brand-primary: hsl(var(--brand-primary));
+  --color-brand-secondary: hsl(var(--brand-secondary));
+  --color-brand-tertiary: hsl(var(--brand-tertiary));
+  --color-brand-primary-foreground: hsl(var(--brand-primary-foreground));
 
   --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, "JetBrains Mono", "SFMono-Regular", Menlo, Consolas, monospace;
@@ -123,4 +139,74 @@
   .status-dot-down { background-color: hsl(var(--status-down)); }
   .status-dot-info { background-color: hsl(var(--status-info)); }
   .status-dot-muted { background-color: hsl(var(--status-muted)); }
+}
+
+/* ──────────────────────────────────────────────────────────
+ * Visual presets — `<html class="theme-{key}">` se přepíná
+ * v root layoutu podle uložených brand settings.
+ *
+ *  flat      — default, jednolité barvy, sharp edges
+ *  gradient  — diagonální gradient v body, hlavičkách, CTA
+ *  aurora    — mesh gradient na pozadí (Stripe / Vercel landing)
+ *  glass     — průsvitné karty s backdrop-blur
+ *  contrast  — silné bordery, plné barvy, wallboard-friendly
+ * ────────────────────────────────────────────────────────── */
+
+/* SOLID FLAT — žádné modifikace. Tady jen pro úplnost. */
+.theme-flat body { background-color: hsl(var(--background)); }
+
+/* LINEAR GRADIENT */
+.theme-gradient body {
+  background-image:
+    linear-gradient(135deg,
+      hsl(var(--background)) 0%,
+      hsl(var(--background)) 55%,
+      hsl(var(--brand-primary) / 0.06) 100%);
+  background-attachment: fixed;
+}
+.theme-gradient [data-ui="card"] {
+  background-image: linear-gradient(135deg,
+    hsl(var(--card)) 0%,
+    hsl(var(--brand-primary) / 0.05) 100%);
+}
+
+/* MESH AURORA */
+.theme-aurora body {
+  background-color: hsl(var(--background));
+  background-image:
+    radial-gradient(at 18% 12%, hsl(var(--brand-primary) / 0.18) 0px, transparent 55%),
+    radial-gradient(at 82% 8%, hsl(var(--brand-secondary) / 0.14) 0px, transparent 55%),
+    radial-gradient(at 65% 78%, hsl(var(--brand-tertiary) / 0.12) 0px, transparent 55%),
+    radial-gradient(at 8% 88%, hsl(var(--brand-primary) / 0.10) 0px, transparent 55%);
+  background-attachment: fixed;
+}
+
+/* GLASSMORPHISM */
+.theme-glass body {
+  background-image:
+    radial-gradient(at 28% 18%, hsl(var(--brand-primary) / 0.22) 0px, transparent 60%),
+    radial-gradient(at 72% 82%, hsl(var(--brand-tertiary) / 0.18) 0px, transparent 60%);
+  background-attachment: fixed;
+}
+.theme-glass [data-ui="card"] {
+  background-color: hsl(var(--card) / 0.55);
+  backdrop-filter: blur(14px) saturate(1.2);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  border-color: hsl(var(--brand-primary) / 0.30);
+  box-shadow: 0 8px 32px hsl(var(--brand-primary) / 0.08);
+}
+
+/* HIGH CONTRAST — silné bordery, posunutý box-shadow jako u brutalist UI */
+.theme-contrast [data-ui="card"] {
+  border-width: 2px;
+  border-color: hsl(var(--brand-primary));
+  box-shadow: 4px 4px 0 0 hsl(var(--brand-primary) / 0.85);
+  border-radius: calc(var(--radius) - 2px);
+}
+.theme-contrast .status-dot-ok,
+.theme-contrast .status-dot-warn,
+.theme-contrast .status-dot-down,
+.theme-contrast .status-dot-info {
+  outline: 2px solid hsl(var(--foreground));
+  outline-offset: 1px;
 }

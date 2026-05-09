@@ -9,6 +9,7 @@ import {
   Boxes,
   Globe,
   LayoutDashboard,
+  Palette,
   Rocket,
   Settings,
   ShieldCheck,
@@ -16,6 +17,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/lib/types";
+
+type BrandHeader = { productName: string; tenantName: string };
 
 type NavItem = {
   href: string;
@@ -35,17 +38,21 @@ const items: NavItem[] = [
   { href: "/quality", label: "Kvalita & bezpečnost", icon: ShieldCheck },
   { href: "/product", label: "Produkt", icon: BarChart3 },
   { href: "/status/preview", label: "Veřejný status", icon: Activity },
-  { href: "/admin/integrations", label: "Nastavení", icon: Settings, adminOnly: true },
+  { href: "/admin/integrations", label: "Integrace", icon: Settings, adminOnly: true },
+  { href: "/admin/branding", label: "Vzhled", icon: Palette, adminOnly: true },
 ];
 
-export function Sidebar({ role }: { role: UserRole }) {
+export function Sidebar({ role, brand }: { role: UserRole; brand: BrandHeader }) {
   const pathname = usePathname();
   return (
     <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border lg:bg-card/40">
       <div className="flex h-16 items-center border-b border-border px-6">
         <Link href="/" className="flex items-center gap-2 text-sm font-semibold tracking-tight">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[hsl(var(--status-ok))]" aria-hidden />
-          qa-app
+          <span
+            className="inline-block h-2.5 w-2.5 rounded-full bg-[hsl(var(--brand-primary))] shadow-[0_0_8px_hsl(var(--brand-primary)/0.6)]"
+            aria-hidden
+          />
+          <span>{brand.productName}</span>
         </Link>
       </div>
       <nav className="flex-1 overflow-y-auto px-3 py-4">
@@ -75,7 +82,7 @@ export function Sidebar({ role }: { role: UserRole }) {
         </ul>
       </nav>
       <div className="border-t border-border p-4 text-xs text-muted-foreground">
-        qa-app · MVP v0.1
+        {brand.productName} · pro {brand.tenantName}
       </div>
     </aside>
   );

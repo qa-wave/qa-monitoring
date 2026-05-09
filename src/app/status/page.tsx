@@ -5,11 +5,15 @@ import { StatusDot } from "@/components/ui/status-dot";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatRelativeTime } from "@/lib/utils";
 import { generateHistoryBar, publicStatusData } from "@/lib/dashboard-data";
+import { getBrandSettings } from "@/lib/branding";
 
-export const metadata: Metadata = {
-  title: "Status",
-  description: "Aktuální stav služeb qa-app, plánovaná údržba a poslední incidenty.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const brand = await getBrandSettings();
+  return {
+    title: "Status",
+    description: `Aktuální stav služeb ${brand.tenantName}, plánovaná údržba a poslední incidenty.`,
+  };
+}
 
 export const revalidate = 60;
 
@@ -19,7 +23,8 @@ const statusCopy = {
   down: "Probíhá incident",
 } as const;
 
-export default function PublicStatusPage() {
+export default async function PublicStatusPage() {
+  const brand = await getBrandSettings();
   const data = publicStatusData();
   const overall = data.overallStatus === "down" ? "down" : data.overallStatus === "warn" ? "warn" : "ok";
   const headline = statusCopy[overall];
@@ -39,7 +44,7 @@ export default function PublicStatusPage() {
             }
             aria-hidden
           />
-          qa-app · status
+          {brand.tenantName} · status
         </div>
         <Link href="/login" className="text-xs text-muted-foreground hover:text-foreground">
           Interní přihlášení
@@ -192,7 +197,7 @@ export default function PublicStatusPage() {
       ) : null}
 
       <footer className="flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
-        <span>© qa-app · interní monitoring</span>
+        <span>© {brand.productName} · interní monitoring {brand.tenantName}</span>
         <div className="flex items-center gap-3">
           <span className="inline-flex items-center gap-1">
             <Rss className="h-3 w-3" /> RSS

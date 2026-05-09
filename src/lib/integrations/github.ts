@@ -57,7 +57,7 @@ function createGitHubAdapter(config: GitHubConfig): ProviderCapability {
     Accept: "application/vnd.github+json",
     Authorization: `Bearer ${config.token}`,
     "X-GitHub-Api-Version": "2022-11-28",
-    "User-Agent": "qa-app",
+    "User-Agent": "qa",
   } as const;
 
   async function call<T>(path: string): Promise<T> {
@@ -148,6 +148,7 @@ function createGitHubAdapter(config: GitHubConfig): ProviderCapability {
 export const githubProviderDefinition: ProviderDefinition<GitHubConfig> = {
   key: "github",
   kind: "vcs",
+  sdlcStage: "code",
   label: "GitHub",
   labelCs: "GitHub (verzování + Actions)",
   description:

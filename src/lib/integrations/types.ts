@@ -50,6 +50,80 @@ export const providerKindLabel: Record<ProviderKind, string> = {
 };
 
 /**
+ * Fáze SDLC, do které provider přispívá. Slouží pro grupování v admin UI
+ * a pro výpočet pokrytí (kolik fází má alespoň jeden aktivní provider).
+ */
+export type SdlcStage =
+  | "plan"
+  | "code"
+  | "build"
+  | "test"
+  | "release"
+  | "operate"
+  | "observe"
+  | "feedback"
+  | "security";
+
+export const sdlcStageOrder: SdlcStage[] = [
+  "plan",
+  "code",
+  "build",
+  "test",
+  "release",
+  "operate",
+  "observe",
+  "feedback",
+  "security",
+];
+
+export const sdlcStageLabel: Record<SdlcStage, string> = {
+  plan: "Plánování",
+  code: "Kód",
+  build: "Build",
+  test: "Test",
+  release: "Release",
+  operate: "Provoz",
+  observe: "Observability",
+  feedback: "Zpětná vazba",
+  security: "Bezpečnost",
+};
+
+export const sdlcStageDescription: Record<SdlcStage, string> = {
+  plan: "Backlog, sprinty, roadmap a discovery — odkud vznikají požadavky.",
+  code: "Verzování, code review a kvalita zdrojových kódů.",
+  build: "CI pipeliny, artefakty a build cache.",
+  test: "Unit, integration, E2E, performance a accessibility testy.",
+  release: "Deploy na prostředí, feature flagy a progressive delivery.",
+  operate: "Běh produkčního prostředí — k8s, DB, incidenty, on-call.",
+  observe: "Metriky, logy, traces, uptime a alerty.",
+  feedback: "Produktová analytika, chování uživatelů a customer support.",
+  security: "Závislosti, secrets, CVE, kontejnery a compliance — průřezová fáze.",
+};
+
+/**
+ * Doporučené mapování `kind → sdlcStage`. Slouží jako default pro nové
+ * providery; konkrétní definice ho mohou přepsat polem `sdlcStage`.
+ */
+export const sdlcStageForKind: Record<ProviderKind, SdlcStage> = {
+  vcs: "code",
+  ci: "build",
+  paas: "release",
+  k8s: "operate",
+  apm: "observe",
+  errors: "observe",
+  logs: "observe",
+  incidents: "operate",
+  tickets: "plan",
+  flags: "release",
+  analytics: "feedback",
+  tests: "test",
+  security: "security",
+  uptime: "observe",
+  db: "operate",
+  comm: "operate",
+};
+
+/**
  * Parametry, se kterými adapter volá externí službu.
  */
 export interface ProviderScope {
@@ -87,6 +161,8 @@ export interface ProviderTestResult {
 export interface ProviderDefinition<TConfig = unknown> {
   key: string;
   kind: ProviderKind;
+  /** Fáze SDLC, do které provider primárně přispívá. */
+  sdlcStage: SdlcStage;
   label: string;
   labelCs: string;
   description: string;
@@ -101,4 +177,4 @@ export interface ProviderDefinition<TConfig = unknown> {
   create: (config: TConfig) => ProviderCapability;
 }
 
-export const providerRegistrySymbol = Symbol.for("qa-app.providerRegistry");
+export const providerRegistrySymbol = Symbol.for("qa.providerRegistry");

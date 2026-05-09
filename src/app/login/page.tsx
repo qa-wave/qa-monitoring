@@ -1,21 +1,28 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { LoginForm } from "./LoginForm";
+import { getBrandSettings } from "@/lib/branding";
 
 export const metadata: Metadata = {
   title: "Přihlášení",
 };
 
-export default function LoginPage({
+export default async function LoginPage({
   searchParams,
 }: {
   searchParams: Promise<{ from?: string; error?: string }>;
 }) {
+  const brand = await getBrandSettings();
   return (
     <div className="mx-auto flex min-h-screen w-full max-w-md flex-col items-center justify-center px-6">
       <div className="mb-6 flex items-center gap-2 text-sm font-semibold tracking-tight">
-        <span className="inline-block h-2.5 w-2.5 rounded-full bg-[hsl(var(--status-ok))]" aria-hidden />
-        qa-app
+        <span
+          className="inline-block h-2.5 w-2.5 rounded-full bg-[hsl(var(--brand-primary))] shadow-[0_0_8px_hsl(var(--brand-primary)/0.6)]"
+          aria-hidden
+        />
+        <span>
+          {brand.productName} <span className="text-muted-foreground font-normal">· {brand.tenantName}</span>
+        </span>
       </div>
       <div className="w-full rounded-lg border border-border bg-card p-6 shadow-sm">
         <h1 className="text-xl font-semibold tracking-tight">Přihlásit se</h1>

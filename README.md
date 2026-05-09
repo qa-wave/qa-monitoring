@@ -1,4 +1,4 @@
-# qa-app
+# qa
 
 Dashboard pro sledování stavu vývojových prostředí napříč aplikacemi. Čtyři cílové skupiny: vývojář, product owner, tester, koncový uživatel.
 

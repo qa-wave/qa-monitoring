@@ -6,7 +6,8 @@ import { healthChecks } from "@/data/health-checks";
 import { incidents } from "@/data/incidents";
 import { pipelineRuns } from "@/data/pipeline-runs";
 import { testRuns } from "@/data/test-runs";
-import type { ProviderCapability, ProviderDefinition, ProviderKind } from "./types";
+import type { ProviderCapability, ProviderDefinition, ProviderKind, SdlcStage } from "./types";
+import { sdlcStageForKind } from "./types";
 
 const mockCredentialsSchema = z.object({
   apiUrl: z.string().url().optional().or(z.literal("").optional()),
@@ -54,6 +55,8 @@ function createMockAdapter(_config: MockConfig): ProviderCapability {
 type MockSpec = {
   key: string;
   kind: ProviderKind;
+  /** Volitelné — pokud chybí, odvodí se z `sdlcStageForKind[kind]`. */
+  sdlcStage?: SdlcStage;
   label: string;
   labelCs: string;
   description: string;
@@ -62,6 +65,24 @@ type MockSpec = {
 };
 
 const mockSpecs: MockSpec[] = [
+  {
+    key: "gitlab",
+    kind: "vcs",
+    label: "GitLab",
+    labelCs: "GitLab (verzování + CI)",
+    description: "Repo, merge requesty, pipelines a releases přes GitLab API.",
+    docsUrl: "https://docs.gitlab.com/ee/api/",
+    capabilities: ["fetchPipelineRuns", "fetchDeployments", "testConnection"],
+  },
+  {
+    key: "bitbucket",
+    kind: "vcs",
+    label: "Bitbucket",
+    labelCs: "Bitbucket (verzování + Pipelines)",
+    description: "Bitbucket Cloud REST API — repozitáře, pull requesty a Pipelines runs.",
+    docsUrl: "https://developer.atlassian.com/cloud/bitbucket/rest/intro/",
+    capabilities: ["fetchPipelineRuns", "fetchDeployments", "testConnection"],
+  },
   {
     key: "sentry",
     kind: "errors",
@@ -212,6 +233,7 @@ export function buildMockProviderDefinitions(): ProviderDefinition<MockConfig>[]
   return mockSpecs.map((spec) => ({
     key: spec.key,
     kind: spec.kind,
+    sdlcStage: spec.sdlcStage ?? sdlcStageForKind[spec.kind],
     label: spec.label,
     labelCs: spec.labelCs,
     description: spec.description,
