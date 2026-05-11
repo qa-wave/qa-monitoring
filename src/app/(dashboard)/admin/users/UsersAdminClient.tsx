@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, UserPlus, X } from "lucide-react";
+import { KeyRound, Pencil, Plus, Trash2, UserPlus, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,12 +15,235 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { PersonaKey, PublicUser, UserRole } from "@/lib/types";
 
 type User = PublicUser;
 import { personaLabel } from "@/lib/personas";
 
 type ToastState = { kind: "ok" | "error"; message: string } | null;
+
+/* ------------------------------------------------------------------ */
+/*  Dialog components — defined OUTSIDE main component                */
+/* ------------------------------------------------------------------ */
+
+function EditUserDialog({
+  user,
+  onClose,
+  onSave,
+  pending,
+}: {
+  user: User;
+  onClose: () => void;
+  onSave: (id: string, patch: Partial<User>) => Promise<boolean>;
+  pending: string | null;
+}) {
+  const [name, setName] = React.useState(user.name);
+  const [role, setRole] = React.useState<UserRole>(user.role);
+  const [persona, setPersona] = React.useState<PersonaKey>(user.personaPreference);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const ok = await onSave(user.id, { name, role, personaPreference: persona });
+    if (ok) onClose();
+  }
+
+  const isBusy = pending === user.id;
+
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Upravit uživatele</DialogTitle>
+          <DialogDescription>
+            Změň jméno, roli nebo personu uživatele {user.email}.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="edit-name">Jméno</Label>
+            <Input
+              id="edit-name"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label>Role</Label>
+              <Select value={role} onValueChange={(v: string) => setRole(v as UserRole)}>
+                <SelectTrigger>
+                  <SelectValue>{role}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="viewer">viewer</SelectItem>
+                  <SelectItem value="admin">admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Persona</Label>
+              <Select value={persona} onValueChange={(v: string) => setPersona(v as PersonaKey)}>
+                <SelectTrigger>
+                  <SelectValue>{personaLabel[persona]}</SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{personaLabel.all}</SelectItem>
+                  <SelectItem value="dev">{personaLabel.dev}</SelectItem>
+                  <SelectItem value="po">{personaLabel.po}</SelectItem>
+                  <SelectItem value="tester">{personaLabel.tester}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isBusy}>
+              Zrušit
+            </Button>
+            <Button type="submit" disabled={isBusy}>
+              {isBusy ? "Ukládám…" : "Uložit"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function ChangePasswordDialog({
+  user,
+  onClose,
+  onSave,
+  pending,
+}: {
+  user: User;
+  onClose: () => void;
+  onSave: (id: string, password: string) => Promise<boolean>;
+  pending: string | null;
+}) {
+  const [password, setPassword] = React.useState("");
+  const [confirm, setConfirm] = React.useState("");
+  const [error, setError] = React.useState<string | null>(null);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (password.length < 6) {
+      setError("Heslo musí mít alespoň 6 znaků.");
+      return;
+    }
+    if (password !== confirm) {
+      setError("Hesla se neshodují.");
+      return;
+    }
+    setError(null);
+    const ok = await onSave(user.id, password);
+    if (ok) onClose();
+  }
+
+  const isBusy = pending === user.id;
+
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Změnit heslo</DialogTitle>
+          <DialogDescription>
+            Nastavení nového hesla pro {user.name} ({user.email}).
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="new-pw">Nové heslo</Label>
+            <Input
+              id="new-pw"
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="minimálně 6 znaků"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="confirm-pw">Potvrzení hesla</Label>
+            <Input
+              id="confirm-pw"
+              type="password"
+              required
+              minLength={6}
+              autoComplete="new-password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              placeholder="zadej znovu"
+            />
+          </div>
+          {error ? (
+            <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-sm text-destructive">
+              {error}
+            </p>
+          ) : null}
+          <DialogFooter>
+            <Button type="button" variant="outline" onClick={onClose} disabled={isBusy}>
+              Zrušit
+            </Button>
+            <Button type="submit" disabled={isBusy}>
+              {isBusy ? "Ukládám…" : "Změnit heslo"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function DeleteUserConfirmDialog({
+  user,
+  onClose,
+  onConfirm,
+  pending,
+}: {
+  user: User;
+  onClose: () => void;
+  onConfirm: () => void;
+  pending: string | null;
+}) {
+  const isBusy = pending === user.id;
+
+  return (
+    <Dialog open onOpenChange={(v) => !v && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Smazat uživatele</DialogTitle>
+          <DialogDescription>
+            Opravdu chceš smazat uživatele <strong>{user.name}</strong> ({user.email})? Tato akce
+            je nevratná.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button type="button" variant="outline" onClick={onClose} disabled={isBusy}>
+            Zrušit
+          </Button>
+          <Button variant="destructive" onClick={onConfirm} disabled={isBusy}>
+            {isBusy ? "Mažu…" : "Smazat"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Main component                                                     */
+/* ------------------------------------------------------------------ */
 
 export function UsersAdminClient({
   initialUsers,
@@ -34,6 +257,10 @@ export function UsersAdminClient({
   const [toast, setToast] = React.useState<ToastState>(null);
   const [pending, setPending] = React.useState<string | null>(null);
   const [addOpen, setAddOpen] = React.useState(false);
+
+  const [editUser, setEditUser] = React.useState<User | null>(null);
+  const [passwordUser, setPasswordUser] = React.useState<User | null>(null);
+  const [deleteUser, setDeleteUser] = React.useState<User | null>(null);
 
   React.useEffect(() => {
     if (!toast) return;
@@ -65,8 +292,27 @@ export function UsersAdminClient({
     }
   }
 
+  async function changePassword(id: string, password: string): Promise<boolean> {
+    setPending(id);
+    try {
+      const res = await fetch(`/api/users/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const body = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setToast({ kind: "error", message: body.error ?? "Změna hesla selhala." });
+        return false;
+      }
+      setToast({ kind: "ok", message: "Heslo změněno." });
+      return true;
+    } finally {
+      setPending(null);
+    }
+  }
+
   async function handleDelete(user: User) {
-    if (!confirm(`Opravdu smazat uživatele ${user.name} (${user.email})?`)) return;
     setPending(user.id);
     try {
       const res = await fetch(`/api/users/${user.id}`, { method: "DELETE" });
@@ -76,6 +322,7 @@ export function UsersAdminClient({
         return;
       }
       setUsers((prev) => prev.filter((u) => u.id !== user.id));
+      setDeleteUser(null);
       setToast({ kind: "ok", message: `Uživatel ${user.name} smazán.` });
       router.refresh();
     } finally {
@@ -142,14 +389,13 @@ export function UsersAdminClient({
                   <th className="pb-2 pr-4 font-medium">E-mail</th>
                   <th className="w-36 pb-2 font-medium">Role</th>
                   <th className="w-40 pb-2 font-medium">Persona</th>
-                  <th className="w-28 pb-2 font-medium">Akce</th>
+                  <th className="w-36 pb-2 font-medium">Akce</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((u) => {
                   const isSelf = u.id === currentUserId;
                   const isOnlyAdmin = u.role === "admin" && adminCount <= 1;
-                  const disableRoleChange = isSelf || isOnlyAdmin;
                   const disableDelete = isSelf || isOnlyAdmin;
                   return (
                     <tr key={u.id} className="border-t border-border/60">
@@ -161,57 +407,50 @@ export function UsersAdminClient({
                       </td>
                       <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">{u.email}</td>
                       <td className="py-3 pr-4">
-                        <Select
-                          value={u.role}
-                          disabled={disableRoleChange || pending === u.id}
-                          onValueChange={(v: string) => patchUser(u.id, { role: v as UserRole })}
-                        >
-                          <SelectTrigger className="h-8 w-28">
-                            <SelectValue>{u.role}</SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="viewer">viewer</SelectItem>
-                            <SelectItem value="admin">admin</SelectItem>
-                          </SelectContent>
-                        </Select>
+                        <Badge variant={u.role === "admin" ? "info" : "outline"}>{u.role}</Badge>
                       </td>
-                      <td className="py-3 pr-4">
-                        <Select
-                          value={u.personaPreference}
-                          disabled={pending === u.id}
-                          onValueChange={(v: string) =>
-                            patchUser(u.id, { personaPreference: v as PersonaKey })
-                          }
-                        >
-                          <SelectTrigger className="h-8 w-32">
-                            <SelectValue>{personaLabel[u.personaPreference]}</SelectValue>
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all">{personaLabel.all}</SelectItem>
-                            <SelectItem value="dev">{personaLabel.dev}</SelectItem>
-                            <SelectItem value="po">{personaLabel.po}</SelectItem>
-                            <SelectItem value="tester">{personaLabel.tester}</SelectItem>
-                          </SelectContent>
-                        </Select>
+                      <td className="py-3 pr-4 text-xs text-muted-foreground">
+                        {personaLabel[u.personaPreference]}
                       </td>
                       <td className="py-3">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          disabled={disableDelete || pending === u.id}
-                          onClick={() => handleDelete(u)}
-                          title={
-                            isSelf
-                              ? "Sebe smazat nemůžeš"
-                              : isOnlyAdmin
-                              ? "Posledního admina nelze smazat"
-                              : "Smazat uživatele"
-                          }
-                          className="gap-1 text-destructive hover:text-destructive"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                          Smazat
-                        </Button>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={pending === u.id}
+                            onClick={() => setEditUser(u)}
+                            title="Upravit uživatele"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            disabled={pending === u.id}
+                            onClick={() => setPasswordUser(u)}
+                            title="Změnit heslo"
+                          >
+                            <KeyRound className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:text-destructive"
+                            disabled={disableDelete || pending === u.id}
+                            onClick={() => setDeleteUser(u)}
+                            title={
+                              isSelf
+                                ? "Sebe smazat nemůžeš"
+                                : isOnlyAdmin
+                                ? "Posledního admina nelze smazat"
+                                : "Smazat uživatele"
+                            }
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </td>
                     </tr>
                   );
@@ -254,9 +493,42 @@ export function UsersAdminClient({
           </div>
         </CardContent>
       </Card>
+
+      {/* Dialogs — conditionally mounted with key for state reset */}
+      {editUser && (
+        <EditUserDialog
+          key={editUser.id}
+          user={editUser}
+          onClose={() => setEditUser(null)}
+          onSave={patchUser}
+          pending={pending}
+        />
+      )}
+      {passwordUser && (
+        <ChangePasswordDialog
+          key={passwordUser.id}
+          user={passwordUser}
+          onClose={() => setPasswordUser(null)}
+          onSave={changePassword}
+          pending={pending}
+        />
+      )}
+      {deleteUser && (
+        <DeleteUserConfirmDialog
+          key={deleteUser.id}
+          user={deleteUser}
+          onClose={() => setDeleteUser(null)}
+          onConfirm={() => handleDelete(deleteUser)}
+          pending={pending}
+        />
+      )}
     </div>
   );
 }
+
+/* ------------------------------------------------------------------ */
+/*  Add User form                                                      */
+/* ------------------------------------------------------------------ */
 
 function AddUserForm({
   onAdded,
