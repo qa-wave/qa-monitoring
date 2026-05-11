@@ -33,8 +33,8 @@ export function parsePersona(value: string | null | undefined): PersonaKey {
  * Určuje, které widgety na Přehledu se mají zvýraznit podle persony.
  */
 export const personaWidgets: Record<PersonaKey, string[]> = {
-  all: ["kpis", "matrix", "releases", "incidents", "tests", "flags", "errors"],
-  dev: ["kpis", "matrix", "incidents", "errors", "deploys"],
-  po: ["kpis", "releases", "flags", "incidents"],
+  all: ["kpis", "matrix", "releases", "incidents", "tests", "flags", "errors", "dora"],
+  dev: ["kpis", "matrix", "incidents", "errors", "deploys", "dora"],
+  po: ["kpis", "releases", "flags", "incidents", "dora"],
   tester: ["kpis", "tests", "matrix", "incidents"],
 };

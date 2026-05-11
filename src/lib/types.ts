@@ -186,6 +186,19 @@ export interface User {
 /** Verze User bezpečná pro odeslání klientovi (bez hashe). */
 export type PublicUser = Omit<User, "passwordHash">;
 
+export interface SecurityVulnerability {
+  id: string;
+  appId: string;
+  package: string;
+  currentVersion: string;
+  fixedVersion: string | null;
+  severity: "critical" | "high" | "medium" | "low";
+  cve: string;
+  title: string;
+  fixAvailable: boolean;
+  discoveredAt: string;
+}
+
 export interface IntegrationConfig {
   id: string;
   providerKey: string;

@@ -63,10 +63,10 @@ export default async function EnvironmentDetailPage({
         }
         actions={
           <>
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" size="sm" disabled title="Plánováno v budoucí verzi">
               Povýšit z předchozího
             </Button>
-            <Button variant="outline" size="sm" disabled>
+            <Button variant="outline" size="sm" disabled title="Plánováno v budoucí verzi">
               Freeze
             </Button>
           </>

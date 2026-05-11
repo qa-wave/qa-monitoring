@@ -11,9 +11,11 @@ import {
   LayoutDashboard,
   Palette,
   Rocket,
+  Server,
   Settings,
   ShieldCheck,
   TestTube2,
+  Users,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/lib/types";
@@ -40,6 +42,9 @@ const items: NavItem[] = [
   { href: "/status/preview", label: "Veřejný status", icon: Activity },
   { href: "/admin/integrations", label: "Integrace", icon: Settings, adminOnly: true },
   { href: "/admin/branding", label: "Vzhled", icon: Palette, adminOnly: true },
+  { href: "/admin/users", label: "Uživatelé", icon: Users, adminOnly: true },
+  { href: "/admin/environments", label: "Správa prostředí", icon: Server, adminOnly: true },
+  { href: "/admin/apps", label: "Správa aplikací", icon: Boxes, adminOnly: true },
 ];
 
 export function Sidebar({ role, brand }: { role: UserRole; brand: BrandHeader }) {

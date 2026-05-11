@@ -1,21 +1,21 @@
-export type StyleKey = "flat" | "gradient" | "aurora" | "glass" | "contrast";
+export type StyleKey = "noir" | "terminal" | "glass" | "paper" | "neon" | "corporate" | "pastel" | "monochrome" | "arctic" | "ember";
 
 export interface BrandSettings {
   productName: string;
   tenantName: string;
-  primary: string; // hex #RRGGBB
+  primary: string;
   secondary: string;
   tertiary: string;
   style: StyleKey;
 }
 
 export const DEFAULT_BRAND: BrandSettings = {
-  productName: "Beacon",
+  productName: "Zorník",
   tenantName: "ČEPS",
   primary: "#2162AD",
   secondary: "#4F91CE",
   tertiary: "#6BC7F1",
-  style: "flat",
+  style: "noir",
 };
 
-export const STYLE_KEYS: StyleKey[] = ["flat", "gradient", "aurora", "glass", "contrast"];
+export const STYLE_KEYS: StyleKey[] = ["noir", "terminal", "glass", "paper", "neon", "corporate", "pastel", "monochrome", "arctic", "ember"];

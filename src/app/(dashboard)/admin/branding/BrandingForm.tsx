@@ -99,7 +99,7 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Default &bdquo;Beacon&ldquo; &mdash; krátké, vyslovitelné v ČJ i AJ. Pro nasazení v jiné
+                Default &bdquo;Zorník&ldquo; &mdash; krátké, vyslovitelné v ČJ i AJ. Pro nasazení v jiné
                 firmě stačí změnit zde.
               </p>
             </div>
@@ -218,7 +218,7 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
           </CardHeader>
           <CardContent className="space-y-4 pt-0">
             <LivePreview
-              productName={productName || "Beacon"}
+              productName={productName || "Zorník"}
               tenantName={tenantName || "ČEPS"}
               primary={primary}
               secondary={secondary}
@@ -294,56 +294,25 @@ function StyleSwatch({
     border: "1px solid hsl(var(--border))",
     ...previewStyle,
   };
-  switch (styleKey) {
-    case "flat":
-      return <div style={{ ...base, background: "var(--p)" }} />;
-    case "gradient":
-      return (
-        <div
-          style={{
-            ...base,
-            backgroundImage: "linear-gradient(135deg, var(--p) 0%, var(--s) 50%, var(--t) 100%)",
-          }}
-        />
-      );
-    case "aurora":
-      return (
-        <div
-          style={{
-            ...base,
-            backgroundColor: "hsl(var(--background))",
-            backgroundImage: `
-              radial-gradient(at 20% 20%, var(--p) 0px, transparent 50%),
-              radial-gradient(at 80% 0%, var(--s) 0px, transparent 50%),
-              radial-gradient(at 50% 100%, var(--t) 0px, transparent 50%)`,
-          }}
-        />
-      );
-    case "glass":
-      return (
-        <div
-          style={{
-            ...base,
-            backgroundColor: "hsl(var(--card) / 0.6)",
-            backgroundImage: `linear-gradient(135deg, var(--p) 0%, var(--t) 100%)`,
-            backdropFilter: "blur(8px)",
-            border: "1px solid var(--p)",
-            boxShadow: "0 4px 16px hsl(0 0% 0% / 0.2)",
-          }}
-        />
-      );
-    case "contrast":
-      return (
-        <div
-          style={{
-            ...base,
-            background: "var(--p)",
-            border: "2px solid hsl(var(--foreground))",
-            boxShadow: "4px 4px 0 0 var(--s)",
-          }}
-        />
-      );
-  }
+  const swatchStyles: Record<StyleKey, React.CSSProperties> = {
+    noir: { background: "#111", border: "none" },
+    terminal: { background: "#000", border: "1px dashed #00ff00" },
+    glass: {
+      backgroundColor: "hsl(var(--card) / 0.6)",
+      backgroundImage: `linear-gradient(135deg, var(--p) 0%, var(--t) 100%)`,
+      backdropFilter: "blur(8px)",
+      border: "1px solid var(--p)",
+      boxShadow: "0 4px 16px hsl(0 0% 0% / 0.2)",
+    },
+    paper: { background: "#FFFDF5", border: "1px solid #e0d8c8" },
+    neon: { background: "#0a0a0a", border: "1px solid #ff00ff", boxShadow: "0 0 8px #00ffff" },
+    corporate: { background: "var(--p)", border: "1px solid hsl(var(--border))" },
+    pastel: { background: `${previewStyle["--p" as keyof typeof previewStyle]}22`, borderRadius: 12 },
+    monochrome: { background: "var(--p)" },
+    arctic: { background: "#f0f8ff", border: "1px solid #b0d4f1" },
+    ember: { background: "#1a1210", border: "1px solid #d97706" },
+  };
+  return <div style={{ ...base, ...swatchStyles[styleKey] }} />;
 }
 
 function LivePreview({
@@ -368,47 +337,41 @@ function LivePreview({
     ["--t" as string]: tertiary,
   };
 
+  const defaultCard: React.CSSProperties = { backgroundColor: "hsl(var(--card))" };
   const cardBgByStyle: Record<StyleKey, React.CSSProperties> = {
-    flat: { backgroundColor: "hsl(var(--card))" },
-    gradient: {
-      backgroundImage: `linear-gradient(135deg, hsl(var(--card)) 0%, ${primary}10 100%)`,
-    },
-    aurora: {
-      backgroundColor: "hsl(var(--card))",
-      backgroundImage: `
-        radial-gradient(at 30% 20%, ${primary}30 0px, transparent 60%),
-        radial-gradient(at 70% 90%, ${tertiary}25 0px, transparent 60%)`,
-    },
+    noir: { backgroundColor: "#111", border: "none" },
+    terminal: { backgroundColor: "#000", border: "1px dashed #00ff00" },
     glass: {
       backgroundColor: "hsl(var(--card) / 0.55)",
       backdropFilter: "blur(10px)",
       border: `1px solid ${primary}55`,
       boxShadow: `0 8px 24px ${primary}22`,
     },
-    contrast: {
-      backgroundColor: "hsl(var(--card))",
-      border: `2px solid ${primary}`,
-      boxShadow: `4px 4px 0 0 ${primary}DD`,
-    },
+    paper: { backgroundColor: "#FFFDF5", border: "1px solid #e0d8c8" },
+    neon: { backgroundColor: "#0a0a0a", border: `1px solid ${primary}`, boxShadow: `0 0 12px ${primary}66` },
+    corporate: defaultCard,
+    pastel: { ...defaultCard, borderRadius: 12 },
+    monochrome: { backgroundColor: `${primary}11` },
+    arctic: { backgroundColor: "#f0f8ff", border: "1px solid #b0d4f1" },
+    ember: { backgroundColor: "#1a1210", border: `1px solid #d9770644` },
   };
 
+  const defaultWrapper: React.CSSProperties = {};
   const wrapperBgByStyle: Record<StyleKey, React.CSSProperties> = {
-    flat: {},
-    gradient: {
-      backgroundImage: `linear-gradient(135deg, hsl(var(--background)) 0%, ${primary}08 100%)`,
-    },
-    aurora: {
-      backgroundImage: `
-        radial-gradient(at 18% 12%, ${primary}28 0px, transparent 60%),
-        radial-gradient(at 82% 8%, ${secondary}22 0px, transparent 60%),
-        radial-gradient(at 65% 78%, ${tertiary}1F 0px, transparent 60%)`,
-    },
+    noir: { backgroundColor: "#000" },
+    terminal: { backgroundColor: "#000" },
     glass: {
       backgroundImage: `
         radial-gradient(at 28% 18%, ${primary}33 0px, transparent 60%),
         radial-gradient(at 72% 82%, ${tertiary}28 0px, transparent 60%)`,
     },
-    contrast: {},
+    paper: { backgroundColor: "#FFFDF5" },
+    neon: { backgroundColor: "#0a0a0a" },
+    corporate: defaultWrapper,
+    pastel: defaultWrapper,
+    monochrome: defaultWrapper,
+    arctic: { backgroundColor: "#f0f8ff" },
+    ember: { backgroundColor: "#1a1210" },
   };
 
   return (
@@ -480,13 +443,9 @@ function LivePreview({
           type="button"
           className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white"
           style={{
-            backgroundImage:
-              styleKey === "gradient"
-                ? `linear-gradient(135deg, ${primary} 0%, ${tertiary} 100%)`
-                : undefined,
-            backgroundColor: styleKey === "gradient" ? undefined : primary,
-            border: styleKey === "contrast" ? `2px solid hsl(var(--foreground))` : undefined,
-            boxShadow: styleKey === "contrast" ? `3px 3px 0 0 ${secondary}` : undefined,
+            backgroundColor: primary,
+            border: styleKey === "neon" ? `1px solid ${primary}` : undefined,
+            boxShadow: styleKey === "neon" ? `0 0 8px ${primary}88` : undefined,
           }}
         >
           <Rocket className="h-4 w-4" />

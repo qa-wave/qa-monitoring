@@ -9,7 +9,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <AppShell
       defaultPersona={user.personaPreference}
       user={{ name: user.name, email: user.email, role: user.role }}
-      brand={{ productName: brand.productName, tenantName: brand.tenantName }}
+      brand={{ productName: brand.productName, tenantName: brand.tenantName, style: brand.style }}
     >
       {children}
     </AppShell>

@@ -145,43 +145,27 @@
  * Visual presets — `<html class="theme-{key}">` se přepíná
  * v root layoutu podle uložených brand settings.
  *
- *  flat      — default, jednolité barvy, sharp edges
- *  gradient  — diagonální gradient v body, hlavičkách, CTA
- *  aurora    — mesh gradient na pozadí (Stripe / Vercel landing)
- *  glass     — průsvitné karty s backdrop-blur
- *  contrast  — silné bordery, plné barvy, wallboard-friendly
+ * 10 stylů: noir, terminal, glass, paper, neon, corporate,
+ *           pastel, monochrome, arctic, ember
+ * Dark: noir, terminal, glass, neon, ember
  * ────────────────────────────────────────────────────────── */
 
-/* SOLID FLAT — žádné modifikace. Tady jen pro úplnost. */
-.theme-flat body { background-color: hsl(var(--background)); }
-
-/* LINEAR GRADIENT */
-.theme-gradient body {
-  background-image:
-    linear-gradient(135deg,
-      hsl(var(--background)) 0%,
-      hsl(var(--background)) 55%,
-      hsl(var(--brand-primary) / 0.06) 100%);
-  background-attachment: fixed;
-}
-.theme-gradient [data-ui="card"] {
-  background-image: linear-gradient(135deg,
-    hsl(var(--card)) 0%,
-    hsl(var(--brand-primary) / 0.05) 100%);
+/* NOIR — luxusní čerň, borderless */
+.theme-noir body { background-color: #000; }
+.theme-noir [data-ui="card"] {
+  background-color: #111;
+  border-color: transparent;
 }
 
-/* MESH AURORA */
-.theme-aurora body {
-  background-color: hsl(var(--background));
-  background-image:
-    radial-gradient(at 18% 12%, hsl(var(--brand-primary) / 0.18) 0px, transparent 55%),
-    radial-gradient(at 82% 8%, hsl(var(--brand-secondary) / 0.14) 0px, transparent 55%),
-    radial-gradient(at 65% 78%, hsl(var(--brand-tertiary) / 0.12) 0px, transparent 55%),
-    radial-gradient(at 8% 88%, hsl(var(--brand-primary) / 0.10) 0px, transparent 55%);
-  background-attachment: fixed;
+/* TERMINAL — zelená na černé, monospace, dashed borders */
+.theme-terminal body { background-color: #000; color: #00ff00; }
+.theme-terminal [data-ui="card"] {
+  background-color: #0a0a0a;
+  border: 1px dashed #00ff0044;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 
-/* GLASSMORPHISM */
+/* GLASS — mléčné sklo, backdrop-blur */
 .theme-glass body {
   background-image:
     radial-gradient(at 28% 18%, hsl(var(--brand-primary) / 0.22) 0px, transparent 60%),
@@ -196,17 +180,55 @@
   box-shadow: 0 8px 32px hsl(var(--brand-primary) / 0.08);
 }
 
-/* HIGH CONTRAST — silné bordery, posunutý box-shadow jako u brutalist UI */
-.theme-contrast [data-ui="card"] {
-  border-width: 2px;
-  border-color: hsl(var(--brand-primary));
-  box-shadow: 4px 4px 0 0 hsl(var(--brand-primary) / 0.85);
-  border-radius: calc(var(--radius) - 2px);
+/* PAPER — tištěný report, teplý krém */
+.theme-paper body { background-color: #FFFDF5; }
+.theme-paper [data-ui="card"] {
+  background-color: #FFFEF8;
+  border: 1px solid #e0d8c8;
+  font-family: Georgia, "Times New Roman", serif;
 }
-.theme-contrast .status-dot-ok,
-.theme-contrast .status-dot-warn,
-.theme-contrast .status-dot-down,
-.theme-contrast .status-dot-info {
-  outline: 2px solid hsl(var(--foreground));
-  outline-offset: 1px;
+
+/* NEON — hot pink/cyan glow */
+.theme-neon body { background-color: #0a0a0a; }
+.theme-neon [data-ui="card"] {
+  background-color: #111;
+  border: 1px solid hsl(var(--brand-primary) / 0.5);
+  box-shadow: 0 0 12px hsl(var(--brand-primary) / 0.25);
+}
+
+/* CORPORATE — enterprise navy */
+.theme-corporate body { background-color: hsl(var(--background)); }
+.theme-corporate [data-ui="card"] {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+/* PASTEL — hravé pastely, large radius */
+.theme-pastel body { background-color: hsl(var(--background)); }
+.theme-pastel [data-ui="card"] {
+  background-color: hsl(var(--brand-primary) / 0.06);
+  border-radius: 16px;
+}
+
+/* MONOCHROME — celý dashboard v jednom odstínu */
+.theme-monochrome body {
+  background-color: hsl(var(--brand-primary) / 0.04);
+}
+.theme-monochrome [data-ui="card"] {
+  background-color: hsl(var(--brand-primary) / 0.08);
+  border-color: hsl(var(--brand-primary) / 0.15);
+}
+
+/* ARCTIC — ledově modrá, frost borders */
+.theme-arctic body { background-color: #f0f8ff; }
+.theme-arctic [data-ui="card"] {
+  background-color: #f8fcff;
+  border: 1px solid #b0d4f1;
+}
+
+/* EMBER — tmavý teplý antracit, amber accents */
+.theme-ember body { background-color: #1a1210; }
+.theme-ember [data-ui="card"] {
+  background-color: #221a15;
+  border-color: #d9770622;
 }

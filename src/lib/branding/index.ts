@@ -1,7 +1,7 @@
 /**
  * Brand konfigurace produktu. White-label friendly — pro nasazení v jiné firmě
- * stačí změnit hodnoty v `/admin/branding`. Default jméno produktu je "Beacon"
- * (krátké, vyslovitelné v ČJ i AJ, metafora „světla nad celou SDLC").
+ * stačí změnit hodnoty v `/admin/branding`. Default jméno produktu je "Zorník"
+ * (krátké, vyslovitelné v ČJ i AJ, metafora „průhledu do celého SDLC").
  */
 export type { BrandSettings, StyleKey } from "./types";
 export { DEFAULT_BRAND, STYLE_KEYS } from "./types";
@@ -27,5 +27,5 @@ export const productMeta = {
     default: `${branding.productName} — ${branding.productTagline.toLowerCase()}`,
     template: `%s · ${branding.productName}`,
   },
-  description: `${branding.productName} sjednocuje signály z verzování, CI/CD, testů, releasů, observability a feedbacku do jednoho přehledu pro vývojáře, product ownery, testery i koncové uživatele.`,
+  description: `${branding.productName} sjednocuje signály z verzování, CI/CD, testů, releasů, observability a feedbacku do jednoho dashboardu pro vývojáře, product ownery, testery i koncové uživatele.`,
 } as const;

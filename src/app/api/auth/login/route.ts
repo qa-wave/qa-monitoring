@@ -13,9 +13,14 @@ export async function POST(req: Request) {
   if (!parsed.success) {
     return NextResponse.json({ error: "Neplatný formát přihlášení." }, { status: 400 });
   }
-  const user = await signIn(parsed.data.email, parsed.data.password);
-  if (!user) {
-    return NextResponse.json({ error: "Uživatel s tímto e-mailem neexistuje." }, { status: 401 });
+  try {
+    const user = await signIn(parsed.data.email, parsed.data.password);
+    if (!user) {
+      return NextResponse.json({ error: "Uživatel s tímto e-mailem neexistuje." }, { status: 401 });
+    }
+    return NextResponse.json({ ok: true, role: user.role });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Interní chyba při přihlášení.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
-  return NextResponse.json({ ok: true, role: user.role });
 }

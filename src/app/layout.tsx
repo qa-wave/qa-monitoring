@@ -19,6 +19,9 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const brand = await getBrandSettings();
+  const darkThemes: string[] = ["noir", "terminal", "glass", "neon", "ember"];
+  const isDarkTheme = darkThemes.includes(brand.style);
+
   const cssVars = `:root {
   --brand-primary: ${hexToHslString(brand.primary)};
   --brand-secondary: ${hexToHslString(brand.secondary)};
@@ -26,7 +29,7 @@ export default async function RootLayout({
   --primary: ${hexToHslString(brand.primary)};
   --ring: ${hexToHslString(brand.primary)};
 }
-.dark {
+.theme-noir, .theme-terminal, .theme-glass, .theme-neon, .theme-ember {
   --brand-primary: ${shiftLightness(brand.primary, 0.16)};
   --brand-secondary: ${shiftLightness(brand.secondary, 0.0)};
   --brand-tertiary: ${shiftLightness(brand.tertiary, 0.0)};
@@ -37,7 +40,7 @@ export default async function RootLayout({
   return (
     <html
       lang="cs"
-      className={`h-full antialiased dark theme-${brand.style}`}
+      className={`h-full antialiased${isDarkTheme ? " dark" : ""} theme-${brand.style}`}
       suppressHydrationWarning
     >
       <head>

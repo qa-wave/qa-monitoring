@@ -30,7 +30,7 @@ export default function IncidentsPage() {
                   <Badge variant={inc.severity === "sev1" ? "danger" : "warning"}>{inc.severity.toUpperCase()}</Badge>
                   <span className="font-medium">{inc.title}</span>
                   <span className="ml-auto text-xs text-muted-foreground">
-                    začátek {formatRelativeTime(inc.startedAt)}
+                    trvá od {formatRelativeTime(inc.startedAt)}
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">{inc.description}</p>

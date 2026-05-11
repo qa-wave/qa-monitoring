@@ -198,12 +198,9 @@ export default async function PublicStatusPage() {
 
       <footer className="flex items-center justify-between border-t border-border pt-4 text-xs text-muted-foreground">
         <span>© {brand.productName} · interní monitoring {brand.tenantName}</span>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1">
-            <Rss className="h-3 w-3" /> RSS
-          </span>
-          <span>Slack</span>
-        </div>
+        <span className="inline-flex items-center gap-1">
+          <Rss className="h-3 w-3" /> Aktualizováno automaticky
+        </span>
       </footer>
     </main>
   );

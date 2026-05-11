@@ -1,40 +1,21 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { randomUUID } from "node:crypto";
+import { readJson, writeJson } from "@/lib/storage";
 import type { IntegrationConfig } from "@/lib/types";
 
-const DATA_DIR = path.join(process.cwd(), ".data");
-const STORE_FILE = path.join(DATA_DIR, "integrations.json");
+const STORE_KEY = "integrations.json";
 
 let cache: IntegrationConfig[] | null = null;
 
-async function ensureFile(): Promise<void> {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.access(STORE_FILE);
-  } catch {
-    await fs.writeFile(STORE_FILE, JSON.stringify([], null, 2), "utf-8");
-  }
-}
-
 async function readAll(): Promise<IntegrationConfig[]> {
   if (cache) return cache;
-  await ensureFile();
-  const raw = await fs.readFile(STORE_FILE, "utf-8");
-  try {
-    const parsed = JSON.parse(raw) as IntegrationConfig[];
-    cache = parsed;
-    return parsed;
-  } catch {
-    cache = [];
-    return cache;
-  }
+  const data = await readJson<IntegrationConfig[]>(STORE_KEY, []);
+  cache = data;
+  return data;
 }
 
 async function writeAll(items: IntegrationConfig[]): Promise<void> {
-  await ensureFile();
   cache = items;
-  await fs.writeFile(STORE_FILE, JSON.stringify(items, null, 2), "utf-8");
+  await writeJson(STORE_KEY, items);
 }
 
 export async function listIntegrations(): Promise<IntegrationConfig[]> {

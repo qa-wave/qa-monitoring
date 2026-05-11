@@ -227,6 +227,47 @@ const mockSpecs: MockSpec[] = [
     docsUrl: "https://api.slack.com/",
     capabilities: ["testConnection"],
   },
+  // --- Build stage (CI) providers ---
+  {
+    key: "github-actions",
+    kind: "ci",
+    sdlcStage: "build",
+    label: "GitHub Actions",
+    labelCs: "GitHub Actions (CI/CD)",
+    description: "Workflow runs, build artefakty, status checks.",
+    docsUrl: "https://docs.github.com/en/rest/actions",
+    capabilities: ["fetchPipelineRuns", "testConnection"],
+  },
+  {
+    key: "circleci",
+    kind: "ci",
+    sdlcStage: "build",
+    label: "CircleCI",
+    labelCs: "CircleCI (CI/CD)",
+    description: "Pipelines, joby, artefakty a paralelní testy.",
+    docsUrl: "https://circleci.com/docs/api/v2/",
+    capabilities: ["fetchPipelineRuns", "testConnection"],
+  },
+  {
+    key: "buildkite",
+    kind: "ci",
+    sdlcStage: "build",
+    label: "Buildkite",
+    labelCs: "Buildkite (CI/CD)",
+    description: "Hybridní CI — agent-based buildy s cloud orchestrací.",
+    docsUrl: "https://buildkite.com/docs/apis/rest-api",
+    capabilities: ["fetchPipelineRuns", "testConnection"],
+  },
+  {
+    key: "jenkins",
+    kind: "ci",
+    sdlcStage: "build",
+    label: "Jenkins",
+    labelCs: "Jenkins (CI/CD)",
+    description: "On-premise CI server — joby, buildy, pluginy.",
+    docsUrl: "https://www.jenkins.io/doc/book/using/remote-access-api/",
+    capabilities: ["fetchPipelineRuns", "testConnection"],
+  },
 ];
 
 export function buildMockProviderDefinitions(): ProviderDefinition<MockConfig>[] {

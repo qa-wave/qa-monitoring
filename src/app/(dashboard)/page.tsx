@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Activity, AlertTriangle, Bug, GitPullRequest, Rocket, TestTube2 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { KpiCard } from "@/components/dashboard/KpiCard";
@@ -7,11 +8,13 @@ import { ReleaseListItem } from "@/components/dashboard/ReleaseListItem";
 import { TestRunRow } from "@/components/dashboard/TestRunRow";
 import { FlagListItem } from "@/components/dashboard/FlagListItem";
 import { Sparkline } from "@/components/dashboard/Sparkline";
+import { DoraCard } from "@/components/dashboard/DoraCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatusDot } from "@/components/ui/status-dot";
 import { formatNumber, formatPercent, formatRelativeTime } from "@/lib/utils";
 import { overviewData } from "@/lib/dashboard-data";
+import { computeDoraMetrics } from "@/data/dora-metrics";
 import { parsePersona, personaDescription, personaLabel, personaWidgets } from "@/lib/personas";
 import { getSessionUser } from "@/lib/auth";
 import { applications } from "@/data/applications";
@@ -32,7 +35,7 @@ export default async function OverviewPage({
     <div className="space-y-6">
       <PageHeader
         title="Přehled"
-        description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]}`}
+        description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]} · Data k ${new Date().toLocaleDateString("cs-CZ")}`}
       />
 
       {data.activePrimaryIncident ? <IncidentBanner incident={data.activePrimaryIncident} /> : null}
@@ -83,15 +86,24 @@ export default async function OverviewPage({
         />
       ) : null}
 
+      {widgets.has("dora") ? <DoraCard data={computeDoraMetrics()} /> : null}
+
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {widgets.has("releases") ? (
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Poslední releasy</CardTitle>
-              <Badge variant="outline" className="gap-1">
-                <Rocket className="h-3 w-3" />
-                {data.recentReleases.length}
-              </Badge>
+              <CardTitle>
+                Poslední releasy
+              </CardTitle>
+              <div className="flex items-center gap-3">
+                <Link href="/releases" className="text-xs font-medium text-muted-foreground hover:text-foreground">
+                  Zobrazit vše &rarr;
+                </Link>
+                <Badge variant="outline" className="gap-1">
+                  <Rocket className="h-3 w-3" />
+                  {data.recentReleases.length}
+                </Badge>
+              </div>
             </CardHeader>
             <CardContent className="divide-y divide-border/60 pt-0">
               {data.recentReleases.map((release) => (
@@ -153,6 +165,9 @@ export default async function OverviewPage({
                 <p className="text-xs text-muted-foreground">Pass rate (7 dní)</p>
               </div>
               <div className="flex items-center gap-3">
+                <Link href="/tests" className="text-xs font-medium text-muted-foreground hover:text-foreground">
+                  Zobrazit vše &rarr;
+                </Link>
                 <Sparkline
                   points={[91, 92, 94, 93, 95, 96, 97, 97, 98, 97]}
                   width={110}

@@ -4,34 +4,64 @@ export const STYLE_PRESETS: Record<
   StyleKey,
   { label: string; description: string; tagline: string }
 > = {
-  flat: {
-    label: "Solid Flat",
+  noir: {
+    label: "Luxusní čerň",
     description:
-      "Jednolité barvy, ostré hrany, žádné stíny. Bezpečná default volba pro většinu produktových B2B nasazení.",
-    tagline: "Klasika bez šumu",
+      "Čistá čerň bez okrajů, luxusní monochromatický vzhled. Minimalistický a elegantní dark mode.",
+    tagline: "Pure black, borderless luxury",
   },
-  gradient: {
-    label: "Linear Gradient",
+  terminal: {
+    label: "Retro terminál",
     description:
-      "Hlavičky, KPI karty a CTA dostanou diagonální gradient z primární přes sekundární do terciární barvy.",
-    tagline: "Moderní SaaS look",
-  },
-  aurora: {
-    label: "Mesh Aurora",
-    description:
-      "Víceuzlový mesh gradient na pozadí v tlumeném tónu — Stripe / Vercel landing page styl. Wow faktor pro prezentace.",
-    tagline: "Prezentační efekt",
+      "Zelená na černé, monospace font, čárkované okraje. Nostalgický hacker aesthetic.",
+    tagline: "Green on black, monospace vibes",
   },
   glass: {
-    label: "Glassmorphism",
+    label: "Mléčné sklo",
     description:
-      "Průsvitné panely s backdrop-blur a světelnými okraji. Funguje na tmavém pozadí nebo s barevnou fotografií.",
-    tagline: "Sklo a světlo",
+      "Matné karty na mesh gradientu, backdrop-blur efekt. Moderní a vzdušný glassmorphism.",
+    tagline: "Frosted cards, mesh gradient backdrop",
   },
-  contrast: {
-    label: "High Contrast",
+  paper: {
+    label: "Tištěný report",
     description:
-      "Silné bordery, plné barvy, nulový subtle. Optimalizováno pro wallboard, TV display a WCAG AAA přístupnost.",
-    tagline: "Wallboard / a11y AAA",
+      "Teplý krémový papír, jemné linky, knižní typografie. Připomíná tištěnou zprávu.",
+    tagline: "Warm cream, hairline borders, book-like",
+  },
+  neon: {
+    label: "Neonová záře",
+    description:
+      "Horká růžová a cyan na tmavém pozadí, zářící okraje. Futuristický cyberpunk styl.",
+    tagline: "Hot pink & cyan glow on dark",
+  },
+  corporate: {
+    label: "Enterprise navy",
+    description:
+      "Navy sidebar, bílý hlavní panel, Bloomberg-like rozložení. Profesionální enterprise look.",
+    tagline: "Navy sidebar, white main, Bloomberg-like",
+  },
+  pastel: {
+    label: "Hravé pastely",
+    description:
+      "Barevné pastelové odstíny karet, velký radius, hravý a přívětivý vzhled.",
+    tagline: "Colorful card tints, large radius, playful",
+  },
+  monochrome: {
+    label: "Jedna barva",
+    description:
+      "Celý dashboard v jednom odstínu brand barvy. Jednotný a konzistentní monochromatický styl.",
+    tagline: "Entire dashboard in one brand hue",
+  },
+  arctic: {
+    label: "Ledová čistota",
+    description:
+      "Ledově modrá, mrazivé okraje, skandinávský minimalismus. Čistý a svěží severský styl.",
+    tagline: "Icy blue, frost borders, Scandinavian",
+  },
+  ember: {
+    label: "Žhavé uhlíky",
+    description:
+      "Tmavý teplý antracit, jantarové akcenty. Dramatický a energický warm dark mode.",
+    tagline: "Dark warm charcoal, amber accents",
   },
 };

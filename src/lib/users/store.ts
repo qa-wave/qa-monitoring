@@ -1,44 +1,31 @@
-import { promises as fs } from "node:fs";
-import path from "node:path";
 import { randomUUID } from "node:crypto";
 import bcrypt from "bcryptjs";
+import { readJson, writeJson } from "@/lib/storage";
 import { DEMO_SEED_PASSWORD, users as seedUsers } from "@/data/users";
 import type { PersonaKey, PublicUser, User, UserRole } from "@/lib/types";
 
-const DATA_DIR = path.join(process.cwd(), ".data");
-const STORE_FILE = path.join(DATA_DIR, "users.json");
+const STORE_KEY = "users.json";
 const BCRYPT_ROUNDS = 10;
 
 // Záměrně žádný in-memory cache — v Next.js dev modu HMR vytváří víc
 // modulových instancí, které by se mohly rozejít. Pro MVP stačí číst pokaždé.
 
-async function ensureFile(): Promise<void> {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-    await fs.access(STORE_FILE);
-  } catch {
+async function readAll(): Promise<User[]> {
+  const data = await readJson<User[]>(STORE_KEY, []);
+  if (data.length === 0) {
     // Seed: zahashuj DEMO_SEED_PASSWORD pro každý fixture účet, ať je login
     // funkční v dev bez ručního setupu. Hash se počítá jednou při prvním
-    // spuštění a uloží se do .data/users.json.
+    // spuštění a uloží se.
     const hash = await bcrypt.hash(DEMO_SEED_PASSWORD, BCRYPT_ROUNDS);
     const seeded: User[] = seedUsers.map((u) => ({ ...u, passwordHash: hash }));
-    await fs.writeFile(STORE_FILE, JSON.stringify(seeded, null, 2), "utf-8");
+    await writeJson(STORE_KEY, seeded);
+    return seeded;
   }
-}
-
-async function readAll(): Promise<User[]> {
-  await ensureFile();
-  const raw = await fs.readFile(STORE_FILE, "utf-8");
-  try {
-    return JSON.parse(raw) as User[];
-  } catch {
-    return [...seedUsers];
-  }
+  return data;
 }
 
 async function writeAll(items: User[]): Promise<void> {
-  await ensureFile();
-  await fs.writeFile(STORE_FILE, JSON.stringify(items, null, 2), "utf-8");
+  await writeJson(STORE_KEY, items);
 }
 
 /** Odebere `passwordHash` před odesláním na klienta. */
