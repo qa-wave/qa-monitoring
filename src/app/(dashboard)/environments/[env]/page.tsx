@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ExternalLink, Activity } from "lucide-react";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PipelineDiagram } from "@/components/dashboard/PipelineDiagram";
 import { TestRunRow } from "@/components/dashboard/TestRunRow";
@@ -37,8 +38,8 @@ export default async function EnvironmentDetailPage({
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[{ label: "Prostředí", href: "/environments" }, { label: env.name }]} />
       <PageHeader
-        backHref="/environments"
         title={
           <span className="flex items-center gap-3">
             {env.name}

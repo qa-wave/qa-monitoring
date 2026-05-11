@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -23,8 +24,8 @@ export default async function IncidentDetailPage({
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[{ label: "Incidenty", href: "/incidents" }, { label: incident.title }]} />
       <PageHeader
-        backHref="/incidents"
         title={
           <span className="flex items-center gap-3">
             <Badge variant={incident.severity === "sev1" ? "danger" : "warning"}>

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ExternalLink, GitBranch, Users } from "lucide-react";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -21,8 +22,8 @@ export default async function ApplicationDetailPage({
 
   return (
     <div className="space-y-6">
+      <Breadcrumbs items={[{ label: "Aplikace", href: "/applications" }, { label: app.name }]} />
       <PageHeader
-        backHref="/applications"
         title={
           <span className="flex items-center gap-3">
             {app.name}
