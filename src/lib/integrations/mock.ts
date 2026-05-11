@@ -93,15 +93,6 @@ const mockSpecs: MockSpec[] = [
     capabilities: ["fetchErrors", "testConnection"],
   },
   {
-    key: "vercel",
-    kind: "paas",
-    label: "Vercel",
-    labelCs: "Vercel (deploye)",
-    description: "Deploye, náhledy PR, aktuální produkční revize.",
-    docsUrl: "https://vercel.com/docs/rest-api",
-    capabilities: ["fetchDeployments", "testConnection"],
-  },
-  {
     key: "kubernetes",
     kind: "k8s",
     label: "Kubernetes",

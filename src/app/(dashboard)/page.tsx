@@ -9,6 +9,7 @@ import { TestRunRow } from "@/components/dashboard/TestRunRow";
 import { FlagListItem } from "@/components/dashboard/FlagListItem";
 import { Sparkline } from "@/components/dashboard/Sparkline";
 import { DoraCard } from "@/components/dashboard/DoraCard";
+import { DeployHeatmap } from "@/components/dashboard/DeployHeatmap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatusDot } from "@/components/ui/status-dot";
@@ -18,6 +19,7 @@ import { computeDoraMetrics } from "@/data/dora-metrics";
 import { parsePersona, personaDescription, personaLabel, personaWidgets } from "@/lib/personas";
 import { getSessionUser } from "@/lib/auth";
 import { applications } from "@/data/applications";
+import { deployments } from "@/data/deployments";
 
 export default async function OverviewPage({
   searchParams,
@@ -87,6 +89,10 @@ export default async function OverviewPage({
       ) : null}
 
       {widgets.has("dora") ? <DoraCard data={computeDoraMetrics()} /> : null}
+
+      {widgets.has("deploys") || widgets.has("dora") ? (
+        <DeployHeatmap deployments={deployments} />
+      ) : null}
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {widgets.has("releases") ? (

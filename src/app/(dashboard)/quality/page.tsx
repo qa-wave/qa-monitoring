@@ -46,6 +46,10 @@ export default function QualityPage() {
 
   // Flaky tests
   const flakyRuns = testRuns.filter((r) => r.flaky > 0);
+  const totalFlaky = flakyRuns.reduce((s, r) => s + r.flaky, 0);
+  const previousPeriodFlaky = 21; // hardcoded "previous period" baseline
+  const flakyDelta = totalFlaky - previousPeriodFlaky;
+  const flakyTrend = flakyDelta > 0 ? "up" : flakyDelta < 0 ? "down" : "flat";
 
   return (
     <div className="space-y-6">
@@ -167,8 +171,23 @@ export default function QualityPage() {
       {/* Flaky tests */}
       <Card>
         <CardHeader className="flex-row items-center justify-between">
-          <CardTitle>Nestabilní testy (flaky)</CardTitle>
-          <Badge variant="warning">{flakyRuns.length}</Badge>
+          <div className="flex items-center gap-2">
+            <CardTitle>Flaky testy ({totalFlaky})</CardTitle>
+            <span
+              className={`text-xs font-medium ${
+                flakyTrend === "up"
+                  ? "text-[hsl(var(--status-down))]"
+                  : flakyTrend === "down"
+                  ? "text-[hsl(var(--status-ok))]"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {flakyTrend === "up" ? "↑" : flakyTrend === "down" ? "↓" : "→"}{" "}
+              {flakyDelta > 0 ? "+" : ""}
+              {flakyDelta} vs minulý týden
+            </span>
+          </div>
+          <Badge variant="warning">{flakyRuns.length} runů</Badge>
         </CardHeader>
         <CardContent className="pt-0 overflow-x-auto">
           {flakyRuns.length === 0 ? (
