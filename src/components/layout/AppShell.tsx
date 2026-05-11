@@ -1,6 +1,7 @@
 import { Sidebar } from "./Sidebar";
 import { Header } from "./Header";
 import { MobileBottomNav } from "./MobileBottomNav";
+import { CommandPalette } from "./CommandPalette";
 import type { PersonaKey, UserRole } from "@/lib/types";
 import type { StyleKey } from "@/lib/branding/types";
 
@@ -23,6 +24,7 @@ export function AppShell({
         <main className="flex-1 overflow-y-auto px-4 pb-20 pt-6 lg:px-8 lg:pb-8">{children}</main>
         <MobileBottomNav role={user.role} />
       </div>
+      <CommandPalette role={user.role} />
     </div>
   );
 }
