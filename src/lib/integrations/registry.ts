@@ -1,11 +1,13 @@
 import type { ProviderDefinition } from "./types";
 import { githubProviderDefinition } from "./github";
 import { vercelProviderDefinition } from "./vercel";
+import { sentryProviderDefinition } from "./sentry";
 import { buildMockProviderDefinitions } from "./mock";
 
 const providers: ProviderDefinition<unknown>[] = [
   githubProviderDefinition as unknown as ProviderDefinition<unknown>,
   vercelProviderDefinition as unknown as ProviderDefinition<unknown>,
+  sentryProviderDefinition as unknown as ProviderDefinition<unknown>,
   ...(buildMockProviderDefinitions() as unknown as ProviderDefinition<unknown>[]),
 ];
 

@@ -84,15 +84,6 @@ const mockSpecs: MockSpec[] = [
     capabilities: ["fetchPipelineRuns", "fetchDeployments", "testConnection"],
   },
   {
-    key: "sentry",
-    kind: "errors",
-    label: "Sentry",
-    labelCs: "Sentry (chyby)",
-    description: "Agregace chyb s rozlišením na nové/regresní a users affected.",
-    docsUrl: "https://docs.sentry.io/api/",
-    capabilities: ["fetchErrors", "testConnection"],
-  },
-  {
     key: "kubernetes",
     kind: "k8s",
     label: "Kubernetes",
