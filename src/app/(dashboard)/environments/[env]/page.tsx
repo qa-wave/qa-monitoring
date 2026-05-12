@@ -7,7 +7,7 @@ import { PipelineDiagram } from "@/components/dashboard/PipelineDiagram";
 import { TestRunRow } from "@/components/dashboard/TestRunRow";
 import { FlagListItem } from "@/components/dashboard/FlagListItem";
 import { AuditLog } from "@/components/dashboard/AuditLog";
-import { Sparkline } from "@/components/dashboard/Sparkline";
+import { AreaChart } from "@/components/dashboard/AreaChart";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -127,19 +127,21 @@ export default async function EnvironmentDetailPage({
         </Card>
 
         <Card>
-          <CardHeader className="flex-row items-center justify-between">
-            <div>
-              <CardTitle>APM & chyby (24 h)</CardTitle>
-              <p className="text-xs text-muted-foreground">p95 latence</p>
-            </div>
-            <Sparkline
-              points={[280, 292, 305, 302, 287, 278, 283, 290, 301, 287]}
-              width={110}
-              height={30}
-              color="hsl(var(--status-info))"
-            />
+          <CardHeader>
+            <CardTitle>APM & chyby (24 h)</CardTitle>
+            <p className="text-xs text-muted-foreground">p95 latence</p>
           </CardHeader>
-          <CardContent className="pt-0">
+          <CardContent className="space-y-4 pt-0">
+            <AreaChart
+              data={Array.from({ length: 24 }, (_, i) => ({
+                label: `${i.toString().padStart(2, "0")}:00`,
+                value: Math.round(270 + Math.sin(i / 3) * 25 + (i % 5) * 3),
+              }))}
+              height={140}
+              color="hsl(var(--status-info))"
+              unit="ms"
+              ariaLabel="p95 latence za posledních 24 hodin"
+            />
             {data.errors.length === 0 ? (
               <p className="text-sm text-muted-foreground">Žádné chyby v tomto prostředí.</p>
             ) : (

@@ -131,6 +131,9 @@
 }
 
 @layer utilities {
+  .animate-fade-in {
+    animation: fade-in 0.35s ease-out both;
+  }
   .font-mono {
     font-family: var(--font-mono);
   }

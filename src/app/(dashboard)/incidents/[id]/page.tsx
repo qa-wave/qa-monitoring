@@ -5,7 +5,8 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatusDot } from "@/components/ui/status-dot";
-import { formatDateTime, formatRelativeTime } from "@/lib/utils";
+import { IncidentTimeline } from "@/components/dashboard/IncidentTimeline";
+import { formatDateTime } from "@/lib/utils";
 import { incidents } from "@/data/incidents";
 import { applications } from "@/data/applications";
 import { environments } from "@/data/environments";
@@ -82,19 +83,11 @@ export default async function IncidentDetailPage({
       <Card>
         <CardHeader><CardTitle>Timeline</CardTitle></CardHeader>
         <CardContent className="pt-0">
-          <ol className="space-y-3 text-sm">
-            {incident.updates.map((u, i) => (
-              <li key={i} className="flex items-start gap-3 border-l border-border pl-4 relative">
-                <span className="absolute -left-1.5 top-2 h-3 w-3 rounded-full bg-[hsl(var(--status-info))]" />
-                <div>
-                  <div className="text-xs text-muted-foreground">
-                    {formatDateTime(u.at)} · {u.author} · {formatRelativeTime(u.at)}
-                  </div>
-                  <div>{u.message}</div>
-                </div>
-              </li>
-            ))}
-          </ol>
+          <IncidentTimeline
+            updates={incident.updates}
+            startedAt={incident.startedAt}
+            resolvedAt={incident.resolvedAt}
+          />
         </CardContent>
       </Card>
 
