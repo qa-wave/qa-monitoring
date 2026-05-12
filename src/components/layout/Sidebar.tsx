@@ -20,37 +20,38 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/lib/types";
+import type { Translations } from "@/lib/i18n";
 import { Changelog } from "./Changelog";
 
 type BrandHeader = { productName: string; tenantName: string };
 
 type NavItem = {
   href: string;
-  label: string;
+  labelKey: keyof Translations["nav"];
   icon: React.ElementType;
   adminOnly?: boolean;
   exact?: boolean;
 };
 
 const items: NavItem[] = [
-  { href: "/", label: "Přehled", icon: LayoutDashboard, exact: true },
-  { href: "/environments", label: "Prostředí", icon: Globe },
-  { href: "/applications", label: "Aplikace", icon: Boxes },
-  { href: "/releases", label: "Releasy", icon: Rocket },
-  { href: "/tests", label: "Testy", icon: TestTube2 },
-  { href: "/incidents", label: "Incidenty", icon: AlertTriangle },
-  { href: "/quality", label: "Kvalita & bezpečnost", icon: ShieldCheck },
-  { href: "/product", label: "Produkt", icon: BarChart3 },
-  { href: "/status/preview", label: "Veřejný status", icon: Activity },
-  { href: "/admin/integrations", label: "Integrace", icon: Settings, adminOnly: true },
-  { href: "/admin/branding", label: "Vzhled", icon: Palette, adminOnly: true },
-  { href: "/admin/users", label: "Uživatelé", icon: Users, adminOnly: true },
-  { href: "/admin/environments", label: "Správa prostředí", icon: Server, adminOnly: true },
-  { href: "/admin/apps", label: "Správa aplikací", icon: Boxes, adminOnly: true },
-  { href: "/admin/audit", label: "Audit log", icon: ClipboardList, adminOnly: true },
+  { href: "/", labelKey: "overview", icon: LayoutDashboard, exact: true },
+  { href: "/environments", labelKey: "environments", icon: Globe },
+  { href: "/applications", labelKey: "applications", icon: Boxes },
+  { href: "/releases", labelKey: "releases", icon: Rocket },
+  { href: "/tests", labelKey: "tests", icon: TestTube2 },
+  { href: "/incidents", labelKey: "incidents", icon: AlertTriangle },
+  { href: "/quality", labelKey: "quality", icon: ShieldCheck },
+  { href: "/product", labelKey: "product", icon: BarChart3 },
+  { href: "/status/preview", labelKey: "publicStatus", icon: Activity },
+  { href: "/admin/integrations", labelKey: "integrations", icon: Settings, adminOnly: true },
+  { href: "/admin/branding", labelKey: "branding", icon: Palette, adminOnly: true },
+  { href: "/admin/users", labelKey: "users", icon: Users, adminOnly: true },
+  { href: "/admin/environments", labelKey: "envAdmin", icon: Server, adminOnly: true },
+  { href: "/admin/apps", labelKey: "appsAdmin", icon: Boxes, adminOnly: true },
+  { href: "/admin/audit", labelKey: "audit", icon: ClipboardList, adminOnly: true },
 ];
 
-export function Sidebar({ role, brand }: { role: UserRole; brand: BrandHeader }) {
+export function Sidebar({ role, brand, navLabels }: { role: UserRole; brand: BrandHeader; navLabels: Translations["nav"] }) {
   const pathname = usePathname();
   return (
     <aside className="hidden lg:flex lg:w-60 lg:flex-col lg:border-r lg:border-border lg:bg-card/40">
@@ -82,7 +83,7 @@ export function Sidebar({ role, brand }: { role: UserRole; brand: BrandHeader })
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{it.label}</span>
+                    <span className="truncate">{navLabels[it.labelKey]}</span>
                   </Link>
                 </li>
               );

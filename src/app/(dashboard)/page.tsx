@@ -21,6 +21,7 @@ import { parsePersona, personaDescription, personaLabel, personaWidgets } from "
 import { getSessionUser } from "@/lib/auth";
 import { applications } from "@/data/applications";
 import { deployments } from "@/data/deployments";
+import { getT } from "@/lib/i18n/server";
 
 export default async function OverviewPage({
   searchParams,
@@ -33,12 +34,13 @@ export default async function OverviewPage({
   const widgets = new Set(personaWidgets[persona]);
   const data = overviewData(sp.env);
   const appMap = new Map(applications.map((a) => [a.id, a]));
+  const { t, locale } = await getT();
 
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Přehled"
-        description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]} · Data k ${new Date().toLocaleDateString("cs-CZ")}`}
+        title={t.dashboard.title}
+        description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]} · Data k ${new Date().toLocaleDateString(locale === "en" ? "en-GB" : "cs-CZ")}`}
       />
 
       {data.activePrimaryIncident ? <IncidentBanner incident={data.activePrimaryIncident} /> : null}
@@ -46,7 +48,7 @@ export default async function OverviewPage({
       {widgets.has("kpis") ? (
         <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <KpiCard
-            label="Uptime 30d"
+            label={t.dashboard.uptime}
             value={formatPercent(data.uptime, 2)}
             status={data.uptime > 99.9 ? "ok" : data.uptime > 99 ? "warn" : "down"}
             delta={{ value: "+0,02 %", direction: "up", positive: true }}
@@ -54,7 +56,7 @@ export default async function OverviewPage({
             icon={Activity}
           />
           <KpiCard
-            label="p95 latence"
+            label={t.dashboard.latency}
             value={formatNumber(data.p95)}
             unit="ms"
             status={data.p95 < 400 ? "ok" : data.p95 < 600 ? "warn" : "down"}
@@ -63,7 +65,7 @@ export default async function OverviewPage({
             icon={Activity}
           />
           <KpiCard
-            label="Chyby (24h)"
+            label={t.dashboard.errors24h}
             value={formatPercent(data.errorRate, 2)}
             status={data.errorRate < 0.5 ? "ok" : data.errorRate < 1 ? "warn" : "down"}
             delta={{ value: `+${data.errorCount}`, direction: "up", positive: false }}
@@ -71,7 +73,7 @@ export default async function OverviewPage({
             icon={Bug}
           />
           <KpiCard
-            label="Deploye dnes"
+            label={t.dashboard.deploysToday}
             value={String(data.deploysToday)}
             status="info"
             delta={{ value: "+6", direction: "up", positive: true }}
@@ -102,11 +104,11 @@ export default async function OverviewPage({
           <Card>
             <CardHeader className="flex-row items-center justify-between">
               <CardTitle>
-                Poslední releasy
+                {t.dashboard.recentReleases}
               </CardTitle>
               <div className="flex items-center gap-3">
                 <Link href="/releases" className="text-xs font-medium text-muted-foreground hover:text-foreground">
-                  Zobrazit vše &rarr;
+                  {t.common.viewAll}
                 </Link>
                 <Badge variant="outline" className="gap-1">
                   <Rocket className="h-3 w-3" />
@@ -125,14 +127,14 @@ export default async function OverviewPage({
         {widgets.has("incidents") ? (
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Otevřené incidenty</CardTitle>
+              <CardTitle>{t.dashboard.openIncidents}</CardTitle>
               <Badge variant={data.incidents.length > 0 ? "danger" : "outline"}>
                 {data.incidents.length}
               </Badge>
             </CardHeader>
             <CardContent className="space-y-2 pt-0">
               {data.incidents.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Žádný aktivní incident — všechny služby běží.</p>
+                <p className="text-sm text-muted-foreground">{t.dashboard.noIncidents}</p>
               ) : (
                 data.incidents.map((inc) => (
                   <a
@@ -170,12 +172,12 @@ export default async function OverviewPage({
           <Card>
             <CardHeader className="flex-row items-center justify-between">
               <div>
-                <CardTitle>Testy v prod</CardTitle>
+                <CardTitle>{t.dashboard.testsInProd}</CardTitle>
                 <p className="text-xs text-muted-foreground">Pass rate (7 dní)</p>
               </div>
               <div className="flex items-center gap-3">
                 <Link href="/tests" className="text-xs font-medium text-muted-foreground hover:text-foreground">
-                  Zobrazit vše &rarr;
+                  {t.common.viewAll}
                 </Link>
                 <Sparkline
                   points={[91, 92, 94, 93, 95, 96, 97, 97, 98, 97]}
@@ -201,7 +203,7 @@ export default async function OverviewPage({
         {widgets.has("flags") ? (
           <Card>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Feature flags</CardTitle>
+              <CardTitle>{t.dashboard.featureFlags}</CardTitle>
               <Badge variant="outline" className="gap-1">
                 <GitPullRequest className="h-3 w-3" />
                 {data.flags.length}
@@ -218,7 +220,7 @@ export default async function OverviewPage({
         {widgets.has("errors") ? (
           <Card className="lg:col-span-2">
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle>Top chyby (24h)</CardTitle>
+              <CardTitle>{t.dashboard.topErrors}</CardTitle>
               <Badge variant={data.errorSummaries.length > 0 ? "warning" : "outline"}>
                 <AlertTriangle className="mr-1 h-3 w-3" />
                 {data.errorSummaries.length}
@@ -226,7 +228,7 @@ export default async function OverviewPage({
             </CardHeader>
             <CardContent className="pt-0">
               {data.errorSummaries.length === 0 ? (
-                <p className="text-sm text-muted-foreground">Žádné chyby — klid.</p>
+                <p className="text-sm text-muted-foreground">{t.dashboard.noErrors}</p>
               ) : (
                 <ul className="divide-y divide-border/60">
                   {data.errorSummaries.map((err) => (

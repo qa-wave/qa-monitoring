@@ -6,27 +6,28 @@ import { AlertTriangle, LayoutDashboard, MoreHorizontal, TestTube2, Rocket, Glob
 import { cn } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import type { UserRole } from "@/lib/types";
+import type { Translations } from "@/lib/i18n";
 
-type Item = { href: string; label: string; icon: React.ElementType; adminOnly?: boolean };
+type Item = { href: string; labelKey: keyof Translations["nav"]; icon: React.ElementType; adminOnly?: boolean };
 
 const mainItems: Item[] = [
-  { href: "/", label: "Přehled", icon: LayoutDashboard },
-  { href: "/incidents", label: "Incidenty", icon: AlertTriangle },
-  { href: "/tests", label: "Testy", icon: TestTube2 },
+  { href: "/", labelKey: "overview", icon: LayoutDashboard },
+  { href: "/incidents", labelKey: "incidents", icon: AlertTriangle },
+  { href: "/tests", labelKey: "tests", icon: TestTube2 },
 ];
 
 const moreItems: Item[] = [
-  { href: "/releases", label: "Releasy", icon: Rocket },
-  { href: "/environments", label: "Prostředí", icon: Globe },
-  { href: "/applications", label: "Aplikace", icon: Boxes },
-  { href: "/quality", label: "Kvalita & bezpečnost", icon: ShieldCheck },
-  { href: "/product", label: "Produkt", icon: BarChart3 },
-  { href: "/status/preview", label: "Veřejný status", icon: Activity },
-  { href: "/admin/integrations", label: "Integrace", icon: Settings, adminOnly: true },
-  { href: "/admin/branding", label: "Vzhled", icon: Palette, adminOnly: true },
+  { href: "/releases", labelKey: "releases", icon: Rocket },
+  { href: "/environments", labelKey: "environments", icon: Globe },
+  { href: "/applications", labelKey: "applications", icon: Boxes },
+  { href: "/quality", labelKey: "quality", icon: ShieldCheck },
+  { href: "/product", labelKey: "product", icon: BarChart3 },
+  { href: "/status/preview", labelKey: "publicStatus", icon: Activity },
+  { href: "/admin/integrations", labelKey: "integrations", icon: Settings, adminOnly: true },
+  { href: "/admin/branding", labelKey: "branding", icon: Palette, adminOnly: true },
 ];
 
-export function MobileBottomNav({ role }: { role: UserRole }) {
+export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels: Translations["nav"] }) {
   const pathname = usePathname();
   const visibleMore = moreItems.filter((i) => !i.adminOnly || role === "admin");
   const isMoreActive = visibleMore.some((it) => it.href === "/" ? pathname === "/" : pathname.startsWith(it.href));
@@ -46,7 +47,7 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
             )}
           >
             <Icon className="h-5 w-5" />
-            {it.label}
+            {navLabels[it.labelKey]}
           </Link>
         );
       })}
@@ -59,7 +60,7 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
             )}
           >
             <MoreHorizontal className="h-5 w-5" />
-            Více
+            {navLabels.more}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 mb-2">
@@ -73,7 +74,7 @@ export function MobileBottomNav({ role }: { role: UserRole }) {
                   className={cn("flex items-center gap-2 cursor-pointer", active && "bg-accent")}
                 >
                   <Icon className="h-4 w-4" />
-                  {it.label}
+                  {navLabels[it.labelKey]}
                 </Link>
               </DropdownMenuItem>
             );

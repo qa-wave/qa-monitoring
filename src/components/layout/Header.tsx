@@ -4,8 +4,10 @@ import { PersonaFilter } from "./PersonaFilter";
 import { EnvFilter } from "./EnvFilter";
 import { UserMenu } from "./UserMenu";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 import type { PersonaKey, UserRole } from "@/lib/types";
 import type { StyleKey } from "@/lib/branding/types";
+import type { Locale } from "@/lib/i18n";
 import { LiveIndicator } from "./LiveIndicator";
 import { activeIncidents } from "@/data/incidents";
 import { environments } from "@/data/environments";
@@ -14,10 +16,12 @@ export function Header({
   defaultPersona,
   user,
   currentStyle,
+  locale,
 }: {
   defaultPersona: PersonaKey;
   user: { name: string; email: string; role: UserRole };
   currentStyle: StyleKey;
+  locale: Locale;
 }) {
   const incidentCount = activeIncidents().length;
   return (
@@ -27,6 +31,7 @@ export function Header({
         <PersonaFilter defaultPersona={defaultPersona} />
       </div>
       <div className="flex items-center gap-2">
+        <LocaleSwitcher current={locale} />
         <ThemeSwitcher current={currentStyle} />
         <LiveIndicator />
         <Link href="/incidents" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent" aria-label="Notifikace">
