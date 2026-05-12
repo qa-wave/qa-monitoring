@@ -7,7 +7,7 @@ import { STYLE_KEYS, type StyleKey } from "@/lib/branding/types";
 import { STYLE_PRESETS } from "@/lib/branding/styles";
 import { cn } from "@/lib/utils";
 
-const darkThemes: StyleKey[] = ["noir", "terminal", "glass", "neon", "ember"];
+const darkThemes: StyleKey[] = ["vercel", "linear", "grafana", "datadog", "github", "supabase", "railway"];
 
 export function ThemeSwitcher({ current }: { current: StyleKey }) {
   const [active, setActive] = React.useState<StyleKey>(current);

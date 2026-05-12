@@ -19,7 +19,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const brand = await getBrandSettings();
-  const darkThemes: string[] = ["noir", "terminal", "glass", "neon", "ember"];
+  const darkThemes: string[] = ["vercel", "linear", "grafana", "datadog", "github", "supabase", "railway"];
   const isDarkTheme = darkThemes.includes(brand.style);
 
   const cssVars = `:root {

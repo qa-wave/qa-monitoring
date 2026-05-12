@@ -1,4 +1,4 @@
-export type StyleKey = "noir" | "terminal" | "glass" | "paper" | "neon" | "corporate" | "pastel" | "monochrome" | "arctic" | "ember";
+export type StyleKey = "vercel" | "linear" | "grafana" | "datadog" | "stripe" | "github" | "notion" | "supabase" | "planetscale" | "railway";
 
 export interface BrandSettings {
   productName: string;
@@ -15,7 +15,7 @@ export const DEFAULT_BRAND: BrandSettings = {
   primary: "#2162AD",
   secondary: "#4F91CE",
   tertiary: "#6BC7F1",
-  style: "noir",
+  style: "vercel",
 };
 
-export const STYLE_KEYS: StyleKey[] = ["noir", "terminal", "glass", "paper", "neon", "corporate", "pastel", "monochrome", "arctic", "ember"];
+export const STYLE_KEYS: StyleKey[] = ["vercel", "linear", "grafana", "datadog", "stripe", "github", "notion", "supabase", "planetscale", "railway"];

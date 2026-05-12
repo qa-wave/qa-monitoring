@@ -145,8 +145,8 @@
  * 10 VISUAL THEMES — each has full CSS variable overrides,
  * card styling, sidebar, header, status dots, hover effects.
  *
- * Dark: noir, terminal, glass, neon, ember
- * Light: paper, corporate, pastel, monochrome, arctic
+ * Dark: vercel, linear, grafana, datadog, github, supabase, railway
+ * Light: stripe, notion, planetscale
  * ══════════════════════════════════════════════════════════════ */
 
 @keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
@@ -155,8 +155,8 @@
 
 [data-ui="card"] { animation: fade-in 0.35s ease-out both; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; }
 
-/* ── 1. NOIR ─ Pure black, borderless, luxury minimal ─────── */
-.theme-noir {
+/* ── 1. VERCEL ─ Pure black, white text, minimal borders ──── */
+.theme-vercel {
   --background: 0 0% 0%; --foreground: 0 0% 85%; --card: 0 0% 4%; --card-foreground: 0 0% 85%;
   --popover: 0 0% 6%; --popover-foreground: 0 0% 85%; --primary: 0 0% 85%; --primary-foreground: 0 0% 0%;
   --secondary: 0 0% 8%; --secondary-foreground: 0 0% 65%; --muted: 0 0% 7%; --muted-foreground: 0 0% 40%;
@@ -164,37 +164,56 @@
   --ring: 0 0% 50%; --radius: 2px; color-scheme: dark;
   --status-ok: 0 0% 60%; --status-warn: 40 50% 55%; --status-down: 0 60% 50%; --status-info: 0 0% 55%;
 }
-.theme-noir [data-ui="card"] { border: none; border-bottom: 1px solid hsl(0 0% 10%); box-shadow: none; border-radius: 0; }
-.theme-noir [data-ui="card"]:hover { background: hsl(0 0% 5%); }
-.theme-noir aside { background: #000; border-color: hsl(0 0% 8%); }
-.theme-noir nav a[class*="bg-accent"] { background: transparent !important; border-bottom: 1px solid hsl(0 0% 80%); border-radius: 0; font-weight: 300; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.7rem; }
-.theme-noir header[class*="border-b"] { background: #000; border-color: hsl(0 0% 8%); }
-.theme-noir .status-dot-ok, .theme-noir .status-dot-warn, .theme-noir .status-dot-down, .theme-noir .status-dot-info { box-shadow: none; }
-.theme-noir tbody tr:hover { background: hsl(0 0% 4%); }
+.theme-vercel [data-ui="card"] { border: none; border-bottom: 1px solid hsl(0 0% 10%); box-shadow: none; border-radius: 0; }
+.theme-vercel [data-ui="card"]:hover { background: hsl(0 0% 5%); }
+.theme-vercel aside { background: #000; border-color: hsl(0 0% 8%); }
+.theme-vercel nav a[class*="bg-accent"] { background: transparent !important; border-bottom: 1px solid hsl(0 0% 80%); border-radius: 0; font-weight: 300; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.7rem; }
+.theme-vercel header[class*="border-b"] { background: #000; border-color: hsl(0 0% 8%); }
+.theme-vercel .status-dot-ok, .theme-vercel .status-dot-warn, .theme-vercel .status-dot-down, .theme-vercel .status-dot-info { box-shadow: none; }
+.theme-vercel tbody tr:hover { background: hsl(0 0% 4%); }
 
-/* ── 2. TERMINAL ─ Green on black, monospace, dashed, blink ── */
-.theme-terminal {
-  --background: 120 10% 3%; --foreground: 120 60% 65%; --card: 120 10% 5%; --card-foreground: 120 60% 65%;
-  --popover: 120 10% 7%; --popover-foreground: 120 60% 65%; --primary: 120 60% 55%; --primary-foreground: 120 10% 3%;
-  --secondary: 120 10% 8%; --secondary-foreground: 120 40% 50%; --muted: 120 10% 7%; --muted-foreground: 120 20% 35%;
-  --accent: 120 10% 10%; --accent-foreground: 120 60% 65%; --border: 120 30% 18%; --input: 120 30% 18%;
-  --ring: 120 60% 55%; --radius: 0px; color-scheme: dark;
-  --status-ok: 120 70% 50%; --status-warn: 50 80% 50%; --status-down: 0 80% 50%; --status-info: 120 60% 55%;
+/* ── 2. LINEAR ─ Dark with purple accents, glow hover ──────── */
+.theme-linear {
+  --background: 260 15% 5%; --foreground: 260 10% 88%; --card: 260 15% 8%; --card-foreground: 260 10% 88%;
+  --popover: 260 15% 10%; --popover-foreground: 260 10% 88%; --primary: 265 80% 62%; --primary-foreground: 0 0% 100%;
+  --secondary: 260 12% 12%; --secondary-foreground: 260 10% 78%; --muted: 260 12% 10%; --muted-foreground: 260 8% 45%;
+  --accent: 260 12% 14%; --accent-foreground: 260 10% 88%; --border: 260 12% 15%; --input: 260 12% 15%;
+  --ring: 265 80% 62%; --radius: 6px; color-scheme: dark;
+  --status-ok: 142 60% 48%; --status-warn: 38 90% 55%; --status-down: 0 70% 55%; --status-info: 265 80% 62%;
 }
-.theme-terminal, .theme-terminal * { font-family: var(--font-mono) !important; font-size: 13px; }
-.theme-terminal [data-ui="card"] { border: 1px dashed hsl(120 30% 20%); box-shadow: none; border-radius: 0; }
-.theme-terminal [data-ui="card"]:hover { border-color: hsl(120 60% 40%); box-shadow: 0 0 10px hsl(120 60% 40% / 0.1); }
-.theme-terminal aside { background: hsl(120 10% 2%); border-color: hsl(120 30% 15%); border-right-style: dashed; }
-.theme-terminal nav a[class*="bg-accent"] { background: transparent !important; color: hsl(120 80% 55%) !important; }
-.theme-terminal nav a[class*="bg-accent"]::before { content: "> "; }
-.theme-terminal header[class*="border-b"] { background: hsl(120 10% 3%); border-color: hsl(120 30% 15%); border-bottom-style: dashed; }
-.theme-terminal .status-dot-ok { box-shadow: 0 0 6px hsl(120 70% 50% / 0.6); animation: blink-cursor 1.5s step-end infinite; }
-.theme-terminal .status-dot-warn { box-shadow: 0 0 6px hsl(50 80% 50% / 0.5); }
-.theme-terminal .status-dot-down { box-shadow: 0 0 8px hsl(0 80% 50% / 0.6); animation: blink-cursor 0.8s step-end infinite; }
-.theme-terminal tbody tr:hover { background: hsl(120 60% 40% / 0.06); }
+.theme-linear body { background-image: radial-gradient(at 0% 0%, hsl(265 60% 20% / 0.15) 0, transparent 50%); background-color: hsl(260 15% 5%); background-attachment: fixed; }
+.theme-linear [data-ui="card"] { border-color: hsl(260 12% 15%); box-shadow: 0 0 0 1px hsl(260 12% 15%), 0 2px 8px hsl(0 0% 0% / 0.3); }
+.theme-linear [data-ui="card"]:hover { transform: translateY(-1px); border-color: hsl(265 80% 55% / 0.3); box-shadow: 0 0 0 1px hsl(265 80% 55% / 0.2), 0 4px 16px hsl(0 0% 0% / 0.4), 0 0 20px hsl(265 80% 55% / 0.05); }
+.theme-linear aside { background: hsl(260 15% 4%); border-color: hsl(260 12% 12%); }
+.theme-linear nav a[class*="bg-accent"] { background: hsl(265 80% 55% / 0.12) !important; border-left: 2px solid hsl(265 80% 62%); }
+.theme-linear header[class*="border-b"] { background: hsl(260 15% 5% / 0.9); border-color: hsl(260 12% 12%); }
+.theme-linear .status-dot-ok { box-shadow: 0 0 6px hsl(var(--status-ok) / 0.4); }
+.theme-linear .status-dot-down { box-shadow: 0 0 8px hsl(var(--status-down) / 0.5); }
+.theme-linear tbody tr:hover { background: hsl(265 80% 55% / 0.04); }
+.theme-linear svg path { filter: drop-shadow(0 0 3px hsl(265 80% 62% / 0.3)); }
 
-/* ── 3. GLASS ─ Frosted cards on colorful mesh gradient ────── */
-.theme-glass {
+/* ── 3. GRAFANA ─ Dark ops, neon status, dense data ────────── */
+.theme-grafana {
+  --background: 225 25% 5%; --foreground: 210 15% 88%; --card: 225 22% 8%; --card-foreground: 210 15% 88%;
+  --popover: 225 22% 10%; --popover-foreground: 210 15% 88%; --primary: 209 56% 56%; --primary-foreground: 0 0% 100%;
+  --secondary: 225 18% 12%; --secondary-foreground: 210 15% 80%; --muted: 225 18% 10%; --muted-foreground: 215 10% 45%;
+  --accent: 225 18% 14%; --accent-foreground: 210 15% 88%; --border: 225 18% 15%; --input: 225 18% 15%;
+  --ring: 209 56% 56%; --radius: 2px; color-scheme: dark;
+  --status-ok: 130 65% 52%; --status-warn: 35 100% 58%; --status-down: 354 80% 60%; --status-info: 210 80% 65%;
+}
+.theme-grafana [data-ui="card"] { border-color: hsl(225 18% 16%); box-shadow: none; }
+.theme-grafana [data-ui="card"]:hover { border-color: hsl(var(--brand-primary) / 0.4); }
+.theme-grafana aside { background: hsl(225 25% 4%); border-color: hsl(225 18% 12%); }
+.theme-grafana nav a[class*="bg-accent"] { background: hsl(var(--brand-primary) / 0.15) !important; border-left: 3px solid hsl(var(--brand-primary)); }
+.theme-grafana header[class*="border-b"] { border-color: hsl(225 18% 12%); }
+.theme-grafana .status-dot-ok { box-shadow: 0 0 8px hsl(var(--status-ok) / 0.6), 0 0 16px hsl(var(--status-ok) / 0.2); }
+.theme-grafana .status-dot-warn { box-shadow: 0 0 8px hsl(var(--status-warn) / 0.6); }
+.theme-grafana .status-dot-down { box-shadow: 0 0 10px hsl(var(--status-down) / 0.7), 0 0 20px hsl(var(--status-down) / 0.3); animation: glow-pulse 1.5s ease-in-out infinite; }
+.theme-grafana tbody tr:hover { background: hsl(var(--brand-primary) / 0.06); }
+.theme-grafana svg path { filter: drop-shadow(0 0 4px hsl(var(--brand-primary) / 0.5)); }
+
+/* ── 4. DATADOG ─ Deep purple, saturated colors ──────────── */
+.theme-datadog {
   --background: 250 30% 8%; --foreground: 0 0% 92%; --card: 250 20% 15%; --card-foreground: 0 0% 92%;
   --popover: 250 20% 18%; --popover-foreground: 0 0% 92%; --primary: 250 70% 65%; --primary-foreground: 0 0% 100%;
   --secondary: 250 20% 16%; --secondary-foreground: 0 0% 80%; --muted: 250 20% 14%; --muted-foreground: 250 10% 50%;
@@ -202,21 +221,21 @@
   --ring: 250 70% 65%; --radius: 16px; color-scheme: dark;
   --status-ok: 160 60% 50%; --status-warn: 40 90% 55%; --status-down: 350 75% 58%; --status-info: 250 70% 65%;
 }
-.theme-glass body {
+.theme-railway body {
   background-image: radial-gradient(at 10% 20%, hsl(280 70% 35% / 0.35) 0, transparent 50%), radial-gradient(at 90% 10%, hsl(210 80% 40% / 0.25) 0, transparent 50%), radial-gradient(at 50% 80%, hsl(330 60% 35% / 0.2) 0, transparent 50%);
   background-color: hsl(250 30% 8%); background-attachment: fixed;
 }
-.theme-glass [data-ui="card"] { background: hsl(250 20% 15% / 0.45); backdrop-filter: blur(20px) saturate(1.3); -webkit-backdrop-filter: blur(20px) saturate(1.3); border: 1px solid hsl(0 0% 100% / 0.08); box-shadow: 0 8px 32px hsl(0 0% 0% / 0.2), inset 0 1px 0 hsl(0 0% 100% / 0.05); }
-.theme-glass [data-ui="card"]:hover { transform: translateY(-2px); border-color: hsl(0 0% 100% / 0.14); box-shadow: 0 12px 40px hsl(0 0% 0% / 0.3); }
-.theme-glass aside { background: hsl(250 30% 8% / 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-color: hsl(0 0% 100% / 0.06); }
-.theme-glass nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.08) !important; border-radius: 12px; }
-.theme-glass header[class*="border-b"] { background: hsl(250 30% 8% / 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-color: hsl(0 0% 100% / 0.06); }
-.theme-glass .status-dot-ok { box-shadow: 0 0 8px hsl(var(--status-ok) / 0.5); }
-.theme-glass .status-dot-down { box-shadow: 0 0 10px hsl(var(--status-down) / 0.5); }
-.theme-glass tbody tr:hover { background: hsl(0 0% 100% / 0.03); }
+.theme-railway [data-ui="card"] { background: hsl(250 20% 15% / 0.45); backdrop-filter: blur(20px) saturate(1.3); -webkit-backdrop-filter: blur(20px) saturate(1.3); border: 1px solid hsl(0 0% 100% / 0.08); box-shadow: 0 8px 32px hsl(0 0% 0% / 0.2), inset 0 1px 0 hsl(0 0% 100% / 0.05); }
+.theme-railway [data-ui="card"]:hover { transform: translateY(-2px); border-color: hsl(0 0% 100% / 0.14); box-shadow: 0 12px 40px hsl(0 0% 0% / 0.3); }
+.theme-railway aside { background: hsl(250 30% 8% / 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-color: hsl(0 0% 100% / 0.06); }
+.theme-railway nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.08) !important; border-radius: 12px; }
+.theme-railway header[class*="border-b"] { background: hsl(250 30% 8% / 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-color: hsl(0 0% 100% / 0.06); }
+.theme-railway .status-dot-ok { box-shadow: 0 0 8px hsl(var(--status-ok) / 0.5); }
+.theme-railway .status-dot-down { box-shadow: 0 0 10px hsl(var(--status-down) / 0.5); }
+.theme-railway tbody tr:hover { background: hsl(0 0% 100% / 0.03); }
 
 /* ── 4. PAPER ─ Warm cream, hairline borders, book-like ───── */
-.theme-paper {
+.theme-notion {
   --background: 40 30% 96%; --foreground: 30 15% 18%; --card: 40 25% 98%; --card-foreground: 30 15% 18%;
   --popover: 40 25% 98%; --popover-foreground: 30 15% 18%; --primary: 30 60% 35%; --primary-foreground: 40 30% 96%;
   --secondary: 40 15% 93%; --secondary-foreground: 30 15% 30%; --muted: 40 15% 93%; --muted-foreground: 30 8% 50%;
@@ -224,53 +243,36 @@
   --ring: 30 60% 35%; --radius: 3px; color-scheme: light;
   --status-ok: 140 40% 35%; --status-warn: 35 70% 45%; --status-down: 0 55% 45%; --status-info: 30 60% 35%;
 }
-.theme-paper [data-ui="card"] { border: 1px solid hsl(30 15% 85%); box-shadow: none; }
-.theme-paper [data-ui="card"]:hover { box-shadow: 0 1px 4px hsl(30 20% 30% / 0.06); }
-.theme-paper aside { background: hsl(40 25% 97%); border-color: hsl(30 15% 85%); }
-.theme-paper nav a[class*="bg-accent"] { background: hsl(30 60% 35% / 0.06) !important; color: hsl(30 60% 30%) !important; }
-.theme-paper header[class*="border-b"] { background: hsl(40 25% 97%); border-color: hsl(30 15% 85%); }
-.theme-paper tbody tr:hover { background: hsl(40 30% 94%); }
+.theme-notion [data-ui="card"] { border: 1px solid hsl(30 15% 85%); box-shadow: none; }
+.theme-notion [data-ui="card"]:hover { box-shadow: 0 1px 4px hsl(30 20% 30% / 0.06); }
+.theme-notion aside { background: hsl(40 25% 97%); border-color: hsl(30 15% 85%); }
+.theme-notion nav a[class*="bg-accent"] { background: hsl(30 60% 35% / 0.06) !important; color: hsl(30 60% 30%) !important; }
+.theme-notion header[class*="border-b"] { background: hsl(40 25% 97%); border-color: hsl(30 15% 85%); }
+.theme-notion tbody tr:hover { background: hsl(40 30% 94%); }
 
-/* ── 5. NEON ─ Hot pink/cyan, screaming glow, dark bg ──────── */
-.theme-neon {
-  --background: 260 20% 4%; --foreground: 180 80% 80%; --card: 260 20% 7%; --card-foreground: 180 80% 80%;
-  --popover: 260 20% 9%; --popover-foreground: 180 80% 80%; --primary: 320 100% 60%; --primary-foreground: 0 0% 100%;
-  --secondary: 260 15% 12%; --secondary-foreground: 180 60% 70%; --muted: 260 15% 10%; --muted-foreground: 260 10% 40%;
-  --accent: 260 15% 14%; --accent-foreground: 180 80% 80%; --border: 320 60% 25%; --input: 320 60% 25%;
-  --ring: 320 100% 60%; --radius: 4px; color-scheme: dark;
-  --status-ok: 150 100% 45%; --status-warn: 55 100% 50%; --status-down: 340 100% 55%; --status-info: 190 100% 50%;
-}
-.theme-neon [data-ui="card"] { border: 1px solid hsl(320 80% 40% / 0.4); box-shadow: 0 0 12px hsl(320 100% 50% / 0.08), inset 0 0 12px hsl(320 100% 50% / 0.03); }
-.theme-neon [data-ui="card"]:hover { border-color: hsl(320 100% 55%); box-shadow: 0 0 20px hsl(320 100% 50% / 0.15), 0 0 40px hsl(320 100% 50% / 0.05); }
-.theme-neon aside { background: hsl(260 20% 3%); border-color: hsl(320 60% 20%); }
-.theme-neon nav a[class*="bg-accent"] { background: hsl(320 100% 50% / 0.1) !important; border-left: 2px solid hsl(320 100% 60%); text-shadow: 0 0 8px hsl(320 100% 60% / 0.3); }
-.theme-neon header[class*="border-b"] { background: hsl(260 20% 4%); border-color: hsl(320 60% 20%); box-shadow: 0 1px 0 hsl(320 100% 50% / 0.1); }
-.theme-neon .status-dot-ok { box-shadow: 0 0 6px hsl(var(--status-ok) / 0.8), 0 0 15px hsl(var(--status-ok) / 0.3); }
-.theme-neon .status-dot-down { box-shadow: 0 0 8px hsl(var(--status-down) / 0.9), 0 0 20px hsl(var(--status-down) / 0.4); animation: glow-pulse 1s ease-in-out infinite; }
-.theme-neon tbody tr:hover { background: hsl(320 100% 50% / 0.04); }
-.theme-neon svg path { filter: drop-shadow(0 0 5px hsl(190 100% 50% / 0.5)); }
+/* (old neon block removed — replaced by Datadog) */
 
 /* ── 6. CORPORATE ─ Navy sidebar, white main, Bloomberg ────── */
-.theme-corporate {
+.theme-stripe {
   --background: 0 0% 97%; --foreground: 220 30% 15%; --card: 0 0% 100%; --card-foreground: 220 30% 15%;
   --popover: 0 0% 100%; --popover-foreground: 220 30% 15%; --primary: 220 70% 35%; --primary-foreground: 0 0% 100%;
   --secondary: 220 15% 94%; --secondary-foreground: 220 30% 25%; --muted: 220 15% 94%; --muted-foreground: 220 10% 48%;
   --accent: 220 15% 92%; --accent-foreground: 220 30% 15%; --border: 220 15% 88%; --input: 220 15% 88%;
   --ring: 220 70% 35%; --radius: 4px; color-scheme: light;
 }
-.theme-corporate [data-ui="card"] { border: 1px solid hsl(220 15% 88%); box-shadow: 0 1px 2px hsl(220 30% 15% / 0.04); }
-.theme-corporate [data-ui="card"]:hover { box-shadow: 0 2px 8px hsl(220 30% 15% / 0.06); }
-.theme-corporate aside { background: hsl(220 50% 18%); border-color: hsl(220 40% 22%); color: hsl(220 20% 80%); }
-.theme-corporate aside * { color: hsl(220 20% 78%); }
-.theme-corporate aside a:hover * { color: white; }
-.theme-corporate nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.1) !important; color: white !important; border-left: 3px solid hsl(40 90% 55%); border-radius: 0; }
-.theme-corporate nav a[class*="bg-accent"] * { color: white !important; }
-.theme-corporate header[class*="border-b"] { background: hsl(0 0% 100%); border-color: hsl(220 15% 88%); }
-.theme-corporate tbody tr:nth-child(even) { background: hsl(220 15% 98%); }
-.theme-corporate tbody tr:hover { background: hsl(220 70% 35% / 0.04); box-shadow: inset 3px 0 0 hsl(220 70% 35%); }
+.theme-stripe [data-ui="card"] { border: 1px solid hsl(220 15% 88%); box-shadow: 0 1px 2px hsl(220 30% 15% / 0.04); }
+.theme-stripe [data-ui="card"]:hover { box-shadow: 0 2px 8px hsl(220 30% 15% / 0.06); }
+.theme-stripe aside { background: hsl(220 50% 18%); border-color: hsl(220 40% 22%); color: hsl(220 20% 80%); }
+.theme-stripe aside * { color: hsl(220 20% 78%); }
+.theme-stripe aside a:hover * { color: white; }
+.theme-stripe nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.1) !important; color: white !important; border-left: 3px solid hsl(40 90% 55%); border-radius: 0; }
+.theme-stripe nav a[class*="bg-accent"] * { color: white !important; }
+.theme-stripe header[class*="border-b"] { background: hsl(0 0% 100%); border-color: hsl(220 15% 88%); }
+.theme-stripe tbody tr:nth-child(even) { background: hsl(220 15% 98%); }
+.theme-stripe tbody tr:hover { background: hsl(220 70% 35% / 0.04); box-shadow: inset 3px 0 0 hsl(220 70% 35%); }
 
 /* ── 7. PASTEL ─ Colorful tinted cards, large radius, playful ── */
-.theme-pastel {
+.theme-planetscale {
   --background: 0 0% 98%; --foreground: 240 10% 25%; --card: 0 0% 100%; --card-foreground: 240 10% 25%;
   --popover: 0 0% 100%; --popover-foreground: 240 10% 25%; --primary: 260 60% 55%; --primary-foreground: 0 0% 100%;
   --secondary: 260 30% 95%; --secondary-foreground: 260 30% 35%; --muted: 260 20% 95%; --muted-foreground: 240 8% 50%;
@@ -278,65 +280,65 @@
   --ring: 260 60% 55%; --radius: 14px; color-scheme: light;
   --status-ok: 160 50% 42%; --status-warn: 40 80% 48%; --status-down: 350 60% 52%; --status-info: 260 60% 55%;
 }
-.theme-pastel [data-ui="card"] { border: none; box-shadow: 0 2px 12px hsl(260 40% 30% / 0.05); }
-.theme-pastel [data-ui="card"]:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 4px 20px hsl(260 40% 30% / 0.08); }
-.theme-pastel [data-ui="card"]:nth-child(4n+1) { background: hsl(340 60% 97%); }
-.theme-pastel [data-ui="card"]:nth-child(4n+2) { background: hsl(210 60% 97%); }
-.theme-pastel [data-ui="card"]:nth-child(4n+3) { background: hsl(160 50% 97%); }
-.theme-pastel [data-ui="card"]:nth-child(4n+4) { background: hsl(270 50% 97%); }
-.theme-pastel aside { background: hsl(0 0% 100%); border-color: hsl(260 20% 92%); }
-.theme-pastel nav a[class*="bg-accent"] { background: hsl(260 60% 55% / 0.08) !important; color: hsl(260 60% 45%) !important; border-radius: 10px; }
-.theme-pastel header[class*="border-b"] { background: hsl(0 0% 100% / 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: hsl(260 20% 92%); }
-.theme-pastel tbody tr:hover { background: hsl(260 40% 95%); }
+.theme-planetscale [data-ui="card"] { border: none; box-shadow: 0 2px 12px hsl(260 40% 30% / 0.05); }
+.theme-planetscale [data-ui="card"]:hover { transform: translateY(-2px) scale(1.005); box-shadow: 0 4px 20px hsl(260 40% 30% / 0.08); }
+.theme-planetscale [data-ui="card"]:nth-child(4n+1) { background: hsl(340 60% 97%); }
+.theme-planetscale [data-ui="card"]:nth-child(4n+2) { background: hsl(210 60% 97%); }
+.theme-planetscale [data-ui="card"]:nth-child(4n+3) { background: hsl(160 50% 97%); }
+.theme-planetscale [data-ui="card"]:nth-child(4n+4) { background: hsl(270 50% 97%); }
+.theme-planetscale aside { background: hsl(0 0% 100%); border-color: hsl(260 20% 92%); }
+.theme-planetscale nav a[class*="bg-accent"] { background: hsl(260 60% 55% / 0.08) !important; color: hsl(260 60% 45%) !important; border-radius: 10px; }
+.theme-planetscale header[class*="border-b"] { background: hsl(0 0% 100% / 0.8); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: hsl(260 20% 92%); }
+.theme-planetscale tbody tr:hover { background: hsl(260 40% 95%); }
 
 /* ── 8. MONOCHROME ─ Single brand hue at varying lightness ─── */
-.theme-monochrome {
+.theme-supabase {
   --background: 0 0% 97%; --foreground: 0 0% 12%; --card: 0 0% 100%; --card-foreground: 0 0% 12%;
   --popover: 0 0% 100%; --popover-foreground: 0 0% 12%; --primary: 0 0% 12%; --primary-foreground: 0 0% 100%;
   --secondary: 0 0% 94%; --secondary-foreground: 0 0% 25%; --muted: 0 0% 94%; --muted-foreground: 0 0% 48%;
   --accent: 0 0% 92%; --accent-foreground: 0 0% 12%; --border: 0 0% 86%; --input: 0 0% 86%;
   --ring: 0 0% 12%; color-scheme: light;
 }
-.theme-monochrome body { background: hsl(var(--brand-primary) / 0.03); }
-.theme-monochrome [data-ui="card"] { box-shadow: 0 1px 4px hsl(var(--brand-primary) / 0.08); border-color: hsl(var(--brand-primary) / 0.12); }
-.theme-monochrome [data-ui="card"]:hover { box-shadow: 0 2px 10px hsl(var(--brand-primary) / 0.12); border-color: hsl(var(--brand-primary) / 0.2); }
-.theme-monochrome aside { background: hsl(var(--brand-primary) / 0.03); border-color: hsl(var(--brand-primary) / 0.1); }
-.theme-monochrome nav a[class*="bg-accent"] { background: hsl(var(--brand-primary) / 0.1) !important; color: hsl(var(--brand-primary)) !important; font-weight: 600; }
-.theme-monochrome tbody tr:hover { background: hsl(var(--brand-primary) / 0.04); }
+.theme-supabase body { background: hsl(var(--brand-primary) / 0.03); }
+.theme-supabase [data-ui="card"] { box-shadow: 0 1px 4px hsl(var(--brand-primary) / 0.08); border-color: hsl(var(--brand-primary) / 0.12); }
+.theme-supabase [data-ui="card"]:hover { box-shadow: 0 2px 10px hsl(var(--brand-primary) / 0.12); border-color: hsl(var(--brand-primary) / 0.2); }
+.theme-supabase aside { background: hsl(var(--brand-primary) / 0.03); border-color: hsl(var(--brand-primary) / 0.1); }
+.theme-supabase nav a[class*="bg-accent"] { background: hsl(var(--brand-primary) / 0.1) !important; color: hsl(var(--brand-primary)) !important; font-weight: 600; }
+.theme-supabase tbody tr:hover { background: hsl(var(--brand-primary) / 0.04); }
 
-/* ── 9. ARCTIC ─ Icy blue, frost borders, cold Scandinavian ── */
-.theme-arctic {
-  --background: 200 30% 97%; --foreground: 210 25% 20%; --card: 200 20% 100%; --card-foreground: 210 25% 20%;
-  --popover: 200 20% 100%; --popover-foreground: 210 25% 20%; --primary: 200 70% 45%; --primary-foreground: 0 0% 100%;
-  --secondary: 200 20% 94%; --secondary-foreground: 200 25% 30%; --muted: 200 15% 94%; --muted-foreground: 200 10% 48%;
-  --accent: 200 20% 92%; --accent-foreground: 210 25% 20%; --border: 200 25% 88%; --input: 200 25% 88%;
-  --ring: 200 70% 45%; --radius: 10px; color-scheme: light;
-  --status-ok: 175 55% 38%; --status-warn: 200 50% 50%; --status-down: 340 50% 50%; --status-info: 200 70% 45%;
+/* ── 9. GITHUB ─ Dark with gray borders, green accents ──────── */
+.theme-github {
+  --background: 220 14% 7%; --foreground: 210 15% 85%; --card: 220 14% 10%; --card-foreground: 210 15% 85%;
+  --popover: 220 14% 12%; --popover-foreground: 210 15% 85%; --primary: 210 15% 85%; --primary-foreground: 220 14% 7%;
+  --secondary: 220 12% 13%; --secondary-foreground: 210 12% 70%; --muted: 220 12% 12%; --muted-foreground: 215 8% 45%;
+  --accent: 220 12% 14%; --accent-foreground: 210 15% 85%; --border: 220 12% 18%; --input: 220 12% 18%;
+  --ring: 140 60% 45%; --radius: 6px; color-scheme: dark;
+  --status-ok: 140 60% 45%; --status-warn: 38 90% 55%; --status-down: 0 70% 55%; --status-info: 210 60% 55%;
 }
-.theme-arctic body { background: linear-gradient(180deg, hsl(200 40% 97%) 0%, hsl(210 30% 95%) 100%); background-attachment: fixed; }
-.theme-arctic [data-ui="card"] { border: 1px solid hsl(200 30% 88%); box-shadow: 0 1px 6px hsl(200 40% 40% / 0.04); }
-.theme-arctic [data-ui="card"]:hover { transform: translateY(-1px); box-shadow: 0 4px 16px hsl(200 40% 40% / 0.07); border-color: hsl(200 50% 75%); }
-.theme-arctic aside { background: hsl(200 25% 99%); border-color: hsl(200 25% 88%); }
-.theme-arctic nav a[class*="bg-accent"] { background: hsl(200 70% 45% / 0.06) !important; color: hsl(200 70% 35%) !important; border-radius: 8px; }
-.theme-arctic header[class*="border-b"] { background: hsl(200 25% 99% / 0.85); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-color: hsl(200 25% 88%); }
-.theme-arctic tbody tr:hover { background: hsl(200 40% 93%); }
+.theme-github [data-ui="card"] { border: 1px solid hsl(220 12% 18%); box-shadow: none; }
+.theme-github [data-ui="card"]:hover { border-color: hsl(220 12% 25%); }
+.theme-github aside { background: hsl(220 14% 6%); border-color: hsl(220 12% 15%); }
+.theme-github nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.06) !important; border-left: 2px solid hsl(140 60% 45%); border-radius: 6px; }
+.theme-github header[class*="border-b"] { background: hsl(220 14% 7%); border-color: hsl(220 12% 15%); }
+.theme-github .status-dot-ok { box-shadow: 0 0 5px hsl(140 60% 45% / 0.4); }
+.theme-github tbody tr:hover { background: hsl(0 0% 100% / 0.03); }
 
-/* ── 10. EMBER ─ Dark warm charcoal, amber accents, firelight ── */
-.theme-ember {
-  --background: 20 15% 6%; --foreground: 30 20% 85%; --card: 20 15% 9%; --card-foreground: 30 20% 85%;
-  --popover: 20 15% 11%; --popover-foreground: 30 20% 85%; --primary: 30 90% 50%; --primary-foreground: 20 15% 6%;
-  --secondary: 20 12% 13%; --secondary-foreground: 30 15% 70%; --muted: 20 12% 11%; --muted-foreground: 20 8% 42%;
-  --accent: 20 12% 15%; --accent-foreground: 30 20% 85%; --border: 20 12% 16%; --input: 20 12% 16%;
-  --ring: 30 90% 50%; color-scheme: dark;
-  --status-ok: 90 50% 45%; --status-warn: 30 90% 50%; --status-down: 0 70% 50%; --status-info: 30 80% 55%;
+/* ── 10. DATADOG ─ Deep purple base, saturated colors ──────── */
+.theme-datadog {
+  --background: 270 20% 5%; --foreground: 270 10% 88%; --card: 270 18% 8%; --card-foreground: 270 10% 88%;
+  --popover: 270 18% 10%; --popover-foreground: 270 10% 88%; --primary: 270 70% 58%; --primary-foreground: 0 0% 100%;
+  --secondary: 270 15% 12%; --secondary-foreground: 270 10% 75%; --muted: 270 15% 10%; --muted-foreground: 270 8% 42%;
+  --accent: 270 15% 14%; --accent-foreground: 270 10% 88%; --border: 270 15% 16%; --input: 270 15% 16%;
+  --ring: 270 70% 58%; color-scheme: dark;
+  --status-ok: 140 65% 48%; --status-warn: 38 95% 55%; --status-down: 0 75% 55%; --status-info: 270 70% 58%;
 }
-.theme-ember body { background: hsl(20 15% 6%); background-image: radial-gradient(at 50% 100%, hsl(20 60% 15% / 0.2) 0, transparent 60%); background-attachment: fixed; }
-.theme-ember [data-ui="card"] { border: 1px solid hsl(20 15% 15%); box-shadow: 0 2px 8px hsl(0 0% 0% / 0.2); }
-.theme-ember [data-ui="card"]:hover { border-color: hsl(30 80% 40% / 0.3); box-shadow: 0 4px 16px hsl(0 0% 0% / 0.3), 0 0 20px hsl(30 90% 50% / 0.04); }
-.theme-ember aside { background: hsl(20 15% 5%); border-color: hsl(20 12% 13%); }
-.theme-ember nav a[class*="bg-accent"] { background: hsl(30 90% 50% / 0.1) !important; border-left: 2px solid hsl(30 90% 50%); }
-.theme-ember header[class*="border-b"] { background: hsl(20 15% 6% / 0.9); border-color: hsl(20 12% 14%); }
-.theme-ember .status-dot-ok { box-shadow: 0 0 5px hsl(var(--status-ok) / 0.4); }
-.theme-ember .status-dot-down { box-shadow: 0 0 8px hsl(var(--status-down) / 0.5); animation: glow-pulse 2s ease-in-out infinite; }
-.theme-ember tbody tr:hover { background: hsl(30 90% 50% / 0.04); }
-.theme-ember svg path { filter: drop-shadow(0 0 3px hsl(30 90% 50% / 0.3)); }
+.theme-datadog body { background: hsl(270 20% 5%); }
+.theme-datadog [data-ui="card"] { border: 1px solid hsl(270 15% 16%); box-shadow: 0 2px 6px hsl(0 0% 0% / 0.2); }
+.theme-datadog [data-ui="card"]:hover { border-color: hsl(270 70% 50% / 0.3); box-shadow: 0 4px 12px hsl(0 0% 0% / 0.3); }
+.theme-datadog aside { background: hsl(270 20% 4%); border-color: hsl(270 15% 12%); }
+.theme-datadog nav a[class*="bg-accent"] { background: hsl(270 70% 55% / 0.12) !important; border-left: 2px solid hsl(270 70% 58%); }
+.theme-datadog header[class*="border-b"] { background: hsl(270 20% 5% / 0.9); border-color: hsl(270 15% 12%); }
+.theme-datadog .status-dot-ok { box-shadow: 0 0 6px hsl(var(--status-ok) / 0.5); }
+.theme-datadog .status-dot-down { box-shadow: 0 0 8px hsl(var(--status-down) / 0.5); animation: glow-pulse 2s ease-in-out infinite; }
+.theme-datadog tbody tr:hover { background: hsl(270 70% 55% / 0.04); }
+.theme-datadog svg path { filter: drop-shadow(0 0 3px hsl(270 70% 58% / 0.3)); }

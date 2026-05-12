@@ -4,64 +4,54 @@ export const STYLE_PRESETS: Record<
   StyleKey,
   { label: string; description: string; tagline: string }
 > = {
-  noir: {
-    label: "Luxusní čerň",
-    description:
-      "Čistá čerň bez okrajů, luxusní monochromatický vzhled. Minimalistický a elegantní dark mode.",
-    tagline: "Pure black, borderless luxury",
+  vercel: {
+    label: "Vercel",
+    description: "Čistá čerň s bílým textem, minimální bordery, jemné hover efekty. Ikonický dark dashboard.",
+    tagline: "▲ Černobílý minimalismus",
   },
-  terminal: {
-    label: "Retro terminál",
-    description:
-      "Zelená na černé, monospace font, čárkované okraje. Nostalgický hacker aesthetic.",
-    tagline: "Green on black, monospace vibes",
+  linear: {
+    label: "Linear",
+    description: "Tmavý s fialovými akcenty, subtle gradient pozadí, glow na hover. Moderní project management.",
+    tagline: "Fialové akcenty na tmavé",
   },
-  glass: {
-    label: "Mléčné sklo",
-    description:
-      "Matné karty na mesh gradientu, backdrop-blur efekt. Moderní a vzdušný glassmorphism.",
-    tagline: "Frosted cards, mesh gradient backdrop",
+  grafana: {
+    label: "Grafana",
+    description: "Tmavý ops dashboard s neonovými status barvami, dense layout. Monitoring klasika.",
+    tagline: "Neonový mission control",
   },
-  paper: {
-    label: "Tištěný report",
-    description:
-      "Teplý krémový papír, jemné linky, knižní typografie. Připomíná tištěnou zprávu.",
-    tagline: "Warm cream, hairline borders, book-like",
+  datadog: {
+    label: "Datadog",
+    description: "Tmavě fialový základ, saturované barvy, kompaktní karty. Observability platforma.",
+    tagline: "Deep purple observability",
   },
-  neon: {
-    label: "Neonová záře",
-    description:
-      "Horká růžová a cyan na tmavém pozadí, zářící okraje. Futuristický cyberpunk styl.",
-    tagline: "Hot pink & cyan glow on dark",
+  stripe: {
+    label: "Stripe",
+    description: "Světlý s indigo akcentem, gradient header, propracované stíny. Enterprise payments dashboard.",
+    tagline: "Indigo enterprise",
   },
-  corporate: {
-    label: "Enterprise navy",
-    description:
-      "Navy sidebar, bílý hlavní panel, Bloomberg-like rozložení. Profesionální enterprise look.",
-    tagline: "Navy sidebar, white main, Bloomberg-like",
+  github: {
+    label: "GitHub",
+    description: "Tmavý s šedými bordery, zelené akcenty, monospace příměs. Vývojářský klasik.",
+    tagline: "Vývojářský tmavý mód",
   },
-  pastel: {
-    label: "Hravé pastely",
-    description:
-      "Barevné pastelové odstíny karet, velký radius, hravý a přívětivý vzhled.",
-    tagline: "Colorful card tints, large radius, playful",
+  notion: {
+    label: "Notion",
+    description: "Světlý, teplý, velký whitespace, tenké bordery, čistá typografie. Produktivní klid.",
+    tagline: "Teplý minimalismus",
   },
-  monochrome: {
-    label: "Jedna barva",
-    description:
-      "Celý dashboard v jednom odstínu brand barvy. Jednotný a konzistentní monochromatický styl.",
-    tagline: "Entire dashboard in one brand hue",
+  supabase: {
+    label: "Supabase",
+    description: "Tmavý se zeleným akcentem, zaoblené karty, moderní developer dashboard.",
+    tagline: "Zelená na tmavé",
   },
-  arctic: {
-    label: "Ledová čistota",
-    description:
-      "Ledově modrá, mrazivé okraje, skandinávský minimalismus. Čistý a svěží severský styl.",
-    tagline: "Icy blue, frost borders, Scandinavian",
+  planetscale: {
+    label: "PlanetScale",
+    description: "Světlý s oranžovým akcentem, čisté grid, subtle shadows. Database dashboard.",
+    tagline: "Oranžový svěží light",
   },
-  ember: {
-    label: "Žhavé uhlíky",
-    description:
-      "Tmavý teplý antracit, jantarové akcenty. Dramatický a energický warm dark mode.",
-    tagline: "Dark warm charcoal, amber accents",
+  railway: {
+    label: "Railway",
+    description: "Tmavý s bílým textem, fialové akcenty, velké zaoblení, glassmorphism karty.",
+    tagline: "Fialové glass karty",
   },
 };

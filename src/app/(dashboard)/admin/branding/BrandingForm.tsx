@@ -295,22 +295,16 @@ function StyleSwatch({
     ...previewStyle,
   };
   const swatchStyles: Record<StyleKey, React.CSSProperties> = {
-    noir: { background: "#111", border: "none" },
-    terminal: { background: "#000", border: "1px dashed #00ff00" },
-    glass: {
-      backgroundColor: "hsl(var(--card) / 0.6)",
-      backgroundImage: `linear-gradient(135deg, var(--p) 0%, var(--t) 100%)`,
-      backdropFilter: "blur(8px)",
-      border: "1px solid var(--p)",
-      boxShadow: "0 4px 16px hsl(0 0% 0% / 0.2)",
-    },
-    paper: { background: "#FFFDF5", border: "1px solid #e0d8c8" },
-    neon: { background: "#0a0a0a", border: "1px solid #ff00ff", boxShadow: "0 0 8px #00ffff" },
-    corporate: { background: "var(--p)", border: "1px solid hsl(var(--border))" },
-    pastel: { background: `${previewStyle["--p" as keyof typeof previewStyle]}22`, borderRadius: 12 },
-    monochrome: { background: "var(--p)" },
-    arctic: { background: "#f0f8ff", border: "1px solid #b0d4f1" },
-    ember: { background: "#1a1210", border: "1px solid #d97706" },
+    vercel: { background: "#000", borderBottom: "1px solid #222", border: "none", borderRadius: 0 },
+    linear: { background: "#15101e", backgroundImage: "radial-gradient(at 20% 30%, #5b3a9e44 0, transparent 50%)", border: "1px solid #2a1e3a" },
+    grafana: { background: "#0d0f18", border: "1px solid #1a1e30" },
+    datadog: { background: "#120a1e", border: "1px solid #2a1840" },
+    stripe: { backgroundImage: "linear-gradient(135deg, #1a2744 0%, #1a2744 40%, #f5f5f5 40.1%)", border: "1px solid #ccc" },
+    github: { background: "#0d1117", border: "1px solid #21262d" },
+    notion: { background: "#faf8f5", border: "1px solid #e0d8c8", borderRadius: 3 },
+    supabase: { background: "var(--p)", opacity: 0.15, border: "1px solid var(--p)" },
+    planetscale: { backgroundImage: "linear-gradient(90deg, #fde8ee, #e8eeff, #e8faf0, #f0e8ff)", border: "none", borderRadius: 14 },
+    railway: { backgroundImage: "linear-gradient(135deg, #1a0840, #0a2040)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16 },
   };
   return <div style={{ ...base, ...swatchStyles[styleKey] }} />;
 }
@@ -339,39 +333,29 @@ function LivePreview({
 
   const defaultCard: React.CSSProperties = { backgroundColor: "hsl(var(--card))" };
   const cardBgByStyle: Record<StyleKey, React.CSSProperties> = {
-    noir: { backgroundColor: "#111", border: "none" },
-    terminal: { backgroundColor: "#000", border: "1px dashed #00ff00" },
-    glass: {
-      backgroundColor: "hsl(var(--card) / 0.55)",
-      backdropFilter: "blur(10px)",
-      border: `1px solid ${primary}55`,
-      boxShadow: `0 8px 24px ${primary}22`,
-    },
-    paper: { backgroundColor: "#FFFDF5", border: "1px solid #e0d8c8" },
-    neon: { backgroundColor: "#0a0a0a", border: `1px solid ${primary}`, boxShadow: `0 0 12px ${primary}66` },
-    corporate: defaultCard,
-    pastel: { ...defaultCard, borderRadius: 12 },
-    monochrome: { backgroundColor: `${primary}11` },
-    arctic: { backgroundColor: "#f0f8ff", border: "1px solid #b0d4f1" },
-    ember: { backgroundColor: "#1a1210", border: `1px solid #d9770644` },
+    vercel: { backgroundColor: "#0a0a0a", borderBottom: "1px solid #1a1a1a", borderRadius: 0 },
+    linear: { backgroundColor: "#15101e", border: "1px solid #2a1e3a" },
+    grafana: { backgroundColor: "#0d0f18", border: "1px solid #1a1e30" },
+    datadog: { backgroundColor: "#120a1e", border: "1px solid #2a1840" },
+    stripe: { backgroundColor: "#fff", border: "1px solid #d0d5dd", boxShadow: "0 1px 2px rgba(0,0,0,0.04)" },
+    github: { backgroundColor: "#0d1117", border: "1px solid #21262d" },
+    notion: { backgroundColor: "#faf8f5", border: "1px solid #e0d8c8" },
+    supabase: { backgroundColor: `${primary}0a`, border: `1px solid ${primary}20` },
+    planetscale: { backgroundColor: "#fde8ee", border: "none", borderRadius: 14 },
+    railway: { backgroundColor: "rgba(40,20,80,0.35)", backdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16 },
   };
 
-  const defaultWrapper: React.CSSProperties = {};
   const wrapperBgByStyle: Record<StyleKey, React.CSSProperties> = {
-    noir: { backgroundColor: "#000" },
-    terminal: { backgroundColor: "#000" },
-    glass: {
-      backgroundImage: `
-        radial-gradient(at 28% 18%, ${primary}33 0px, transparent 60%),
-        radial-gradient(at 72% 82%, ${tertiary}28 0px, transparent 60%)`,
-    },
-    paper: { backgroundColor: "#FFFDF5" },
-    neon: { backgroundColor: "#0a0a0a" },
-    corporate: defaultWrapper,
-    pastel: defaultWrapper,
-    monochrome: defaultWrapper,
-    arctic: { backgroundColor: "#f0f8ff" },
-    ember: { backgroundColor: "#1a1210" },
+    vercel: { backgroundColor: "#000", color: "#e0e0e0" },
+    linear: { backgroundColor: "#0d0a14", color: "#d8d0e8" },
+    grafana: { backgroundColor: "#0a0c14", color: "#d0d4dc" },
+    datadog: { backgroundColor: "#0a0614", color: "#d8d0e8" },
+    stripe: { backgroundColor: "#f0f2f5", color: "#1a2744" },
+    github: { backgroundColor: "#010409", color: "#c9d1d9" },
+    notion: { backgroundColor: "#faf8f5", color: "#37352f" },
+    supabase: { backgroundColor: `${primary}06` },
+    planetscale: { backgroundColor: "#fafafe" },
+    railway: { backgroundImage: "linear-gradient(135deg, #1a0840, #0a2040)", color: "#e0e0f0" },
   };
 
   return (
@@ -444,8 +428,8 @@ function LivePreview({
           className="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-white"
           style={{
             backgroundColor: primary,
-            border: styleKey === "neon" ? `1px solid ${primary}` : undefined,
-            boxShadow: styleKey === "neon" ? `0 0 8px ${primary}88` : undefined,
+            border: styleKey === "datadog" ? `1px solid ${primary}` : undefined,
+            boxShadow: styleKey === "datadog" ? `0 0 8px ${primary}88` : undefined,
           }}
         >
           <Rocket className="h-4 w-4" />
