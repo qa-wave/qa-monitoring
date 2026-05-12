@@ -199,12 +199,16 @@ export function CommandPalette({ role }: { role: UserRole }) {
             className="flex-1 bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground"
             autoComplete="off"
             spellCheck={false}
+            role="combobox"
+            aria-expanded={true}
+            aria-controls="command-palette-listbox"
+            aria-activedescendant={flatFiltered[selectedIndex]?.id ?? undefined}
           />
           <kbd className="hidden text-[10px] font-medium text-muted-foreground sm:inline-block">ESC</kbd>
         </div>
 
         {/* Results */}
-        <div ref={listRef} className="max-h-[min(60vh,24rem)] overflow-y-auto px-2 py-2">
+        <div ref={listRef} id="command-palette-listbox" role="listbox" className="max-h-[min(60vh,24rem)] overflow-y-auto px-2 py-2">
           {flatFiltered.length === 0 && (
             <p className="px-4 py-8 text-center text-sm text-muted-foreground">
               Nic nenalezeno.
@@ -224,6 +228,9 @@ export function CommandPalette({ role }: { role: UserRole }) {
                 return (
                   <button
                     key={item.id}
+                    id={item.id}
+                    role="option"
+                    aria-selected={isSelected}
                     data-selected={isSelected}
                     onClick={() => go(item)}
                     onMouseEnter={() => setSelectedIndex(idx)}

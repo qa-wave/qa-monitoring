@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { signIn } from "@/lib/auth";
+import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -8,19 +9,29 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
-  const raw = await req.json().catch(() => null);
-  const parsed = bodySchema.safeParse(raw);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Neplatný formát přihlášení." }, { status: 400 });
-  }
   try {
+    const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+    const rl = rateLimit(`login:${ip}`, 10, 15 * 60 * 1000);
+    if (!rl.ok) {
+      return NextResponse.json(
+        { error: "Příliš mnoho pokusů" },
+        { status: 429, headers: getRateLimitHeaders(rl.remaining, 10) },
+      );
+    }
+
+    const raw = await req.json().catch(() => null);
+    const parsed = bodySchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Neplatný formát přihlášení." }, { status: 400 });
+    }
+
     const user = await signIn(parsed.data.email, parsed.data.password);
     if (!user) {
       return NextResponse.json({ error: "Uživatel s tímto e-mailem neexistuje." }, { status: 401 });
     }
     return NextResponse.json({ ok: true, role: user.role });
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Interní chyba při přihlášení.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[auth/login]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

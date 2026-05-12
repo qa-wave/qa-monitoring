@@ -59,11 +59,13 @@ export function DashboardGrid({ children, storageKey = "zornik-widget-order" }: 
   const validOrder = order.filter((i) => i >= 0 && i < children.length);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6" role="list">
       {validOrder.map((childIdx, displayIdx) => (
         <div
           key={childIdx}
+          role="listitem"
           draggable
+          aria-label="Přeřadit widget"
           onDragStart={() => handleDragStart(displayIdx)}
           onDragOver={(e) => handleDragOver(e, displayIdx)}
           onDrop={() => handleDrop(displayIdx)}
@@ -74,7 +76,7 @@ export function DashboardGrid({ children, storageKey = "zornik-widget-order" }: 
             overIndex === displayIdx && dragIndex !== displayIdx && "border-t-2 border-[hsl(var(--brand-primary))]"
           )}
         >
-          <div className="absolute -left-6 top-2 hidden cursor-grab opacity-0 transition-opacity group-hover:opacity-40 lg:block" aria-label="Drag to reorder">
+          <div className="absolute -left-6 top-2 hidden cursor-grab opacity-0 transition-opacity group-hover:opacity-40 lg:block" title="Přetáhni pro změnu pořadí (pouze desktop)">
             <GripVertical className="h-4 w-4 text-muted-foreground" />
           </div>
           {children[childIdx]}

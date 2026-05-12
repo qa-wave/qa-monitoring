@@ -30,9 +30,9 @@ export function StatusMatrix({ applications, environments, healthChecks, classNa
         <table className="w-full min-w-[560px] text-sm">
           <thead>
             <tr className="text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <th className="w-40 pb-2 pr-4 font-medium">Aplikace</th>
+              <th scope="col" className="w-40 pb-2 pr-4 font-medium">Aplikace</th>
               {envs.map((e) => (
-                <th key={e.id} className="px-2 pb-2 font-medium">
+                <th key={e.id} scope="col" className="px-2 pb-2 font-medium">
                   <span className="inline-flex items-center gap-2">
                     {e.name}
                     {e.isProduction ? (
@@ -49,7 +49,7 @@ export function StatusMatrix({ applications, environments, healthChecks, classNa
             <TooltipProvider>
               {applications.map((app) => (
                 <tr key={app.id} className="border-t border-border/60">
-                  <td className="py-3 pr-4 font-medium">
+                  <td scope="row" className="py-3 pr-4 font-medium">
                     <Link href={`/applications/${app.slug}`} className="hover:underline">
                       {app.name}
                     </Link>
@@ -59,7 +59,11 @@ export function StatusMatrix({ applications, environments, healthChecks, classNa
                     const status: StatusKind = hc?.status ?? (app.environmentIds.includes(e.id) ? "muted" : "muted");
                     const deployed = app.environmentIds.includes(e.id);
                     return (
-                      <td key={e.id} className="px-2 py-3">
+                      <td
+                        key={e.id}
+                        className="px-2 py-3"
+                        aria-label={deployed && hc ? `${app.name} v ${e.name}: ${status}, ${hc.latencyMs ?? "—"}ms` : undefined}
+                      >
                         {deployed ? (
                           <Tooltip>
                             <TooltipTrigger asChild>

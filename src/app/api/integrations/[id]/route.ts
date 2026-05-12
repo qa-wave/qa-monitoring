@@ -4,12 +4,17 @@ import { getSessionUser } from "@/lib/auth";
 import { deleteIntegration, getIntegration, updateIntegration } from "@/lib/integrations/store";
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
-  if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-  const { id } = await params;
-  const item = await getIntegration(id);
-  if (!item) return NextResponse.json({ error: "Integrace neexistuje." }, { status: 404 });
-  return NextResponse.json({ ...item, credentials: { _redacted: true } });
+  try {
+    const user = await getSessionUser();
+    if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
+    const { id } = await params;
+    const item = await getIntegration(id);
+    if (!item) return NextResponse.json({ error: "Integrace neexistuje." }, { status: 404 });
+    return NextResponse.json({ ...item, credentials: { _redacted: true } });
+  } catch (err) {
+    console.error("[integrations/[id] GET]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }
 
 const patchSchema = z
@@ -21,26 +26,36 @@ const patchSchema = z
   .strict();
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
-  if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-  if (user.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const { id } = await params;
-  const raw = await req.json().catch(() => null);
-  const parsed = patchSchema.safeParse(raw);
-  if (!parsed.success) {
-    return NextResponse.json({ error: "Neplatná data.", issues: parsed.error.flatten() }, { status: 400 });
+  try {
+    const user = await getSessionUser();
+    if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
+    if (user.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { id } = await params;
+    const raw = await req.json().catch(() => null);
+    const parsed = patchSchema.safeParse(raw);
+    if (!parsed.success) {
+      return NextResponse.json({ error: "Neplatná data.", issues: parsed.error.flatten() }, { status: 400 });
+    }
+    const updated = await updateIntegration(id, parsed.data);
+    if (!updated) return NextResponse.json({ error: "Integrace neexistuje." }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations/[id] PATCH]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
-  const updated = await updateIntegration(id, parsed.data);
-  if (!updated) return NextResponse.json({ error: "Integrace neexistuje." }, { status: 404 });
-  return NextResponse.json({ ok: true });
 }
 
 export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
-  const user = await getSessionUser();
-  if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-  if (user.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const { id } = await params;
-  const ok = await deleteIntegration(id);
-  if (!ok) return NextResponse.json({ error: "Integrace neexistuje." }, { status: 404 });
-  return NextResponse.json({ ok: true });
+  try {
+    const user = await getSessionUser();
+    if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
+    if (user.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    const { id } = await params;
+    const ok = await deleteIntegration(id);
+    if (!ok) return NextResponse.json({ error: "Integrace neexistuje." }, { status: 404 });
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations/[id] DELETE]", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
 }

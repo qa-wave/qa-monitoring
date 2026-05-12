@@ -1,6 +1,6 @@
 import type { ErrorSummary } from "@/lib/types";
 
-const now = new Date("2026-04-17T12:44:00+02:00");
+const now = new Date();
 const minutesAgo = (m: number) => new Date(now.getTime() - m * 60_000).toISOString();
 const hoursAgo = (h: number) => new Date(now.getTime() - h * 60 * 60_000).toISOString();
 

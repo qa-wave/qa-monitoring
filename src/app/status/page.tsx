@@ -12,8 +12,12 @@ import { getBrandSettings } from "@/lib/branding";
 export async function generateMetadata(): Promise<Metadata> {
   const brand = await getBrandSettings();
   return {
-    title: "Status",
+    title: "Stav služeb",
     description: `Aktuální stav služeb ${brand.tenantName}, plánovaná údržba a poslední incidenty.`,
+    openGraph: {
+      title: `Stav služeb — ${brand.productName}`,
+      description: "Aktuální stav všech monitorovaných služeb",
+    },
   };
 }
 

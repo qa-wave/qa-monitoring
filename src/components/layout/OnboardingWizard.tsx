@@ -129,6 +129,8 @@ export function OnboardingWizard() {
           {steps.map((_, i) => (
             <span
               key={i}
+              aria-current={i === step ? "step" : undefined}
+              aria-label={`Krok ${i + 1} ze ${steps.length}`}
               className={
                 "h-2 w-2 rounded-full transition-colors " +
                 (i === step

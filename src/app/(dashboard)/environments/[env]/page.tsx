@@ -17,6 +17,12 @@ import { environmentDetailData, pipelineLatestByEnv } from "@/lib/dashboard-data
 import { environments } from "@/data/environments";
 import { applications } from "@/data/applications";
 
+export async function generateMetadata({ params }: { params: Promise<{ env: string }> }) {
+  const { env: slug } = await params;
+  const env = environments.find((e) => e.slug === slug);
+  return { title: env?.name ?? "Prostředí" };
+}
+
 export default async function EnvironmentDetailPage({
   params,
 }: {

@@ -11,6 +11,12 @@ import { incidents } from "@/data/incidents";
 import { applications } from "@/data/applications";
 import { environments } from "@/data/environments";
 
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const incident = incidents.find((i) => i.id === id);
+  return { title: incident?.title ?? "Incident" };
+}
+
 export default async function IncidentDetailPage({
   params,
 }: {

@@ -1,7 +1,7 @@
 import type { PipelineRun } from "@/lib/types";
 import { applications } from "./applications";
 
-const now = new Date("2026-04-17T12:44:00+02:00");
+const now = new Date();
 const minutesAgo = (m: number) => new Date(now.getTime() - m * 60_000).toISOString();
 
 const runs: PipelineRun[] = [];

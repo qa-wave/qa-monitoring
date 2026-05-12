@@ -2,7 +2,7 @@ import type { HealthCheck } from "@/lib/types";
 import { applications } from "./applications";
 import { environments } from "./environments";
 
-const now = new Date("2026-04-17T12:44:00+02:00");
+const now = new Date();
 const secondsAgo = (s: number) => new Date(now.getTime() - s * 1000).toISOString();
 
 type Override = { appId: string; envId: string; status: HealthCheck["status"]; latencyMs?: number; uptime?: number; message?: string };
