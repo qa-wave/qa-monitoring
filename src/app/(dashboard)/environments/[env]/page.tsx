@@ -14,11 +14,12 @@ import { Button } from "@/components/ui/button";
 import { StatusDot } from "@/components/ui/status-dot";
 import { formatRelativeTime } from "@/lib/utils";
 import { environmentDetailData, pipelineLatestByEnv } from "@/lib/dashboard-data";
-import { environments } from "@/data/environments";
-import { applications } from "@/data/applications";
+import { listEnvironments } from "@/lib/environments/store";
+import { listApplications } from "@/lib/applications/store";
 
 export async function generateMetadata({ params }: { params: Promise<{ env: string }> }) {
   const { env: slug } = await params;
+  const environments = await listEnvironments();
   const env = environments.find((e) => e.slug === slug);
   return { title: env?.name ?? "Prostředí" };
 }
@@ -29,11 +30,13 @@ export default async function EnvironmentDetailPage({
   params: Promise<{ env: string }>;
 }) {
   const { env: slug } = await params;
-  const data = environmentDetailData(slug);
+  const data = await environmentDetailData(slug);
   if (!data) notFound();
   const { environment: env } = data;
+  const applications = await listApplications();
   const appMap = new Map(applications.map((a) => [a.id, a]));
-  const pipeline = pipelineLatestByEnv();
+  const environments = await listEnvironments();
+  const pipeline = await pipelineLatestByEnv();
 
   const hasDown = data.healthChecks.some((h) => h.status === "down");
   const hasWarn = data.healthChecks.some((h) => h.status === "warn");

@@ -9,10 +9,11 @@ import { StatusDot } from "@/components/ui/status-dot";
 import { TestRunRow } from "@/components/dashboard/TestRunRow";
 import { formatRelativeTime } from "@/lib/utils";
 import { applicationDetailData } from "@/lib/dashboard-data";
-import { applications } from "@/data/applications";
+import { listApplications } from "@/lib/applications/store";
 
 export async function generateMetadata({ params }: { params: Promise<{ app: string }> }) {
   const { app: slug } = await params;
+  const applications = await listApplications();
   const app = applications.find((a) => a.slug === slug);
   return { title: app?.name ?? "Aplikace" };
 }
@@ -23,7 +24,7 @@ export default async function ApplicationDetailPage({
   params: Promise<{ app: string }>;
 }) {
   const { app: slug } = await params;
-  const data = applicationDetailData(slug);
+  const data = await applicationDetailData(slug);
   if (!data) notFound();
   const { application: app, perEnv } = data;
 

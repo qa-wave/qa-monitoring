@@ -5,13 +5,19 @@ import { createIntegration, listIntegrations } from "@/lib/integrations/store";
 import { getProviderDefinition } from "@/lib/integrations/registry";
 import { addAuditEntry } from "@/lib/audit/store";
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
   const items = await listIntegrations();
   // Credentials v GET odpovědi schováváme.
   const sanitized = items.map((i) => ({ ...i, credentials: Object.keys(i.credentials).length > 0 ? { _redacted: true } : {} }));
-  return NextResponse.json({ items: sanitized });
+  const url = new URL(req.url);
+  const limit = parseInt(url.searchParams.get("limit") ?? "0") || sanitized.length;
+  const offset = parseInt(url.searchParams.get("offset") ?? "0");
+  const sliced = sanitized.slice(offset, offset + limit);
+  return NextResponse.json({ items: sliced }, {
+    headers: { "X-Total-Count": String(sanitized.length) },
+  });
 }
 
 const createSchema = z.object({

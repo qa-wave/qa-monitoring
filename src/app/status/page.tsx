@@ -31,7 +31,7 @@ const statusCopy = {
 
 export default async function PublicStatusPage() {
   const brand = await getBrandSettings();
-  const data = publicStatusData();
+  const data = await publicStatusData();
   const overall = data.overallStatus === "down" ? "down" : data.overallStatus === "warn" ? "warn" : "ok";
   const headline = statusCopy[overall];
   const overallUptime = computeOverallUptime();

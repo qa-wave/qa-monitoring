@@ -9,7 +9,7 @@ import { getT } from "@/lib/i18n/server";
 
 export default async function StatusPreviewPage() {
   const { t } = await getT();
-  const publicData = publicStatusData();
+  const publicData = await publicStatusData();
   const privateIncidents = incidents.filter((i) => !i.isPublic);
   const privateMaintenance = plannedMaintenance.filter((m) => !m.isPublic);
   return (

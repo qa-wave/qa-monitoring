@@ -4,12 +4,18 @@ import { getSessionUser } from "@/lib/auth";
 import { listAlertRules, createAlertRule } from "@/lib/alerts/store";
 import { addAuditEntry } from "@/lib/audit/store";
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
   if (user.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-  const items = await listAlertRules();
-  return NextResponse.json({ items });
+  const all = await listAlertRules();
+  const url = new URL(req.url);
+  const limit = parseInt(url.searchParams.get("limit") ?? "0") || all.length;
+  const offset = parseInt(url.searchParams.get("offset") ?? "0");
+  const sliced = all.slice(offset, offset + limit);
+  return NextResponse.json({ items: sliced }, {
+    headers: { "X-Total-Count": String(all.length) },
+  });
 }
 
 const createSchema = z.object({

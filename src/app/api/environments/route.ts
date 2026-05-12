@@ -7,11 +7,17 @@ import {
   EnvironmentStoreError,
 } from "@/lib/environments/store";
 
-export async function GET() {
+export async function GET(req: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-  const items = await listEnvironments();
-  return NextResponse.json({ items });
+  const all = await listEnvironments();
+  const url = new URL(req.url);
+  const limit = parseInt(url.searchParams.get("limit") ?? "0") || all.length;
+  const offset = parseInt(url.searchParams.get("offset") ?? "0");
+  const sliced = all.slice(offset, offset + limit);
+  return NextResponse.json({ items: sliced }, {
+    headers: { "X-Total-Count": String(all.length) },
+  });
 }
 
 const createSchema = z.object({

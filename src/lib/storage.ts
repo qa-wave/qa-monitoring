@@ -27,10 +27,26 @@ export async function readJson<T>(key: string, fallback: T): Promise<T> {
 export async function writeJson<T>(key: string, data: T): Promise<void> {
   if (isVercel()) {
     const { put } = await import("@vercel/blob");
-    await put(key, JSON.stringify(data, null, 2), { access: "public", addRandomSuffix: false, allowOverwrite: true, contentType: "application/json" });
+    const payload = JSON.stringify(data, null, 2);
+    for (let attempt = 0; attempt < 3; attempt++) {
+      try {
+        await put(key, payload, {
+          access: "public",
+          addRandomSuffix: false,
+          allowOverwrite: true,
+          contentType: "application/json",
+        });
+        return;
+      } catch (err) {
+        if (attempt === 2) throw err;
+        await new Promise((r) => setTimeout(r, 100 * (attempt + 1)));
+      }
+    }
     return;
   }
   const filePath = path.join(DATA_DIR, key);
   await fs.mkdir(DATA_DIR, { recursive: true });
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf-8");
+  const tmpPath = `${filePath}.${Date.now()}.tmp`;
+  await fs.writeFile(tmpPath, JSON.stringify(data, null, 2), "utf-8");
+  await fs.rename(tmpPath, filePath);
 }

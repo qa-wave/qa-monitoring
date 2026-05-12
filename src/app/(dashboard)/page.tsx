@@ -19,7 +19,7 @@ import { overviewData } from "@/lib/dashboard-data";
 import { computeDoraMetrics } from "@/data/dora-metrics";
 import { parsePersona, personaDescription, personaLabel, personaWidgets } from "@/lib/personas";
 import { getSessionUser } from "@/lib/auth";
-import { applications } from "@/data/applications";
+import { listApplications } from "@/lib/applications/store";
 import { deployments } from "@/data/deployments";
 import { getT } from "@/lib/i18n/server";
 import { DashboardLayout } from "./DashboardLayout";
@@ -33,7 +33,8 @@ export default async function OverviewPage({
   const user = await getSessionUser();
   const persona = parsePersona(sp.persona ?? user?.personaPreference ?? "dev");
   const widgets = new Set(personaWidgets[persona]);
-  const data = overviewData(sp.env);
+  const data = await overviewData(sp.env);
+  const applications = await listApplications();
   const appMap = new Map(applications.map((a) => [a.id, a]));
   const { t, locale } = await getT();
 

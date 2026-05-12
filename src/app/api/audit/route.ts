@@ -8,8 +8,12 @@ export async function GET(req: Request) {
   if (user.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const { searchParams } = new URL(req.url);
-  const limit = Math.min(Number(searchParams.get("limit") || "50"), 200);
+  const fetchLimit = Math.min(Number(searchParams.get("limit") || "50"), 200);
 
-  const items = await listAuditEntries(limit);
-  return NextResponse.json({ items });
+  const all = await listAuditEntries(fetchLimit);
+  const offset = parseInt(searchParams.get("offset") ?? "0");
+  const sliced = all.slice(offset);
+  return NextResponse.json({ items: sliced }, {
+    headers: { "X-Total-Count": String(all.length) },
+  });
 }

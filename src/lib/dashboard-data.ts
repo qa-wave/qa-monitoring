@@ -1,9 +1,9 @@
-import { applications } from "@/data/applications";
+import { listApplications } from "@/lib/applications/store";
+import { listEnvironments } from "@/lib/environments/store";
 import { auditLog } from "@/data/audit-log";
 import { deployments } from "@/data/deployments";
 import { errorSummaries } from "@/data/errors";
 import { featureFlags } from "@/data/feature-flags";
-import { environments } from "@/data/environments";
 import {
   computeAverageLatency,
   computeOverallUptime,
@@ -17,7 +17,9 @@ import { releases } from "@/data/releases";
 import { computeOverallPassRate, testRuns } from "@/data/test-runs";
 import type { Deployment, StatusKind } from "@/lib/types";
 
-export function overviewData(envSlug?: string) {
+export async function overviewData(envSlug?: string) {
+  const applications = await listApplications();
+  const environments = await listEnvironments();
   const filteredEnv = envSlug ? environments.find((e) => e.slug === envSlug) : undefined;
 
   const uptime = computeOverallUptime();
@@ -52,7 +54,9 @@ export function overviewData(envSlug?: string) {
   };
 }
 
-export function environmentDetailData(envSlug: string) {
+export async function environmentDetailData(envSlug: string) {
+  const applications = await listApplications();
+  const environments = await listEnvironments();
   const env = environments.find((e) => e.slug === envSlug);
   if (!env) return null;
   const envApps = applications.filter((a) => a.environmentIds.includes(env.id));
@@ -78,7 +82,8 @@ export function environmentDetailData(envSlug: string) {
   };
 }
 
-export function pipelineLatestByEnv(): Record<string, { status: StatusKind; version: string; when: string }> {
+export async function pipelineLatestByEnv(): Promise<Record<string, { status: StatusKind; version: string; when: string }>> {
+  const environments = await listEnvironments();
   const out: Record<string, { status: StatusKind; version: string; when: string }> = {};
   for (const env of environments) {
     const envDeployments = deployments.filter((d) => d.envId === env.id).sort(sortByStartedDesc);
@@ -106,7 +111,9 @@ function sortByStartedDesc(a: Deployment, b: Deployment) {
   return new Date(b.startedAt).getTime() - new Date(a.startedAt).getTime();
 }
 
-export function applicationDetailData(appSlug: string) {
+export async function applicationDetailData(appSlug: string) {
+  const applications = await listApplications();
+  const environments = await listEnvironments();
   const app = applications.find((a) => a.slug === appSlug);
   if (!app) return null;
   const perEnv = environments
@@ -124,7 +131,8 @@ export function applicationDetailData(appSlug: string) {
   return { application: app, perEnv, incidents: appIncidents, errors: appErrors };
 }
 
-export function publicStatusData() {
+export async function publicStatusData() {
+  const applications = await listApplications();
   const publicIncidents = incidents.filter((i) => i.isPublic);
   const publicMaintenance = plannedMaintenance.filter((m) => m.isPublic);
   const services = applications
