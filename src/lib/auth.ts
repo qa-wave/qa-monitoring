@@ -16,9 +16,12 @@ export type Session = {
 function getSecret(): string {
   const secret = process.env.SESSION_SECRET;
   if (!secret || secret.length < 16) {
-    // V MVP padneme na jasný default, ať se dev nemusí trápit s env vars při
-    // prvním spuštění. V produkci je env proměnná povinná — middleware na to
-    // zatím neupozorňuje, ale v v1 přidáme startup check.
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        "SESSION_SECRET env variable is missing or too short (min 16 chars). " +
+        "Set it before starting the production server.",
+      );
+    }
     return "dev-only-insecure-secret-change-me-please-32byte";
   }
   return secret;
@@ -68,7 +71,14 @@ export async function signIn(email: string, password: string): Promise<User | nu
 
 export async function signOut(): Promise<void> {
   const cookieStore = await cookies();
-  cookieStore.delete(COOKIE);
+  cookieStore.set(COOKIE, "", {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    path: "/",
+    maxAge: 0,
+    expires: new Date(0),
+  });
 }
 
 export async function getSessionUser(): Promise<User | null> {

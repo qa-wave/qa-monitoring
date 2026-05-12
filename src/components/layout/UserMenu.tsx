@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { LogOut, User as UserIcon } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -26,7 +26,14 @@ export function UserMenu({
   const router = useRouter();
 
   async function handleLogout() {
-    await fetch("/api/auth/logout", { method: "POST" });
+    try {
+      const res = await fetch("/api/auth/logout", { method: "POST" });
+      if (!res.ok) {
+        console.error("Logout failed:", res.status, res.statusText);
+      }
+    } catch (err) {
+      console.error("Logout request failed:", err);
+    }
     router.push("/login");
     router.refresh();
   }
@@ -58,10 +65,6 @@ export function UserMenu({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="gap-2">
-          <UserIcon className="h-4 w-4" />
-          Profil
-        </DropdownMenuItem>
         <DropdownMenuItem onSelect={handleLogout} className="gap-2 text-destructive focus:text-destructive">
           <LogOut className="h-4 w-4" />
           Odhlásit se

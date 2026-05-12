@@ -85,12 +85,12 @@ export default function AlertsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Alert Rules"
-        description="Threshold-based alert rules. Data stored in localStorage for MVP."
+        title="Pravidla alertů"
+        description="Pravidla alertů na základě prahových hodnot. Data uložena v localStorage (MVP)."
         actions={
           <Button onClick={() => setShowForm(!showForm)} className="gap-2">
             <Plus className="h-4 w-4" />
-            New Rule
+            Nové pravidlo
           </Button>
         }
       />
@@ -98,21 +98,21 @@ export default function AlertsPage() {
       {showForm && (
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">New Alert Rule</CardTitle>
+            <CardTitle className="text-base">Nové pravidlo alertu</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
-                <Label htmlFor="alert-name">Name</Label>
+                <Label htmlFor="alert-name">Název</Label>
                 <Input
                   id="alert-name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="e.g. High latency alert"
+                  placeholder="např. Alert na vysokou latenci"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Metric</Label>
+                <Label>Metrika</Label>
                 <Select value={metric} onValueChange={(v) => setMetric(v as AlertRule["metric"])}>
                   <SelectTrigger>
                     <SelectValue />
@@ -127,7 +127,7 @@ export default function AlertsPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Operator</Label>
+                <Label>Operátor</Label>
                 <Select value={operator} onValueChange={(v) => setOperator(v as AlertRule["operator"])}>
                   <SelectTrigger>
                     <SelectValue />
@@ -142,34 +142,34 @@ export default function AlertsPage() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="alert-threshold">Threshold</Label>
+                <Label htmlFor="alert-threshold">Práh</Label>
                 <Input
                   id="alert-threshold"
                   type="number"
                   value={threshold}
                   onChange={(e) => setThreshold(e.target.value)}
-                  placeholder="e.g. 500"
+                  placeholder="např. 500"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Channel</Label>
+                <Label>Kanál</Label>
                 <Select value={channel} onValueChange={(v) => setChannel(v as AlertRule["channel"])}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="email">Email</SelectItem>
+                    <SelectItem value="email">E-mail</SelectItem>
                     <SelectItem value="slack">Slack</SelectItem>
-                    <SelectItem value="both">Both</SelectItem>
+                    <SelectItem value="both">Oba</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="flex items-end gap-2">
                 <Button onClick={addRule} disabled={!name || !threshold}>
-                  Add Rule
+                  Přidat pravidlo
                 </Button>
                 <Button variant="ghost" onClick={() => setShowForm(false)}>
-                  Cancel
+                  Zrušit
                 </Button>
               </div>
             </div>
@@ -181,26 +181,26 @@ export default function AlertsPage() {
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BellRing className="h-5 w-5" />
-            Rules
+            Pravidla
           </CardTitle>
           <Badge variant="outline">{rules.length}</Badge>
         </CardHeader>
         <CardContent className="pt-0">
           {rules.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">
-              No alert rules configured yet.
+              Žádná pravidla alertů.
             </p>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b text-left text-xs text-muted-foreground">
-                    <th className="pb-2 pr-4 font-medium">Name</th>
-                    <th className="pb-2 pr-4 font-medium">Metric</th>
-                    <th className="pb-2 pr-4 font-medium">Condition</th>
-                    <th className="pb-2 pr-4 font-medium">Channel</th>
-                    <th className="pb-2 pr-4 font-medium">Enabled</th>
-                    <th className="pb-2 font-medium">Actions</th>
+                    <th className="pb-2 pr-4 font-medium">Název</th>
+                    <th className="pb-2 pr-4 font-medium">Metrika</th>
+                    <th className="pb-2 pr-4 font-medium">Podmínka</th>
+                    <th className="pb-2 pr-4 font-medium">Kanál</th>
+                    <th className="pb-2 pr-4 font-medium">Aktivní</th>
+                    <th className="pb-2 font-medium">Akce</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border/60">
@@ -233,7 +233,7 @@ export default function AlertsPage() {
                           variant="ghost"
                           size="icon"
                           onClick={() => deleteRule(rule.id)}
-                          aria-label="Delete rule"
+                          aria-label="Smazat pravidlo"
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
                         </Button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useId } from "react";
 
 interface AreaChartDatum {
   label: string;
@@ -29,6 +29,8 @@ export function AreaChart({
   unit = "",
   ariaLabel,
 }: AreaChartProps) {
+  const reactId = useId();
+  const gradientId = "area-grad-" + reactId.replace(/:/g, "");
   const svgRef = useRef<SVGSVGElement>(null);
   const [hover, setHover] = useState<{
     x: number;
@@ -98,8 +100,6 @@ export function AreaChart({
     .join(" ");
 
   const fillPath = `${linePath} L${coords[coords.length - 1].x.toFixed(1)},${PADDING_TOP + plotH} L${PADDING_LEFT},${PADDING_TOP + plotH} Z`;
-
-  const gradientId = "area-grad-" + (ariaLabel ?? "default").replace(/\s+/g, "-");
 
   // X-axis labels: first, middle, last
   const xLabels: { label: string; x: number }[] = [];

@@ -22,12 +22,12 @@ const STATUS_COLORS: Record<StatusKind, string> = {
 };
 
 const STATUS_DOT: Record<StatusKind, string> = {
-  ok: "#16a34a",
-  warn: "#f59e0b",
-  down: "#dc2626",
-  info: "#3b82f6",
-  muted: "#6b7280",
-  pending: "#6b7280",
+  ok: "hsl(var(--status-ok))",
+  warn: "hsl(var(--status-warn))",
+  down: "hsl(var(--status-down))",
+  info: "hsl(var(--status-info))",
+  muted: "hsl(var(--muted-foreground))",
+  pending: "hsl(var(--muted-foreground))",
 };
 
 export function ServiceMap() {

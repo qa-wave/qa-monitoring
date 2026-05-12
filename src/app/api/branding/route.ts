@@ -12,7 +12,7 @@ export async function GET() {
 export async function PUT(req: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-  if (user.role !== "admin" && user.role !== "operator") {
+  if (user.role !== "admin") {
     return NextResponse.json({ error: "K této akci nemáš oprávnění." }, { status: 403 });
   }
   const raw = await req.json().catch(() => null);

@@ -54,6 +54,7 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
+            aria-label="Více možností navigace"
             className={cn(
               "flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs",
               isMoreActive ? "text-foreground" : "text-muted-foreground"

@@ -17,7 +17,7 @@ export function evaluateAlerts(rules: AlertRule[], metrics: MetricValues): Alert
     const isTriggered =
       rule.operator === "gt" ? value > rule.threshold :
       rule.operator === "lt" ? value < rule.threshold :
-      value === rule.threshold;
+      Math.abs(value - rule.threshold) < 0.01;
     if (isTriggered) triggered.push(rule);
   }
   return triggered;

@@ -25,7 +25,7 @@ export function overviewData(envSlug?: string) {
   const errorCount = errorSummaries.reduce((a, e) => a + e.count24h, 0);
   const requestsEstimate = 50_000;
   const errorRate = (errorCount / requestsEstimate) * 100;
-  const now = new Date("2026-04-17T12:44:00+02:00");
+  const now = new Date();
   const deploysToday = deployments.filter((d) => {
     const ds = new Date(d.startedAt);
     return ds.toDateString() === now.toDateString();

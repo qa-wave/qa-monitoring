@@ -19,18 +19,24 @@ interface SavedView {
 
 const STORAGE_KEY = "zornik-saved-views";
 
+function readViews(): SavedView[] {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
+const emptyViews: SavedView[] = [];
+
 export function SavedViews() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [views, setViews] = React.useState<SavedView[]>(() => {
-    if (typeof window === "undefined") return [];
-    try {
-      return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
-    } catch {
-      return [];
-    }
-  });
+  const [mounted, setMounted] = React.useState(false);
+  React.useEffect(() => { setMounted(true); }, []); // eslint-disable-line react-hooks/set-state-in-effect -- one-time mount flag, no cascading render risk
+  const views = mounted ? readViews() : emptyViews;
+  const [, forceUpdate] = React.useReducer((x: number) => x + 1, 0);
 
   function saveView() {
     const name = prompt("Název pohledu:");
@@ -39,10 +45,10 @@ export function SavedViews() {
     searchParams.forEach((v, k) => {
       params[k] = v;
     });
-    const view: SavedView = { id: Math.random().toString(36).slice(2), name, params };
+    const view: SavedView = { id: crypto.randomUUID(), name, params };
     const updated = [...views, view];
-    setViews(updated);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    forceUpdate();
   }
 
   function loadView(view: SavedView) {
@@ -52,8 +58,8 @@ export function SavedViews() {
 
   function deleteView(id: string) {
     const updated = views.filter((v) => v.id !== id);
-    setViews(updated);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    forceUpdate();
   }
 
   return (

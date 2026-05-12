@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
     const user = await signIn(parsed.data.email, parsed.data.password);
     if (!user) {
-      return NextResponse.json({ error: "Uživatel s tímto e-mailem neexistuje." }, { status: 401 });
+      return NextResponse.json({ error: "Neplatný e-mail nebo heslo." }, { status: 401 });
     }
     return NextResponse.json({ ok: true, role: user.role });
   } catch (err) {

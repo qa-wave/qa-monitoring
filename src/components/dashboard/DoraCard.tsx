@@ -72,12 +72,12 @@ export function DoraCard({ data }: { data: DoraMetrics }) {
         </TooltipProvider>
       </CardHeader>
       <CardContent className="pt-0">
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {metrics.map(({ key, label, icon: Icon, tooltip }) => {
-            const m = data[key];
-            return (
-              <TooltipProvider key={key}>
-                <Tooltip>
+        <TooltipProvider>
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            {metrics.map(({ key, label, icon: Icon, tooltip }) => {
+              const m = data[key];
+              return (
+                <Tooltip key={key}>
                   <TooltipTrigger asChild>
                     <div className="flex flex-col gap-1 rounded-md border p-3">
                       <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
@@ -97,10 +97,10 @@ export function DoraCard({ data }: { data: DoraMetrics }) {
                     {tooltip}
                   </TooltipContent>
                 </Tooltip>
-              </TooltipProvider>
-            );
-          })}
-        </div>
+              );
+            })}
+          </div>
+        </TooltipProvider>
       </CardContent>
     </Card>
   );

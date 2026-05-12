@@ -13,11 +13,11 @@ export function Breadcrumbs({ items }: { items: Crumb[] }) {
         <span key={i} className="flex items-center gap-1">
           {i > 0 && <ChevronRight className="h-3.5 w-3.5" />}
           {crumb.href ? (
-            <Link href={crumb.href} className="hover:text-foreground transition-colors">
+            <Link href={crumb.href} className="max-w-[200px] truncate hover:text-foreground transition-colors">
               {crumb.label}
             </Link>
           ) : (
-            <span className="text-foreground font-medium">{crumb.label}</span>
+            <span className="max-w-[200px] truncate text-foreground font-medium">{crumb.label}</span>
           )}
         </span>
       ))}

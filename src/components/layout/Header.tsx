@@ -36,7 +36,7 @@ export function Header({
         <LocaleSwitcher current={locale} />
         <ThemeSwitcher current={currentStyle} />
         <LiveIndicator />
-        <Link href="/incidents" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent" aria-label="Notifikace">
+        <Link href="/incidents" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background" aria-label="Notifikace">
           <Bell className="h-5 w-5" />
           {incidentCount > 0 ? (
             <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
