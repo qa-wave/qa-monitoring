@@ -27,7 +27,7 @@ export async function readJson<T>(key: string, fallback: T): Promise<T> {
 export async function writeJson<T>(key: string, data: T): Promise<void> {
   if (isVercel()) {
     const { put } = await import("@vercel/blob");
-    await put(key, JSON.stringify(data, null, 2), { access: "public", addRandomSuffix: false, contentType: "application/json" });
+    await put(key, JSON.stringify(data, null, 2), { access: "public", addRandomSuffix: false, allowOverwrite: true, contentType: "application/json" });
     return;
   }
   const filePath = path.join(DATA_DIR, key);
