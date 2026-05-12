@@ -11,6 +11,7 @@ const PUBLIC_PREFIXES = [
   "/api/cron",
   "/api/webhooks",
   "/api/stream",
+  "/api/db",
   "/_next",
   "/favicon",
 ];

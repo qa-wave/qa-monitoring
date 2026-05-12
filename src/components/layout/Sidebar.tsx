@@ -14,6 +14,7 @@ import {
   Rocket,
   Server,
   Settings,
+  Shield,
   ShieldCheck,
   TestTube2,
   Users,
@@ -48,6 +49,7 @@ const items: NavItem[] = [
   { href: "/admin/users", labelKey: "users", icon: Users, adminOnly: true },
   { href: "/admin/environments", labelKey: "envAdmin", icon: Server, adminOnly: true },
   { href: "/admin/apps", labelKey: "appsAdmin", icon: Boxes, adminOnly: true },
+  { href: "/admin/roles", labelKey: "roles", icon: Shield, adminOnly: true },
   { href: "/admin/audit", labelKey: "audit", icon: ClipboardList, adminOnly: true },
 ];
 

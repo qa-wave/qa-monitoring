@@ -21,7 +21,7 @@ export function UserMenu({
 }: {
   name: string;
   email: string;
-  role: "viewer" | "admin";
+  role: "viewer" | "operator" | "admin";
 }) {
   const router = useRouter();
 

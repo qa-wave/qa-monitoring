@@ -4,7 +4,7 @@ export type Severity = "sev1" | "sev2" | "sev3";
 
 export type PersonaKey = "all" | "dev" | "po" | "tester";
 
-export type UserRole = "viewer" | "admin";
+export type UserRole = "viewer" | "operator" | "admin";
 
 export interface Environment {
   id: string;
