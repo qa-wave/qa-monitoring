@@ -1,5 +1,6 @@
 import type { AlertRule } from "./alerts";
 import { sendSlackNotification } from "./notifications/slack";
+import { logger } from "./logger";
 
 export interface MetricValues {
   latency: number;
@@ -31,6 +32,6 @@ export async function processAlerts(rules: AlertRule[], metrics: MetricValues): 
       await sendSlackNotification(message);
     }
     // email would go here when implemented
-    console.log("[alert]", message);
+    logger.info("alert.triggered", { rule: rule.name, metric: rule.metric, threshold: rule.threshold, channel: rule.channel });
   }
 }

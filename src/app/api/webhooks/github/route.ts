@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 import { sendSlackNotification, formatDeploySlack } from "@/lib/notifications/slack";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
@@ -34,10 +35,10 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
       }
     } else {
-      console.warn("[webhook/github] GITHUB_WEBHOOK_SECRET is not configured — accepting without signature verification (dev mode)");
+      logger.warn("webhook.github.no_secret", { message: "GITHUB_WEBHOOK_SECRET is not configured — accepting without signature verification (dev mode)" });
     }
 
-    console.log(`[webhook/github] event=${event}`);
+    logger.info("webhook.github.received", { event, ip });
 
     // Notify Slack on failed workflow runs
     if (event === "workflow_run") {
@@ -50,13 +51,13 @@ export async function POST(req: Request) {
           await sendSlackNotification(message);
         }
       } catch (parseErr) {
-        console.error("[webhook/github] Failed to parse payload for Slack notification:", parseErr);
+        logger.error("webhook.github.slack_notify_failed", { error: String(parseErr) });
       }
     }
 
     return NextResponse.json({ ok: true, event });
   } catch (err) {
-    console.error("[webhook/github]", err);
+    logger.error("webhook.github.error", { error: String(err) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

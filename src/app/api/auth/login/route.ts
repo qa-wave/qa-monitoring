@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { signIn } from "@/lib/auth";
 import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
+import { logger } from "@/lib/logger";
+import { captureException } from "@/lib/error-tracking";
 
 const bodySchema = z.object({
   email: z.string().email(),
@@ -27,11 +29,13 @@ export async function POST(req: Request) {
 
     const user = await signIn(parsed.data.email, parsed.data.password);
     if (!user) {
+      logger.warn("auth.login_failed", { email: parsed.data.email, ip });
       return NextResponse.json({ error: "Neplatný e-mail nebo heslo." }, { status: 401 });
     }
+    logger.info("auth.login_success", { email: parsed.data.email, role: user.role, ip });
     return NextResponse.json({ ok: true, role: user.role });
   } catch (err) {
-    console.error("[auth/login]", err);
+    captureException(err, { route: "login" });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

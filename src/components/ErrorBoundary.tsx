@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { captureException } from "@/lib/error-tracking";
 
 interface Props {
   children: React.ReactNode;
@@ -22,7 +23,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: React.ErrorInfo) {
-    console.error("[ErrorBoundary]", error, info);
+    captureException(error, { componentStack: info.componentStack ?? undefined });
   }
 
   render() {

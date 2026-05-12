@@ -2,6 +2,51 @@
 
 All API endpoints are Next.js Route Handlers located in `src/app/api/`.
 
+## Pagination
+
+All list endpoints (`GET /api/users`, `GET /api/applications`, `GET /api/environments`, `GET /api/alerts`, `GET /api/audit`, `GET /api/integrations`) support pagination via query parameters:
+
+| Parameter | Type | Default | Description |
+|---|---|---|---|
+| `limit` | number | all items | Maximum number of items to return |
+| `offset` | number | 0 | Number of items to skip |
+
+**Response header:** `X-Total-Count` -- total number of items (before pagination).
+
+**Example:**
+```
+GET /api/applications?limit=10&offset=20
+→ 200 OK
+→ X-Total-Count: 42
+→ { "items": [...] }
+```
+
+## Error Response Format
+
+All error responses follow a consistent format:
+
+```json
+{
+  "error": "Human-readable error message.",
+  "issues": { ... },
+  "code": "OPTIONAL_ERROR_CODE"
+}
+```
+
+| Field | Type | Presence | Description |
+|---|---|---|---|
+| `error` | string | Always | Error message |
+| `issues` | object | Validation errors only | Zod flatten output with `fieldErrors` and `formErrors` |
+| `code` | string | Store errors only | Machine-readable error code (e.g. `DUPLICATE_SLUG`) |
+
+Common HTTP status codes:
+- **400** -- Invalid request data (with `issues` for validation errors)
+- **401** -- Not authenticated
+- **403** -- Insufficient permissions (wrong role)
+- **404** -- Resource not found
+- **409** -- Conflict (duplicate slug, email already exists)
+- **500** -- Internal server error
+
 ## Authentication
 
 ### POST /api/auth/login
@@ -332,6 +377,352 @@ Or on failure (still 200):
   "message": "Authentication failed: Bad credentials"
 }
 ```
+
+---
+
+## Applications
+
+### GET /api/applications
+
+List all applications. Requires authentication. Supports pagination.
+
+**Response (200):**
+```json
+{
+  "items": [
+    {
+      "id": "app-1",
+      "name": "Web App",
+      "slug": "web-app",
+      "language": "TypeScript",
+      "description": "Main web application",
+      "repoUrl": "https://github.com/org/web-app",
+      "owners": ["admin@example.com"],
+      "environmentIds": ["env-prod", "env-staging"],
+      "tags": ["frontend", "critical"]
+    }
+  ]
+}
+```
+
+**Headers:** `X-Total-Count: 5`
+
+---
+
+### POST /api/applications
+
+Create a new application. Requires admin role.
+
+**Request:**
+```json
+{
+  "name": "New App",
+  "slug": "new-app",
+  "language": "Go",
+  "description": "Backend microservice",
+  "repoUrl": "https://github.com/org/new-app",
+  "owners": [],
+  "environmentIds": [],
+  "tags": ["backend"]
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "generated-uuid",
+  "item": { ... }
+}
+```
+
+**Errors:**
+- 400 -- Invalid data (with `issues`)
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 409 -- Duplicate slug (with `code`)
+
+---
+
+### GET /api/applications/[id]
+
+Get a single application. Requires authentication.
+
+**Response (200):** Application object.
+
+**Errors:**
+- 401 -- Not authenticated
+- 404 -- Application not found
+
+---
+
+### PATCH /api/applications/[id]
+
+Update an application. Requires admin role. All fields optional. Uses strict schema (unknown fields rejected).
+
+**Response (200):** Updated application object.
+
+**Errors:**
+- 400 -- Invalid data
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 404 -- Application not found
+- 409 -- Duplicate slug
+
+---
+
+### DELETE /api/applications/[id]
+
+Delete an application. Requires admin role.
+
+**Response (200):**
+```json
+{
+  "ok": true
+}
+```
+
+**Errors:**
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 404 -- Application not found
+
+---
+
+## Environments
+
+### GET /api/environments
+
+List all environments. Requires authentication. Supports pagination.
+
+**Response (200):**
+```json
+{
+  "items": [
+    {
+      "id": "env-prod",
+      "name": "Production",
+      "slug": "production",
+      "url": "https://app.example.com",
+      "region": "eu-west-1",
+      "color": "#22c55e",
+      "isProduction": true,
+      "order": 0
+    }
+  ]
+}
+```
+
+**Headers:** `X-Total-Count: 3`
+
+---
+
+### POST /api/environments
+
+Create a new environment. Requires admin role.
+
+**Request:**
+```json
+{
+  "name": "Staging",
+  "slug": "staging",
+  "url": "https://staging.example.com",
+  "region": "eu-west-1",
+  "color": "#64748b",
+  "isProduction": false,
+  "order": 1
+}
+```
+
+**Response (201):**
+```json
+{
+  "id": "generated-uuid",
+  "item": { ... }
+}
+```
+
+**Errors:**
+- 400 -- Invalid data (with `issues`)
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 409 -- Duplicate slug (with `code`)
+
+---
+
+### GET /api/environments/[id]
+
+Get a single environment. Requires authentication.
+
+**Response (200):** Environment object.
+
+**Errors:**
+- 401 -- Not authenticated
+- 404 -- Environment not found
+
+---
+
+### PATCH /api/environments/[id]
+
+Update an environment. Requires admin role. All fields optional. Uses strict schema.
+
+**Response (200):** Updated environment object.
+
+**Errors:**
+- 400 -- Invalid data
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 404 -- Environment not found
+- 409 -- Duplicate slug
+
+---
+
+### DELETE /api/environments/[id]
+
+Delete an environment. Requires admin role.
+
+**Response (200):**
+```json
+{
+  "ok": true
+}
+```
+
+**Errors:**
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 404 -- Environment not found
+
+---
+
+## Alerts
+
+### GET /api/alerts
+
+List all alert rules. Requires admin role. Supports pagination.
+
+**Response (200):**
+```json
+{
+  "items": [
+    {
+      "id": "alert-1",
+      "name": "High latency",
+      "metric": "latency",
+      "operator": "gt",
+      "threshold": 500,
+      "channel": "slack",
+      "enabled": true,
+      "createdBy": "admin@example.com"
+    }
+  ]
+}
+```
+
+**Headers:** `X-Total-Count: 4`
+
+**Errors:**
+- 401 -- Not authenticated
+- 403 -- Not admin
+
+---
+
+### POST /api/alerts
+
+Create a new alert rule. Requires admin role. Creates an audit log entry.
+
+**Request:**
+```json
+{
+  "name": "High error rate",
+  "metric": "errorRate",
+  "operator": "gt",
+  "threshold": 5,
+  "channel": "both",
+  "enabled": true
+}
+```
+
+Allowed `metric` values: `latency`, `errorRate`, `uptime`, `deployFailRate`, `flakyTests`.
+Allowed `operator` values: `gt`, `lt`, `eq`.
+Allowed `channel` values: `email`, `slack`, `both`.
+
+**Response (201):**
+```json
+{
+  "id": "generated-uuid"
+}
+```
+
+**Errors:**
+- 400 -- Invalid data (with `issues`)
+- 401 -- Not authenticated
+- 403 -- Not admin
+
+---
+
+### PATCH /api/alerts/[id]
+
+Update an alert rule. Requires admin role. All fields optional. Creates an audit log entry.
+
+**Response (200):** Updated alert rule object.
+
+**Errors:**
+- 400 -- Invalid data
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 404 -- Rule not found
+
+---
+
+### DELETE /api/alerts/[id]
+
+Delete an alert rule. Requires admin role. Creates an audit log entry.
+
+**Response (200):**
+```json
+{
+  "ok": true
+}
+```
+
+**Errors:**
+- 401 -- Not authenticated
+- 403 -- Not admin
+- 404 -- Rule not found
+
+---
+
+## Audit
+
+### GET /api/audit
+
+List audit log entries (most recent first). Requires admin role. Supports pagination.
+
+**Query params:**
+- `limit` -- max entries to fetch from store (default 50, max 200)
+- `offset` -- skip N entries from the result
+
+**Response (200):**
+```json
+{
+  "items": [
+    {
+      "id": "audit-1",
+      "actor": "admin@example.com",
+      "action": "alert.create",
+      "target": "High latency",
+      "details": "Metric: latency, gt 500",
+      "timestamp": "2026-05-09T10:00:00Z"
+    }
+  ]
+}
+```
+
+**Headers:** `X-Total-Count: 120`
+
+**Errors:**
+- 401 -- Not authenticated
+- 403 -- Not admin
 
 ---
 

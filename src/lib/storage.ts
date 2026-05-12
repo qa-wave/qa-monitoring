@@ -1,5 +1,6 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
+import { logger } from "./logger";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 
@@ -38,6 +39,7 @@ export async function writeJson<T>(key: string, data: T): Promise<void> {
         });
         return;
       } catch (err) {
+        logger.warn("storage.blob_write_retry", { key, attempt, error: String(err) });
         if (attempt === 2) throw err;
         await new Promise((r) => setTimeout(r, 100 * (attempt + 1)));
       }

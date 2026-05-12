@@ -4,6 +4,7 @@ import { getSessionUser } from "@/lib/auth";
 import { createIntegration, listIntegrations } from "@/lib/integrations/store";
 import { getProviderDefinition } from "@/lib/integrations/registry";
 import { addAuditEntry } from "@/lib/audit/store";
+import { captureException } from "@/lib/error-tracking";
 
 export async function GET(req: Request) {
   const user = await getSessionUser();
@@ -60,21 +61,26 @@ export async function POST(req: Request) {
     );
   }
 
-  const created = await createIntegration({
-    providerKey: parsed.data.providerKey,
-    displayName: parsed.data.displayName,
-    credentials: parsed.data.credentials,
-    scope: parsed.data.scope ?? {},
-    enabled: parsed.data.enabled,
-    createdBy: user.email,
-  });
+  try {
+    const created = await createIntegration({
+      providerKey: parsed.data.providerKey,
+      displayName: parsed.data.displayName,
+      credentials: parsed.data.credentials,
+      scope: parsed.data.scope ?? {},
+      enabled: parsed.data.enabled,
+      createdBy: user.email,
+    });
 
-  await addAuditEntry({
-    actor: user.email,
-    action: "integration.create",
-    target: created.displayName,
-    details: `Provider: ${created.providerKey}`,
-  });
+    await addAuditEntry({
+      actor: user.email,
+      action: "integration.create",
+      target: created.displayName,
+      details: `Provider: ${created.providerKey}`,
+    });
 
-  return NextResponse.json({ id: created.id }, { status: 201 });
+    return NextResponse.json({ id: created.id }, { status: 201 });
+  } catch (err) {
+    captureException(err, { route: "integrations.create", provider: parsed.data.providerKey });
+    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  }
 }

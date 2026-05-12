@@ -3,6 +3,8 @@ import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { createUser, listPublicUsers, UserStoreError } from "@/lib/users/store";
 import { addAuditEntry } from "@/lib/audit/store";
+import { captureException } from "@/lib/error-tracking";
+import { withTiming } from "@/lib/request-timing";
 
 export async function GET(req: Request) {
   const user = await getSessionUser();
@@ -44,13 +46,15 @@ export async function POST(req: Request) {
   }
 
   try {
-    const created = await createUser({
-      email: parsed.data.email,
-      name: parsed.data.name,
-      role: parsed.data.role,
-      personaPreference: parsed.data.personaPreference,
-      password: parsed.data.password,
-    });
+    const created = await withTiming("user.create", () =>
+      createUser({
+        email: parsed.data.email,
+        name: parsed.data.name,
+        role: parsed.data.role,
+        personaPreference: parsed.data.personaPreference,
+        password: parsed.data.password,
+      })
+    );
     await addAuditEntry({
       actor: actor.email,
       action: "user.create",
@@ -63,6 +67,7 @@ export async function POST(req: Request) {
       const status = e.code === "email_exists" ? 409 : e.code === "password_too_short" ? 400 : 409;
       return NextResponse.json({ error: e.message, code: e.code }, { status });
     }
+    captureException(e, { route: "users.create" });
     return NextResponse.json({ error: (e as Error).message }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { rateLimit, getRateLimitHeaders } from "@/lib/rate-limit";
 import { sendSlackNotification } from "@/lib/notifications/slack";
+import { logger } from "@/lib/logger";
 
 export async function POST(req: Request) {
   try {
@@ -33,10 +34,10 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
       }
     } else {
-      console.warn("[webhook/sentry] SENTRY_WEBHOOK_SECRET is not configured — accepting without signature verification (dev mode)");
+      logger.warn("webhook.sentry.no_secret", { message: "SENTRY_WEBHOOK_SECRET is not configured — accepting without signature verification (dev mode)" });
     }
 
-    console.log(`[webhook/sentry] resource=${resource}`);
+    logger.info("webhook.sentry.received", { resource, ip });
 
     // Notify Slack on issue or error events
     if (resource === "issue" || resource === "error") {
@@ -47,13 +48,13 @@ export async function POST(req: Request) {
         const message = `🚨 Sentry ${resource}: ${title}${url ? `\n<${url}|Zobrazit v Sentry>` : ""}`;
         await sendSlackNotification(message);
       } catch (parseErr) {
-        console.error("[webhook/sentry] Failed to parse payload for Slack notification:", parseErr);
+        logger.error("webhook.sentry.slack_notify_failed", { error: String(parseErr) });
       }
     }
 
     return NextResponse.json({ ok: true, resource });
   } catch (err) {
-    console.error("[webhook/sentry]", err);
+    logger.error("webhook.sentry.error", { error: String(err) });
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

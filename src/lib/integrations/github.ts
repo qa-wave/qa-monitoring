@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { Deployment, PipelineRun } from "@/lib/types";
 import type { ProviderCapability, ProviderDefinition, ProviderScope, ProviderTestResult } from "./types";
+import { logger } from "@/lib/logger";
 
 export const githubCredentialsSchema = z.object({
   owner: z.string().min(1, "GitHub owner (org nebo uživatel) je povinný"),
@@ -51,23 +52,57 @@ function mapPipelineStatus(run: WorkflowRunApi): PipelineRun["status"] {
   return "failed";
 }
 
-function createGitHubAdapter(config: GitHubConfig): ProviderCapability {
-  const base = "https://api.github.com";
+async function githubFetch(url: string, token: string): Promise<Response> {
   const headers = {
     Accept: "application/vnd.github+json",
-    Authorization: `Bearer ${config.token}`,
+    Authorization: `Bearer ${token}`,
     "X-GitHub-Api-Version": "2022-11-28",
     "User-Agent": "qa",
-  } as const;
+  };
 
-  async function call<T>(path: string): Promise<T> {
-    const res = await fetch(`${base}${path}`, {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(url, {
       headers,
       next: { revalidate: 60 },
     });
-    if (!res.ok) {
-      throw new Error(`GitHub API ${path} selhalo: ${res.status} ${res.statusText}`);
+
+    // Check rate limit headers
+    const remaining = res.headers.get("x-ratelimit-remaining");
+    if (remaining !== null && parseInt(remaining) <= 5) {
+      logger.warn("GitHub API rate limit low", {
+        remaining: parseInt(remaining),
+        url,
+      });
     }
+
+    if (res.status === 429) {
+      const retryAfter = parseInt(res.headers.get("retry-after") ?? "5");
+      logger.warn("GitHub API rate limited, retrying", {
+        attempt,
+        retryAfterSec: retryAfter,
+        url,
+      });
+      await new Promise((r) => setTimeout(r, retryAfter * 1000));
+      continue;
+    }
+
+    if (!res.ok) {
+      throw new Error(
+        `GitHub API ${res.status}: ${(await res.text()).slice(0, 200)}`
+      );
+    }
+
+    return res;
+  }
+
+  throw new Error("GitHub API: max retries exceeded");
+}
+
+function createGitHubAdapter(config: GitHubConfig): ProviderCapability {
+  const base = "https://api.github.com";
+
+  async function call<T>(path: string): Promise<T> {
+    const res = await githubFetch(`${base}${path}`, config.token);
     return (await res.json()) as T;
   }
 
@@ -117,18 +152,11 @@ function createGitHubAdapter(config: GitHubConfig): ProviderCapability {
     async testConnection(): Promise<ProviderTestResult> {
       const start = Date.now();
       try {
-        const res = await fetch(`${base}/repos/${config.owner}/${config.repo}`, {
-          headers,
-          cache: "no-store",
-        });
-        if (!res.ok) {
-          const body = await res.text();
-          return {
-            ok: false,
-            message: `Připojení selhalo: ${res.status} ${res.statusText} — ${body.slice(0, 200)}`,
-            latencyMs: Date.now() - start,
-          };
-        }
+        await githubFetch(
+          `${base}/repos/${config.owner}/${config.repo}`,
+          config.token,
+        );
+        // githubFetch already throws on !res.ok (except 429 retries)
         return {
           ok: true,
           message: `Připojeno na ${config.owner}/${config.repo}.`,

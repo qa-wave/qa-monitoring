@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { Deployment } from "@/lib/types";
 import type { ProviderCapability, ProviderDefinition, ProviderScope, ProviderTestResult } from "./types";
+import { logger } from "@/lib/logger";
 
 export const vercelCredentialsSchema = z.object({
   token: z
@@ -67,22 +68,54 @@ function mapDeploymentStatus(
   }
 }
 
-function createVercelAdapter(config: VercelConfig): ProviderCapability {
-  const base = "https://api.vercel.com";
+async function vercelFetch(url: string, token: string): Promise<Response> {
   const headers = {
-    Authorization: `Bearer ${config.token}`,
-  } as const;
+    Authorization: `Bearer ${token}`,
+  };
 
-  async function call<T>(path: string): Promise<T> {
-    const res = await fetch(`${base}${path}`, {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(url, {
       headers,
       next: { revalidate: 60 },
     });
+
+    // Check rate limit headers
+    const remaining = res.headers.get("x-ratelimit-remaining");
+    if (remaining !== null && parseInt(remaining) <= 5) {
+      logger.warn("Vercel API rate limit low", {
+        remaining: parseInt(remaining),
+        url,
+      });
+    }
+
+    if (res.status === 429) {
+      const retryAfter = parseInt(res.headers.get("retry-after") ?? "5");
+      logger.warn("Vercel API rate limited, retrying", {
+        attempt,
+        retryAfterSec: retryAfter,
+        url,
+      });
+      await new Promise((r) => setTimeout(r, retryAfter * 1000));
+      continue;
+    }
+
     if (!res.ok) {
       throw new Error(
-        `Vercel API ${path} selhalo: ${res.status} ${res.statusText}`
+        `Vercel API ${res.status}: ${(await res.text()).slice(0, 200)}`
       );
     }
+
+    return res;
+  }
+
+  throw new Error("Vercel API: max retries exceeded");
+}
+
+function createVercelAdapter(config: VercelConfig): ProviderCapability {
+  const base = "https://api.vercel.com";
+
+  async function call<T>(path: string): Promise<T> {
+    const res = await vercelFetch(`${base}${path}`, config.token);
     return (await res.json()) as T;
   }
 
@@ -120,18 +153,7 @@ function createVercelAdapter(config: VercelConfig): ProviderCapability {
     async testConnection(): Promise<ProviderTestResult> {
       const start = Date.now();
       try {
-        const res = await fetch(`${base}/v2/user`, {
-          headers,
-          cache: "no-store",
-        });
-        if (!res.ok) {
-          const body = await res.text();
-          return {
-            ok: false,
-            message: `Připojení selhalo: ${res.status} ${res.statusText} — ${body.slice(0, 200)}`,
-            latencyMs: Date.now() - start,
-          };
-        }
+        const res = await vercelFetch(`${base}/v2/user`, config.token);
         const data = (await res.json()) as VercelUserResponse;
         return {
           ok: true,

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import type { ErrorSummary } from "@/lib/types";
 import type { ProviderCapability, ProviderDefinition, ProviderScope, ProviderTestResult } from "./types";
+import { logger } from "@/lib/logger";
 
 export const sentryCredentialsSchema = z.object({
   organization: z.string().min(1, "Sentry organization slug je povinný"),
@@ -46,22 +47,57 @@ function mapSentryLevel(level: string): ErrorSummary["level"] {
   }
 }
 
-function createSentryAdapter(config: SentryConfig): ProviderCapability {
-  const base = config.baseUrl?.replace(/\/+$/, "") || "https://sentry.io";
+async function sentryFetch(
+  url: string,
+  authToken: string,
+): Promise<Response> {
   const headers = {
-    Authorization: `Bearer ${config.authToken}`,
-  } as const;
+    Authorization: `Bearer ${authToken}`,
+  };
 
-  async function call<T>(path: string): Promise<T> {
-    const res = await fetch(`${base}${path}`, {
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await fetch(url, {
       headers,
       next: { revalidate: 60 },
     });
+
+    // Check rate limit headers
+    const remaining = res.headers.get("x-sentry-rate-limit-remaining");
+    if (remaining !== null && parseInt(remaining) <= 5) {
+      logger.warn("Sentry API rate limit low", {
+        remaining: parseInt(remaining),
+        url,
+      });
+    }
+
+    if (res.status === 429) {
+      const retryAfter = parseInt(res.headers.get("retry-after") ?? "5");
+      logger.warn("Sentry API rate limited, retrying", {
+        attempt,
+        retryAfterSec: retryAfter,
+        url,
+      });
+      await new Promise((r) => setTimeout(r, retryAfter * 1000));
+      continue;
+    }
+
     if (!res.ok) {
       throw new Error(
-        `Sentry API ${path} selhalo: ${res.status} ${res.statusText}`
+        `Sentry API ${res.status}: ${(await res.text()).slice(0, 200)}`
       );
     }
+
+    return res;
+  }
+
+  throw new Error("Sentry API: max retries exceeded");
+}
+
+function createSentryAdapter(config: SentryConfig): ProviderCapability {
+  const base = config.baseUrl?.replace(/\/+$/, "") || "https://sentry.io";
+
+  async function call<T>(path: string): Promise<T> {
+    const res = await sentryFetch(`${base}${path}`, config.authToken);
     return (await res.json()) as T;
   }
 
@@ -96,18 +132,10 @@ function createSentryAdapter(config: SentryConfig): ProviderCapability {
     async testConnection(): Promise<ProviderTestResult> {
       const start = Date.now();
       try {
-        const res = await fetch(
+        const res = await sentryFetch(
           `${base}/api/0/organizations/${config.organization}/`,
-          { headers, cache: "no-store" }
+          config.authToken,
         );
-        if (!res.ok) {
-          const body = await res.text();
-          return {
-            ok: false,
-            message: `Připojení selhalo: ${res.status} ${res.statusText} — ${body.slice(0, 200)}`,
-            latencyMs: Date.now() - start,
-          };
-        }
         const data = (await res.json()) as SentryOrgApi;
         return {
           ok: true,

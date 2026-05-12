@@ -2,6 +2,9 @@ import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
 import { brandSettingsSchema, getBrandSettings, saveBrandSettings } from "@/lib/branding";
 import { addAuditEntry } from "@/lib/audit/store";
+import { logger } from "@/lib/logger";
+import { captureException } from "@/lib/error-tracking";
+import { withTiming } from "@/lib/request-timing";
 
 export async function GET() {
   const user = await getSessionUser();
@@ -25,16 +28,19 @@ export async function PUT(req: Request) {
     );
   }
   try {
-    const saved = await saveBrandSettings(parsed.data as Parameters<typeof saveBrandSettings>[0]);
+    const saved = await withTiming("branding.save", () =>
+      saveBrandSettings(parsed.data as Parameters<typeof saveBrandSettings>[0])
+    );
     await addAuditEntry({
       actor: user.email,
       action: "branding.update",
       target: "brand-settings",
       details: `Style: ${(parsed.data as Record<string, unknown>).style ?? "unchanged"}`,
     });
+    logger.info("branding.saved", { actor: user.email, style: (parsed.data as Record<string, unknown>).style });
     return NextResponse.json(saved);
   } catch (err) {
-    console.error("[api/branding] Save failed:", err);
+    captureException(err, { route: "branding", actor: user.email });
     return NextResponse.json({ error: String((err as Error).message) }, { status: 500 });
   }
 }
