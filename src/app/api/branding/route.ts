@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
 import { brandSettingsSchema, getBrandSettings, saveBrandSettings } from "@/lib/branding";
+import { addAuditEntry } from "@/lib/audit/store";
 
 export async function GET() {
   const user = await getSessionUser();
@@ -25,6 +26,12 @@ export async function PUT(req: Request) {
   }
   try {
     const saved = await saveBrandSettings(parsed.data as Parameters<typeof saveBrandSettings>[0]);
+    await addAuditEntry({
+      actor: user.email,
+      action: "branding.update",
+      target: "brand-settings",
+      details: `Style: ${(parsed.data as Record<string, unknown>).style ?? "unchanged"}`,
+    });
     return NextResponse.json(saved);
   } catch (err) {
     console.error("[api/branding] Save failed:", err);

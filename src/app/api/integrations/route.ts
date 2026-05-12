@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { createIntegration, listIntegrations } from "@/lib/integrations/store";
 import { getProviderDefinition } from "@/lib/integrations/registry";
+import { addAuditEntry } from "@/lib/audit/store";
 
 export async function GET() {
   const user = await getSessionUser();
@@ -60,6 +61,13 @@ export async function POST(req: Request) {
     scope: parsed.data.scope ?? {},
     enabled: parsed.data.enabled,
     createdBy: user.email,
+  });
+
+  await addAuditEntry({
+    actor: user.email,
+    action: "integration.create",
+    target: created.displayName,
+    details: `Provider: ${created.providerKey}`,
   });
 
   return NextResponse.json({ id: created.id }, { status: 201 });

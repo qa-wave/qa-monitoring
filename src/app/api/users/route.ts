@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getSessionUser } from "@/lib/auth";
 import { createUser, listPublicUsers, UserStoreError } from "@/lib/users/store";
+import { addAuditEntry } from "@/lib/audit/store";
 
 export async function GET() {
   const user = await getSessionUser();
@@ -43,6 +44,12 @@ export async function POST(req: Request) {
       role: parsed.data.role,
       personaPreference: parsed.data.personaPreference,
       password: parsed.data.password,
+    });
+    await addAuditEntry({
+      actor: actor.email,
+      action: "user.create",
+      target: created.email,
+      details: `Role: ${created.role}`,
     });
     return NextResponse.json({ id: created.id }, { status: 201 });
   } catch (e) {

@@ -1,7 +1,7 @@
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { auditLog } from "@/data/audit-log";
+import { listAuditEntries } from "@/lib/audit/store";
 import { formatRelativeTime, formatDateTime } from "@/lib/utils";
 import { getT } from "@/lib/i18n/server";
 import { requirePermission } from "@/lib/auth";
@@ -23,6 +23,7 @@ const actionVariant: Record<string, "default" | "danger" | "warning" | "info" | 
 export default async function AuditLogPage() {
   await requirePermission("audit:view");
   const { t } = await getT();
+  const auditLog = await listAuditEntries();
   return (
     <div className="space-y-6">
       <PageHeader

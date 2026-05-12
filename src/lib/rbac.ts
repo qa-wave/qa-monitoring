@@ -14,7 +14,8 @@ export type Permission =
   | "branding:manage"
   | "users:view"
   | "users:manage"
-  | "audit:view";
+  | "audit:view"
+  | "alerts:manage";
 
 export interface Role {
   id: string;
@@ -46,6 +47,7 @@ export const SYSTEM_ROLES: Role[] = [
       "users:view",
       "users:manage",
       "audit:view",
+      "alerts:manage",
     ],
     isSystem: true,
   },
