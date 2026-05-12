@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { SYSTEM_ROLES, type Permission } from "@/lib/rbac";
 import { Check, X } from "lucide-react";
+import { requirePermission } from "@/lib/auth";
 
 const permissionGroups: { label: string; permissions: Permission[] }[] = [
   { label: "Dashboard", permissions: ["dashboard:view"] },
@@ -37,6 +38,7 @@ const permissionGroups: { label: string; permissions: Permission[] }[] = [
 ];
 
 export default async function RolesPage() {
+  await requirePermission("users:view");
   return (
     <div className="space-y-6">
       <PageHeader

@@ -1,3 +1,10 @@
+function sanitizeCell(val: string): string {
+  if (/^[=+\-@\t\r]/.test(val)) {
+    return "'" + val;
+  }
+  return val;
+}
+
 export function toCSV<T extends object>(
   data: T[],
   columns: { key: keyof T; label: string }[]
@@ -6,7 +13,7 @@ export function toCSV<T extends object>(
   const rows = data.map((row) =>
     columns
       .map((c) => {
-        const val = String(row[c.key] ?? "");
+        const val = sanitizeCell(String(row[c.key] ?? ""));
         return val.includes(",") || val.includes('"')
           ? `"${val.replace(/"/g, '""')}"`
           : val;

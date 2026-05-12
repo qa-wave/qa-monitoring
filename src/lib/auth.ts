@@ -2,6 +2,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { findUserByEmail, findUserById, verifyPassword } from "@/lib/users/store";
+import { getPermissionsForRole, hasPermission, type Permission } from "@/lib/rbac";
 import type { User } from "@/lib/types";
 
 const COOKIE = "qa_session";
@@ -88,6 +89,15 @@ export async function requireUser(): Promise<User> {
 export async function requireAdmin(): Promise<User> {
   const user = await requireUser();
   if (user.role !== "admin") redirect("/");
+  return user;
+}
+
+export async function requirePermission(permission: Permission): Promise<User> {
+  const user = await requireUser();
+  const permissions = getPermissionsForRole(user.role);
+  if (!hasPermission(permissions, permission)) {
+    redirect("/");
+  }
   return user;
 }
 

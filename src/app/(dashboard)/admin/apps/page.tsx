@@ -4,8 +4,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { applications } from "@/data/applications";
 import { getT } from "@/lib/i18n/server";
+import { requirePermission } from "@/lib/auth";
 
 export default async function AdminAppsPage() {
+  await requirePermission("integrations:view");
   const { t } = await getT();
   return (
     <div className="space-y-6">

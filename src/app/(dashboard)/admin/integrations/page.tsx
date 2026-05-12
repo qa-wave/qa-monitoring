@@ -30,6 +30,7 @@ import {
 import { DeleteIntegrationButton } from "./DeleteIntegrationButton";
 import { TestIntegrationButton } from "./TestIntegrationButton";
 import { getT } from "@/lib/i18n/server";
+import { requirePermission } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -46,6 +47,7 @@ const stageIcon: Record<SdlcStage, React.ElementType> = {
 };
 
 export default async function IntegrationsPage() {
+  await requirePermission("integrations:view");
   const { t } = await getT();
   const defs = listProviderDefinitions();
   const configs = await listIntegrations();
