@@ -47,7 +47,7 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
             )}
           >
             <Icon className="h-5 w-5" />
-            {navLabels[it.labelKey]}
+            {navLabels[it.labelKey] ?? it.labelKey}
           </Link>
         );
       })}
@@ -60,7 +60,7 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
             )}
           >
             <MoreHorizontal className="h-5 w-5" />
-            {navLabels.more}
+            {navLabels.more ?? "Více"}
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48 mb-2">
@@ -74,7 +74,7 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
                   className={cn("flex items-center gap-2 cursor-pointer", active && "bg-accent")}
                 >
                   <Icon className="h-4 w-4" />
-                  {navLabels[it.labelKey]}
+                  {navLabels[it.labelKey] ?? it.labelKey}
                 </Link>
               </DropdownMenuItem>
             );

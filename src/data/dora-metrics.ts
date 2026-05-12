@@ -27,11 +27,12 @@ export function computeDoraMetrics(
   deployments?: DeploymentRecord[] | null,
   incidents?: IncidentRecord[] | null,
 ): DoraMetrics {
-  // When explicitly passed empty arrays, return safe zero defaults.
-  const hasDeployments = deployments === undefined || (Array.isArray(deployments) && deployments.length > 0);
-  const hasIncidents = incidents === undefined || (Array.isArray(incidents) && incidents.length > 0);
+  // undefined = use fixture defaults (normal call from dashboard)
+  // explicit empty [] or null = no data available → return safe zeros
+  const deploymentsEmpty = deployments !== undefined && (!deployments || deployments.length === 0);
+  const incidentsEmpty = incidents !== undefined && (!incidents || incidents.length === 0);
 
-  if (!hasDeployments && !hasIncidents) {
+  if (deploymentsEmpty && incidentsEmpty) {
     return EMPTY_METRICS;
   }
 

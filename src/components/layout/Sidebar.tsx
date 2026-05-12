@@ -85,7 +85,7 @@ export function Sidebar({ role, brand, navLabels }: { role: UserRole; brand: Bra
                     )}
                   >
                     <Icon className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{navLabels[it.labelKey]}</span>
+                    <span className="truncate">{navLabels[it.labelKey] ?? it.labelKey}</span>
                   </Link>
                 </li>
               );
