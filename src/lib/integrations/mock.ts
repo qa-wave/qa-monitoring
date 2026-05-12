@@ -111,15 +111,6 @@ const mockSpecs: MockSpec[] = [
     capabilities: ["fetchHealth", "testConnection"],
   },
   {
-    key: "pagerduty",
-    kind: "incidents",
-    label: "PagerDuty",
-    labelCs: "PagerDuty (incidenty)",
-    description: "Aktivní incidenty, on-call a MTTR.",
-    docsUrl: "https://developer.pagerduty.com/api-reference/",
-    capabilities: ["fetchIncidents", "testConnection"],
-  },
-  {
     key: "jira",
     kind: "tickets",
     label: "Jira",

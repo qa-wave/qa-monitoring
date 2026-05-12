@@ -3,6 +3,7 @@ import { Header } from "./Header";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { CommandPalette } from "./CommandPalette";
 import { KeyboardShortcuts } from "./KeyboardShortcuts";
+import { OnboardingWizard } from "./OnboardingWizard";
 import { ToastProvider } from "@/components/ui/toast";
 import type { PersonaKey, UserRole } from "@/lib/types";
 import type { StyleKey } from "@/lib/branding/types";
@@ -29,6 +30,7 @@ export function AppShell({
         </div>
         <CommandPalette role={user.role} />
         <KeyboardShortcuts />
+        {user.role === "admin" && <OnboardingWizard />}
       </div>
     </ToastProvider>
   );

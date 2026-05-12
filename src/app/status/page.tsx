@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Activity, AlertTriangle, CalendarClock, CheckCircle2, Clock, Rss, ShieldCheck } from "lucide-react";
+import { SubscribeForm } from "./SubscribeForm";
 import { StatusDot } from "@/components/ui/status-dot";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatRelativeTime } from "@/lib/utils";
@@ -230,6 +231,8 @@ export default async function PublicStatusPage() {
           </ul>
         </section>
       ) : null}
+
+      <SubscribeForm />
 
       <footer className="mt-auto flex flex-col items-center gap-2 border-t border-border pt-6 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5 font-medium">
