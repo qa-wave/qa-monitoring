@@ -93,7 +93,7 @@ export default async function IncidentDetailPage({
 
       {incident.postmortemUrl ? (
         <p className="text-sm">
-          <Link href={incident.postmortemUrl} className="underline hover:text-foreground">
+          <Link href={incident.postmortemUrl} target="_blank" rel="noreferrer" className="underline hover:text-foreground">
             Postmortem dokument →
           </Link>
         </p>

@@ -6,13 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { environments } from "@/data/environments";
 import { applications } from "@/data/applications";
 import { healthChecks } from "@/data/health-checks";
+import { getT } from "@/lib/i18n/server";
 
-export default function EnvironmentsPage() {
+export default async function EnvironmentsPage() {
+  const { t } = await getT();
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Prostředí"
-        description="Všechna vývojová prostředí a jejich souhrnný stav."
+        title={t.pages.environments.title}
+        description={t.pages.environments.description}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {environments.map((env) => {

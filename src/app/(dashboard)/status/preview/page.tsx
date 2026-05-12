@@ -5,16 +5,18 @@ import { formatDateTime } from "@/lib/utils";
 import { publicStatusData } from "@/lib/dashboard-data";
 import { incidents } from "@/data/incidents";
 import { plannedMaintenance } from "@/data/maintenance";
+import { getT } from "@/lib/i18n/server";
 
-export default function StatusPreviewPage() {
+export default async function StatusPreviewPage() {
+  const { t } = await getT();
   const publicData = publicStatusData();
   const privateIncidents = incidents.filter((i) => !i.isPublic);
   const privateMaintenance = plannedMaintenance.filter((m) => !m.isPublic);
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Náhled status stránky"
-        description="Jak veřejný status aktuálně vypadá a co je interní jen pro tým."
+        title={t.pages.statusPreview.title}
+        description={t.pages.statusPreview.description}
         actions={
           <a
             href="/status"

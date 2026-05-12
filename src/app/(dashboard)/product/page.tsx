@@ -6,8 +6,10 @@ import { Badge } from "@/components/ui/badge";
 import { Users, TrendingUp, ThumbsUp, Clock, ArrowUp, ArrowDown, Minus } from "lucide-react";
 import { weeklyMetrics, featureAdoption, conversionFunnel } from "@/data/product-analytics";
 import { formatNumber } from "@/lib/utils";
+import { getT } from "@/lib/i18n/server";
 
-export default function ProductPage() {
+export default async function ProductPage() {
+  const { t } = await getT();
   const latest = weeklyMetrics[weeklyMetrics.length - 1];
   const prev = weeklyMetrics.length > 1 ? weeklyMetrics[weeklyMetrics.length - 2] : latest;
 
@@ -26,8 +28,8 @@ export default function ProductPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Produkt"
-        description="KPI a produktové metriky — DAU, retence, NPS, adopce funkcí a konverzní funnel."
+        title={t.pages.product.title}
+        description={t.pages.product.description}
       />
 
       {/* KPI cards */}

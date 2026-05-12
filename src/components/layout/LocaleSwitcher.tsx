@@ -37,7 +37,7 @@ export function LocaleSwitcher({ current }: { current: Locale }) {
             current === "cs" && "bg-accent",
           )}
         >
-          CZ Cestina
+          CZ Čeština
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => switchLocale("en")}

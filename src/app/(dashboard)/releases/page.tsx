@@ -5,8 +5,10 @@ import { ReleaseListItem } from "@/components/dashboard/ReleaseListItem";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { releases } from "@/data/releases";
+import { getT } from "@/lib/i18n/server";
 
-export default function ReleasesPage() {
+export default async function ReleasesPage() {
+  const { t } = await getT();
   const total = releases.length;
   const successful = releases.filter((r) => r.status === "released").length;
   const rolledBack = releases.filter((r) => r.status === "rolled_back").length;
@@ -14,8 +16,8 @@ export default function ReleasesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Releasy"
-        description="Časová osa releasů s propojenými PR a ticketami."
+        title={t.pages.releases.title}
+        description={t.pages.releases.description}
       />
       <section className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <KpiCard

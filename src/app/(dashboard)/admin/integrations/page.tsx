@@ -29,6 +29,7 @@ import {
 } from "@/lib/integrations/types";
 import { DeleteIntegrationButton } from "./DeleteIntegrationButton";
 import { TestIntegrationButton } from "./TestIntegrationButton";
+import { getT } from "@/lib/i18n/server";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +46,7 @@ const stageIcon: Record<SdlcStage, React.ElementType> = {
 };
 
 export default async function IntegrationsPage() {
+  const { t } = await getT();
   const defs = listProviderDefinitions();
   const configs = await listIntegrations();
   const defByKey = new Map(defs.map((d) => [d.key, d]));
@@ -68,8 +70,8 @@ export default async function IntegrationsPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Integrace"
-        description="Napoj externí služby (GitHub, Sentry, Vercel, …) a jejich data se zobrazí napříč celou aplikací."
+        title={t.pages.integrations.title}
+        description={t.pages.integrations.description}
         actions={
           <Button asChild>
             <Link href="/admin/integrations/new">

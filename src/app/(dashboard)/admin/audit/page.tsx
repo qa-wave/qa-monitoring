@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { auditLog } from "@/data/audit-log";
 import { formatRelativeTime, formatDateTime } from "@/lib/utils";
+import { getT } from "@/lib/i18n/server";
 
 const actionLabels: Record<string, string> = {
   deploy: "Deploy",
@@ -18,12 +19,13 @@ const actionVariant: Record<string, "default" | "danger" | "warning" | "info" | 
   "maintenance.schedule": "warning",
 };
 
-export default function AuditLogPage() {
+export default async function AuditLogPage() {
+  const { t } = await getT();
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Audit log"
-        description="Přehled akcí provedených v systému."
+        title={t.pages.audit.title}
+        description={t.pages.audit.description}
       />
 
       <Card>

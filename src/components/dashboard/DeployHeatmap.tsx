@@ -12,6 +12,7 @@ import type { Deployment } from "@/lib/types";
 
 interface DeployHeatmapProps {
   deployments: Deployment[];
+  locale?: "cs" | "en";
 }
 
 /** Simple deterministic PRNG seeded from a string (same approach as generateHistoryBar). */
@@ -33,7 +34,8 @@ interface DayData {
 
 const WEEKS = 12;
 const DAYS = WEEKS * 7;
-const DAY_LABELS = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+const DAY_LABELS_CS = ["Po", "Út", "St", "Čt", "Pá", "So", "Ne"];
+const DAY_LABELS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 function generateSyntheticData(): DayData[] {
   const rng = seededRng("deploy-heatmap-2026");
@@ -94,7 +96,8 @@ function tooltipText(day: DayData): string {
   return parts.join(" ");
 }
 
-export function DeployHeatmap({ deployments: _deployments }: DeployHeatmapProps) {
+export function DeployHeatmap({ deployments: _deployments, locale = "cs" }: DeployHeatmapProps) {
+  const DAY_LABELS = locale === "en" ? DAY_LABELS_EN : DAY_LABELS_CS;
   // We use synthetic data since fixtures only have ~8 deploys
   // In production this would aggregate _deployments by day
   const days = useMemo(() => generateSyntheticData(), []);

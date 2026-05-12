@@ -6,13 +6,15 @@ import { Badge } from "@/components/ui/badge";
 import { applications } from "@/data/applications";
 import { environments } from "@/data/environments";
 import { healthChecks } from "@/data/health-checks";
+import { getT } from "@/lib/i18n/server";
 
-export default function ApplicationsPage() {
+export default async function ApplicationsPage() {
+  const { t } = await getT();
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Aplikace"
-        description="Všechny sledované aplikace napříč prostředími."
+        title={t.pages.applications.title}
+        description={t.pages.applications.description}
       />
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
         {applications.map((app) => {

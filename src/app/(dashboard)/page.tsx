@@ -52,7 +52,7 @@ export default async function OverviewPage({
             value={formatPercent(data.uptime, 2)}
             status={data.uptime > 99.9 ? "ok" : data.uptime > 99 ? "warn" : "down"}
             delta={{ value: "+0,02 %", direction: "up", positive: true }}
-            hint="vůči minulému týdnu"
+            hint={t.kpi.vsLastWeek}
             icon={Activity}
           />
           <KpiCard
@@ -61,7 +61,7 @@ export default async function OverviewPage({
             unit="ms"
             status={data.p95 < 400 ? "ok" : data.p95 < 600 ? "warn" : "down"}
             delta={{ value: "-12 ms", direction: "down", positive: true }}
-            hint="proti 24 h"
+            hint={t.kpi.vs24h}
             icon={Activity}
           />
           <KpiCard
@@ -69,7 +69,7 @@ export default async function OverviewPage({
             value={formatPercent(data.errorRate, 2)}
             status={data.errorRate < 0.5 ? "ok" : data.errorRate < 1 ? "warn" : "down"}
             delta={{ value: `+${data.errorCount}`, direction: "up", positive: false }}
-            hint="unikátních události"
+            hint={t.kpi.uniqueEvents}
             icon={Bug}
           />
           <KpiCard
@@ -77,7 +77,7 @@ export default async function OverviewPage({
             value={String(data.deploysToday)}
             status="info"
             delta={{ value: "+6", direction: "up", positive: true }}
-            hint="napříč všemi prostředími"
+            hint={t.kpi.acrossEnvs}
             icon={Rocket}
           />
         </section>
@@ -94,7 +94,7 @@ export default async function OverviewPage({
       {widgets.has("dora") ? <DoraCard data={computeDoraMetrics()} /> : null}
 
       {widgets.has("deploys") || widgets.has("dora") ? (
-        <DeployHeatmap deployments={deployments} />
+        <DeployHeatmap deployments={deployments} locale={locale} />
       ) : null}
 
       {widgets.has("matrix") ? <ServiceMap /> : null}
@@ -173,7 +173,7 @@ export default async function OverviewPage({
             <CardHeader className="flex-row items-center justify-between">
               <div>
                 <CardTitle>{t.dashboard.testsInProd}</CardTitle>
-                <p className="text-xs text-muted-foreground">Pass rate (7 dní)</p>
+                <p className="text-xs text-muted-foreground">{t.kpi.passRate7d}</p>
               </div>
               <div className="flex items-center gap-3">
                 <Link href="/tests" className="text-xs font-medium text-muted-foreground hover:text-foreground">
@@ -239,7 +239,7 @@ export default async function OverviewPage({
                       <span className="font-mono text-xs tabular-nums text-muted-foreground">
                         {formatNumber(err.count24h)}×
                       </span>
-                      <span className="text-xs text-muted-foreground">{err.usersAffected} uživatelů</span>
+                      <span className="text-xs text-muted-foreground">{err.usersAffected} {t.kpi.users}</span>
                     </li>
                   ))}
                 </ul>

@@ -2,12 +2,13 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, Bug, FlaskConical, TrendingDown } from "lucide-react";
+import { ShieldCheck, Bug, FlaskConical, CheckCircle } from "lucide-react";
 import { securityVulnerabilities } from "@/data/security-vulnerabilities";
 import { testRuns } from "@/data/test-runs";
 import { applications } from "@/data/applications";
 import { formatRelativeTime } from "@/lib/utils";
 import { ExportVulnerabilities } from "./ExportButton";
+import { getT } from "@/lib/i18n/server";
 
 const severityOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 const severityVariant: Record<string, "danger" | "warning" | "info" | "outline"> = {
@@ -17,7 +18,8 @@ const severityVariant: Record<string, "danger" | "warning" | "info" | "outline">
   low: "outline",
 };
 
-export default function QualityPage() {
+export default async function QualityPage() {
+  const { t } = await getT();
   const appMap = new Map(applications.map((a) => [a.id, a.name]));
   const sorted = [...securityVulnerabilities].sort(
     (a, b) => (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9)
@@ -55,8 +57,8 @@ export default function QualityPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Kvalita & bezpečnost"
-        description="Bezpečnostní zranitelnosti, pokrytí kódu, stabilita testů a pass rate napříč aplikacemi."
+        title={t.pages.quality.title}
+        description={t.pages.quality.description}
         actions={<ExportVulnerabilities data={securityVulnerabilities} />}
       />
 
@@ -87,7 +89,7 @@ export default function QualityPage() {
           label="Pass rate"
           value={`${passRate.toFixed(1).replace(".", ",")} %`}
           status={passRate >= 98 ? "ok" : passRate >= 95 ? "warn" : "down"}
-          icon={TrendingDown}
+          icon={CheckCircle}
           hint="všechny test suites"
         />
       </section>

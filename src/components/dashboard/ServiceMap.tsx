@@ -119,7 +119,7 @@ export function ServiceMap() {
             textAnchor="middle"
             className="fill-foreground text-[13px] font-bold"
           >
-            Zorn&#237;k
+            Zorník
           </text>
         </svg>
       </div>

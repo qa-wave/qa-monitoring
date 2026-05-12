@@ -3,13 +3,15 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { applications } from "@/data/applications";
+import { getT } from "@/lib/i18n/server";
 
-export default function AdminAppsPage() {
+export default async function AdminAppsPage() {
+  const { t } = await getT();
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Aplikace"
-        description="Správa seznamu aplikací (v MVP jen pro čtení — zdrojem je src/data/applications.ts)."
+        title={t.pages.adminApps.title}
+        description={t.pages.adminApps.description}
       />
       <div className="flex items-center gap-2 rounded-md border border-border bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
         <Info className="h-4 w-4 shrink-0" />

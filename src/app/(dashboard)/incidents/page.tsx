@@ -4,13 +4,15 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { formatDateTime, formatDuration, formatRelativeTime } from "@/lib/utils";
 import { incidents } from "@/data/incidents";
+import { getT } from "@/lib/i18n/server";
 
-export default function IncidentsPage() {
+export default async function IncidentsPage() {
+  const { t } = await getT();
   const active = incidents.filter((i) => i.status !== "resolved");
   const resolved = incidents.filter((i) => i.status === "resolved");
   return (
     <div className="space-y-6">
-      <PageHeader title="Incidenty" description="Aktivní incidenty a historie." />
+      <PageHeader title={t.pages.incidents.title} description={t.pages.incidents.description} />
       <Card>
         <CardHeader className="flex-row items-center justify-between">
           <CardTitle>Aktivní incidenty</CardTitle>

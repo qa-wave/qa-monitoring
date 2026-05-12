@@ -23,31 +23,31 @@ interface Step {
 
 const steps: Step[] = [
   {
-    title: "Vitejte v Zorniku",
+    title: "Vítejte v Zorníku",
     description:
-      "Zornik sjednocuje signaly z verzovani, CI/CD, testu, releasu, observability a feedbacku do jednoho dashboardu. Projdeme spolu zakladni nastaveni.",
+      "Zorník sjednocuje signály z verzování, CI/CD, testů, releasů, observability a feedbacku do jednoho dashboardu. Projdeme spolu základní nastavení.",
     icon: <Sparkles className="h-8 w-8 text-[hsl(var(--brand-primary))]" />,
   },
   {
     title: "Napojte integrace",
     description:
-      "Pripojte GitHub, Sentry, Vercel, PagerDuty a dalsi nastroje, ktere vas tym pouziva. Data se zacnou stahovat okamzite.",
+      "Připojte GitHub, Sentry, Vercel, PagerDuty a další nástroje, které váš tým používá. Data se začnou stahovat okamžitě.",
     icon: <Cable className="h-8 w-8 text-[hsl(var(--brand-primary))]" />,
     link: { href: "/admin/integrations", label: "Nastavit integrace" },
   },
   {
-    title: "Prizpusobte vzhled",
+    title: "Přizpůsobte vzhled",
     description:
-      "Zvolte barvy a vizualni styl, ktery odpovida vasemu brandu. K dispozici je 5 presetovych stylu.",
+      "Zvolte barvy a vizuální styl, který odpovídá vašemu brandu. K dispozici je 5 presetových stylů.",
     icon: <Palette className="h-8 w-8 text-[hsl(var(--brand-primary))]" />,
     link: { href: "/admin/branding", label: "Nastavit branding" },
   },
   {
-    title: "Pozvete tym",
+    title: "Pozvěte tým",
     description:
-      "Pridejte kolegy jako viewery nebo adminy. Kazdy si muze zvolit svou personu (vyvojar, PM, tester).",
+      "Přidejte kolegy jako viewery nebo adminy. Každý si může zvolit svou personu (vývojář, PM, tester).",
     icon: <Users className="h-8 w-8 text-[hsl(var(--brand-primary))]" />,
-    link: { href: "/admin/users", label: "Spravovat uzivatele" },
+    link: { href: "/admin/users", label: "Spravovat uživatele" },
   },
 ];
 
