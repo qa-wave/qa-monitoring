@@ -44,6 +44,8 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#2162AD" />
         <style id="brand-vars" dangerouslySetInnerHTML={{ __html: cssVars }} />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">

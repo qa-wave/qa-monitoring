@@ -7,6 +7,7 @@ import {
   AlertTriangle,
   BarChart3,
   Boxes,
+  ClipboardList,
   Globe,
   LayoutDashboard,
   Palette,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { UserRole } from "@/lib/types";
+import { Changelog } from "./Changelog";
 
 type BrandHeader = { productName: string; tenantName: string };
 
@@ -45,6 +47,7 @@ const items: NavItem[] = [
   { href: "/admin/users", label: "Uživatelé", icon: Users, adminOnly: true },
   { href: "/admin/environments", label: "Správa prostředí", icon: Server, adminOnly: true },
   { href: "/admin/apps", label: "Správa aplikací", icon: Boxes, adminOnly: true },
+  { href: "/admin/audit", label: "Audit log", icon: ClipboardList, adminOnly: true },
 ];
 
 export function Sidebar({ role, brand }: { role: UserRole; brand: BrandHeader }) {
@@ -86,8 +89,9 @@ export function Sidebar({ role, brand }: { role: UserRole; brand: BrandHeader })
             })}
         </ul>
       </nav>
-      <div className="border-t border-border p-4 text-xs text-muted-foreground">
-        {brand.productName} · pro {brand.tenantName}
+      <div className="border-t border-border p-4 text-xs text-muted-foreground space-y-2">
+        <Changelog />
+        <div>{brand.productName} · pro {brand.tenantName}</div>
       </div>
     </aside>
   );

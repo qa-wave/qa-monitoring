@@ -10,6 +10,7 @@ import { FlagListItem } from "@/components/dashboard/FlagListItem";
 import { Sparkline } from "@/components/dashboard/Sparkline";
 import { DoraCard } from "@/components/dashboard/DoraCard";
 import { DeployHeatmap } from "@/components/dashboard/DeployHeatmap";
+import { ServiceMap } from "@/components/dashboard/ServiceMap";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { StatusDot } from "@/components/ui/status-dot";
@@ -93,6 +94,8 @@ export default async function OverviewPage({
       {widgets.has("deploys") || widgets.has("dora") ? (
         <DeployHeatmap deployments={deployments} />
       ) : null}
+
+      {widgets.has("matrix") ? <ServiceMap /> : null}
 
       <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {widgets.has("releases") ? (

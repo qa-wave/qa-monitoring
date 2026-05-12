@@ -6,6 +6,7 @@ import { UserMenu } from "./UserMenu";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import type { PersonaKey, UserRole } from "@/lib/types";
 import type { StyleKey } from "@/lib/branding/types";
+import { LiveIndicator } from "./LiveIndicator";
 import { activeIncidents } from "@/data/incidents";
 import { environments } from "@/data/environments";
 
@@ -27,6 +28,7 @@ export function Header({
       </div>
       <div className="flex items-center gap-2">
         <ThemeSwitcher current={currentStyle} />
+        <LiveIndicator />
         <Link href="/incidents" className="relative inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-accent" aria-label="Notifikace">
           <Bell className="h-5 w-5" />
           {incidentCount > 0 ? (

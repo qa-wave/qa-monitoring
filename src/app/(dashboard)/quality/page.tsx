@@ -7,6 +7,7 @@ import { securityVulnerabilities } from "@/data/security-vulnerabilities";
 import { testRuns } from "@/data/test-runs";
 import { applications } from "@/data/applications";
 import { formatRelativeTime } from "@/lib/utils";
+import { ExportVulnerabilities } from "./ExportButton";
 
 const severityOrder: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 const severityVariant: Record<string, "danger" | "warning" | "info" | "outline"> = {
@@ -56,6 +57,7 @@ export default function QualityPage() {
       <PageHeader
         title="Kvalita & bezpečnost"
         description="Bezpečnostní zranitelnosti, pokrytí kódu, stabilita testů a pass rate napříč aplikacemi."
+        actions={<ExportVulnerabilities data={securityVulnerabilities} />}
       />
 
       {/* KPI cards */}
