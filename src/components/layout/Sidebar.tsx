@@ -6,6 +6,7 @@ import {
   Activity,
   AlertTriangle,
   BarChart3,
+  BellRing,
   Boxes,
   ClipboardList,
   Globe,
@@ -49,6 +50,7 @@ const items: NavItem[] = [
   { href: "/admin/users", labelKey: "users", icon: Users, adminOnly: true },
   { href: "/admin/environments", labelKey: "envAdmin", icon: Server, adminOnly: true },
   { href: "/admin/apps", labelKey: "appsAdmin", icon: Boxes, adminOnly: true },
+  { href: "/admin/alerts", labelKey: "alerts", icon: BellRing, adminOnly: true },
   { href: "/admin/roles", labelKey: "roles", icon: Shield, adminOnly: true },
   { href: "/admin/audit", labelKey: "audit", icon: ClipboardList, adminOnly: true },
 ];

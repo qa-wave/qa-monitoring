@@ -22,6 +22,7 @@ import { getSessionUser } from "@/lib/auth";
 import { applications } from "@/data/applications";
 import { deployments } from "@/data/deployments";
 import { getT } from "@/lib/i18n/server";
+import { DashboardLayout } from "./DashboardLayout";
 
 export default async function OverviewPage({
   searchParams,
@@ -36,70 +37,79 @@ export default async function OverviewPage({
   const appMap = new Map(applications.map((a) => [a.id, a]));
   const { t, locale } = await getT();
 
-  return (
-    <div className="space-y-6">
-      <PageHeader
-        title={t.dashboard.title}
-        description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]} · Data k ${new Date().toLocaleDateString(locale === "en" ? "en-GB" : "cs-CZ")}`}
-      />
+  // Collect visible widget sections for DashboardGrid reordering
+  const sections: React.ReactNode[] = [];
 
-      {data.activePrimaryIncident ? <IncidentBanner incident={data.activePrimaryIncident} /> : null}
+  if (data.activePrimaryIncident) {
+    sections.push(<IncidentBanner key="incident-banner" incident={data.activePrimaryIncident} />);
+  }
 
-      {widgets.has("kpis") ? (
-        <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          <KpiCard
-            label={t.dashboard.uptime}
-            value={formatPercent(data.uptime, 2)}
-            status={data.uptime > 99.9 ? "ok" : data.uptime > 99 ? "warn" : "down"}
-            delta={{ value: "+0,02 %", direction: "up", positive: true }}
-            hint={t.kpi.vsLastWeek}
-            icon={Activity}
-          />
-          <KpiCard
-            label={t.dashboard.latency}
-            value={formatNumber(data.p95)}
-            unit="ms"
-            status={data.p95 < 400 ? "ok" : data.p95 < 600 ? "warn" : "down"}
-            delta={{ value: "-12 ms", direction: "down", positive: true }}
-            hint={t.kpi.vs24h}
-            icon={Activity}
-          />
-          <KpiCard
-            label={t.dashboard.errors24h}
-            value={formatPercent(data.errorRate, 2)}
-            status={data.errorRate < 0.5 ? "ok" : data.errorRate < 1 ? "warn" : "down"}
-            delta={{ value: `+${data.errorCount}`, direction: "up", positive: false }}
-            hint={t.kpi.uniqueEvents}
-            icon={Bug}
-          />
-          <KpiCard
-            label={t.dashboard.deploysToday}
-            value={String(data.deploysToday)}
-            status="info"
-            delta={{ value: "+6", direction: "up", positive: true }}
-            hint={t.kpi.acrossEnvs}
-            icon={Rocket}
-          />
-        </section>
-      ) : null}
-
-      {widgets.has("matrix") ? (
-        <StatusMatrix
-          applications={data.applications}
-          environments={data.allEnvironments}
-          healthChecks={data.healthChecks}
+  if (widgets.has("kpis")) {
+    sections.push(
+      <section key="kpis" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <KpiCard
+          label={t.dashboard.uptime}
+          value={formatPercent(data.uptime, 2)}
+          status={data.uptime > 99.9 ? "ok" : data.uptime > 99 ? "warn" : "down"}
+          delta={{ value: "+0,02 %", direction: "up", positive: true }}
+          hint={t.kpi.vsLastWeek}
+          icon={Activity}
         />
-      ) : null}
+        <KpiCard
+          label={t.dashboard.latency}
+          value={formatNumber(data.p95)}
+          unit="ms"
+          status={data.p95 < 400 ? "ok" : data.p95 < 600 ? "warn" : "down"}
+          delta={{ value: "-12 ms", direction: "down", positive: true }}
+          hint={t.kpi.vs24h}
+          icon={Activity}
+        />
+        <KpiCard
+          label={t.dashboard.errors24h}
+          value={formatPercent(data.errorRate, 2)}
+          status={data.errorRate < 0.5 ? "ok" : data.errorRate < 1 ? "warn" : "down"}
+          delta={{ value: `+${data.errorCount}`, direction: "up", positive: false }}
+          hint={t.kpi.uniqueEvents}
+          icon={Bug}
+        />
+        <KpiCard
+          label={t.dashboard.deploysToday}
+          value={String(data.deploysToday)}
+          status="info"
+          delta={{ value: "+6", direction: "up", positive: true }}
+          hint={t.kpi.acrossEnvs}
+          icon={Rocket}
+        />
+      </section>
+    );
+  }
 
-      {widgets.has("dora") ? <DoraCard data={computeDoraMetrics()} /> : null}
+  if (widgets.has("matrix")) {
+    sections.push(
+      <StatusMatrix
+        key="matrix"
+        applications={data.applications}
+        environments={data.allEnvironments}
+        healthChecks={data.healthChecks}
+      />
+    );
+  }
 
-      {widgets.has("deploys") || widgets.has("dora") ? (
-        <DeployHeatmap deployments={deployments} locale={locale} />
-      ) : null}
+  if (widgets.has("dora")) {
+    sections.push(<DoraCard key="dora" data={computeDoraMetrics()} />);
+  }
 
-      {widgets.has("matrix") ? <ServiceMap /> : null}
+  if (widgets.has("deploys") || widgets.has("dora")) {
+    sections.push(<DeployHeatmap key="heatmap" deployments={deployments} locale={locale} />);
+  }
 
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+  if (widgets.has("matrix")) {
+    sections.push(<ServiceMap key="service-map" />);
+  }
+
+  if (widgets.has("releases") || widgets.has("incidents")) {
+    sections.push(
+      <section key="releases-incidents" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {widgets.has("releases") ? (
           <Card>
             <CardHeader className="flex-row items-center justify-between">
@@ -166,8 +176,12 @@ export default async function OverviewPage({
           </Card>
         ) : null}
       </section>
+    );
+  }
 
-      <section className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+  if (widgets.has("tests") || widgets.has("flags") || widgets.has("errors")) {
+    sections.push(
+      <section key="tests-flags-errors" className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         {widgets.has("tests") ? (
           <Card>
             <CardHeader className="flex-row items-center justify-between">
@@ -248,6 +262,17 @@ export default async function OverviewPage({
           </Card>
         ) : null}
       </section>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <PageHeader
+        title={t.dashboard.title}
+        description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]} · Data k ${new Date().toLocaleDateString(locale === "en" ? "en-GB" : "cs-CZ")}`}
+      />
+
+      <DashboardLayout>{sections}</DashboardLayout>
     </div>
   );
 }

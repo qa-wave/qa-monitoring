@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Bell } from "lucide-react";
 import { PersonaFilter } from "./PersonaFilter";
 import { EnvFilter } from "./EnvFilter";
+import { SavedViews } from "./SavedViews";
 import { UserMenu } from "./UserMenu";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { LocaleSwitcher } from "./LocaleSwitcher";
@@ -29,6 +30,7 @@ export function Header({
       <div className="flex flex-1 items-center gap-3">
         <EnvFilter environments={environments.map((e) => ({ slug: e.slug, name: e.name }))} />
         <PersonaFilter defaultPersona={defaultPersona} />
+        <SavedViews />
       </div>
       <div className="flex items-center gap-2">
         <LocaleSwitcher current={locale} />
