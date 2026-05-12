@@ -81,7 +81,43 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
   }
 
   return (
-    <form className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]" onSubmit={handleSubmit}>
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      {/* Style picker — compact horizontal strip, always visible */}
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle>Vizuální styl</CardTitle>
+          <p className="text-xs text-muted-foreground">
+            Klikni pro okamžitý náhled. Uložení aplikuje styl permanentně.
+          </p>
+        </CardHeader>
+        <CardContent className="pt-0">
+          <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1 scrollbar-thin">
+            {STYLE_KEYS.map((key) => {
+              const preset = STYLE_PRESETS[key];
+              const selected = style === key;
+              return (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => setStyle(key)}
+                  className={cn(
+                    "group relative flex flex-col items-center gap-1.5 rounded-lg border p-2 text-center transition-all shrink-0 w-[100px]",
+                    selected
+                      ? "border-[hsl(var(--brand-primary))] bg-[hsl(var(--brand-primary)/0.08)] ring-2 ring-[hsl(var(--brand-primary)/0.3)]"
+                      : "border-border hover:border-accent hover:bg-accent/40"
+                  )}
+                >
+                  <StyleSwatch styleKey={key} previewStyle={previewStyle} />
+                  <span className="text-xs font-semibold leading-tight">{preset.label}</span>
+                  {selected && <Check className="absolute top-1 right-1 h-3.5 w-3.5 text-[hsl(var(--brand-primary))]" />}
+                </button>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1fr]">
       {/* Levý sloupec: form */}
       <div className="space-y-6">
         <Card>
@@ -148,41 +184,6 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Vizuální styl</CardTitle>
-            <p className="text-xs text-muted-foreground">
-              Přepíná globální vzhled karet a pozadí. Změnu uvidíš okamžitě po uložení.
-            </p>
-          </CardHeader>
-          <CardContent className="grid grid-cols-1 gap-2 pt-0 sm:grid-cols-2">
-            {STYLE_KEYS.map((key) => {
-              const preset = STYLE_PRESETS[key];
-              const selected = style === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => setStyle(key)}
-                  className={cn(
-                    "group relative flex flex-col items-start gap-2 rounded-md border p-3 text-left transition-colors",
-                    selected
-                      ? "border-[hsl(var(--brand-primary))] bg-[hsl(var(--brand-primary)/0.08)]"
-                      : "border-border hover:border-accent hover:bg-accent/40"
-                  )}
-                >
-                  <StyleSwatch styleKey={key} previewStyle={previewStyle} />
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-semibold">{preset.label}</span>
-                    {selected ? <Check className="h-3.5 w-3.5 text-[hsl(var(--brand-primary))]" /> : null}
-                  </div>
-                  <p className="text-xs text-muted-foreground">{preset.tagline}</p>
-                </button>
-              );
-            })}
-          </CardContent>
-        </Card>
-
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Button type="button" variant="outline" onClick={reset} disabled={pending}>
             <RefreshCw className="h-4 w-4" />
@@ -231,6 +232,7 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
             </p>
           </CardContent>
         </Card>
+      </div>
       </div>
     </form>
   );

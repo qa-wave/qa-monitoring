@@ -12,7 +12,7 @@ export async function GET() {
 export async function PUT(req: Request) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "Nepřihlášený" }, { status: 401 });
-  if (user.role !== "admin") {
+  if (user.role !== "admin" && user.role !== "operator") {
     return NextResponse.json({ error: "K této akci nemáš oprávnění." }, { status: 403 });
   }
   const raw = await req.json().catch(() => null);
@@ -23,6 +23,11 @@ export async function PUT(req: Request) {
       { status: 400 }
     );
   }
-  const saved = await saveBrandSettings(parsed.data as Parameters<typeof saveBrandSettings>[0]);
-  return NextResponse.json(saved);
+  try {
+    const saved = await saveBrandSettings(parsed.data as Parameters<typeof saveBrandSettings>[0]);
+    return NextResponse.json(saved);
+  } catch (err) {
+    console.error("[api/branding] Save failed:", err);
+    return NextResponse.json({ error: String((err as Error).message) }, { status: 500 });
+  }
 }
