@@ -35,7 +35,14 @@ interface KpiCardProps extends VariantProps<typeof kpiVariants> {
 export function KpiCard({ label, value, unit, delta, hint, icon: Icon, status, className }: KpiCardProps) {
   const effectiveStatus: StatusKind = (status as StatusKind | null | undefined) ?? "muted";
   return (
-    <Card className={cn(kpiVariants({ status }), "relative overflow-hidden", className)}>
+    <Card
+      className={cn(kpiVariants({ status }), "relative overflow-hidden", className)}
+      style={effectiveStatus !== "muted" ? {
+        borderTopWidth: 2,
+        borderTopColor: "transparent",
+        borderImage: `linear-gradient(90deg, hsl(var(--status-${effectiveStatus})), transparent) 1`,
+      } : undefined}
+    >
       <CardContent className="p-5">
         <div className="flex items-center justify-between gap-2 text-xs font-medium uppercase tracking-wide text-muted-foreground">
           <span className="inline-flex items-center gap-2">

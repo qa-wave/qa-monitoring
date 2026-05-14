@@ -167,8 +167,12 @@
   --ring: 0 0% 50%; --radius: 2px; color-scheme: dark;
   --status-ok: 0 0% 60%; --status-warn: 40 50% 55%; --status-down: 0 60% 50%; --status-info: 0 0% 55%;
 }
-.theme-vercel [data-ui="card"] { border: none; border-bottom: 1px solid hsl(0 0% 10%); box-shadow: none; border-radius: 0; }
-.theme-vercel [data-ui="card"]:hover { background: hsl(0 0% 5%); }
+.theme-vercel body {
+  background: linear-gradient(180deg, hsl(0 0% 0%) 0%, hsl(240 5% 3%) 100%);
+  background-attachment: fixed;
+}
+.theme-vercel [data-ui="card"] { border: none; border-bottom: 1px solid hsl(0 0% 12%); box-shadow: 0 1px 0 hsl(0 0% 6%); border-radius: 0; }
+.theme-vercel [data-ui="card"]:hover { background: hsl(0 0% 4%); box-shadow: 0 1px 0 hsl(0 0% 8%); }
 .theme-vercel aside { background: #000; border-color: hsl(0 0% 8%); }
 .theme-vercel nav a[class*="bg-accent"] { background: transparent !important; border-left: 2px solid hsl(0 0% 85%); border-bottom: none; border-radius: 0; padding-left: calc(0.75rem - 2px); font-weight: 300; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.7rem; }
 .theme-vercel header[class*="border-b"] { background: #000; border-color: hsl(0 0% 8%); }
@@ -187,7 +191,13 @@
   --ring: 265 80% 62%; --radius: 6px; color-scheme: dark;
   --status-ok: 142 60% 48%; --status-warn: 38 90% 55%; --status-down: 0 70% 55%; --status-info: 265 80% 62%;
 }
-.theme-linear body { background-image: radial-gradient(at 0% 0%, hsl(265 60% 20% / 0.15) 0, transparent 50%); background-color: hsl(260 15% 5%); background-attachment: fixed; }
+.theme-linear body {
+  background-image:
+    radial-gradient(ellipse at 15% 5%, hsl(270 50% 15% / 0.25) 0, transparent 50%),
+    radial-gradient(ellipse at 85% 80%, hsl(230 50% 12% / 0.2) 0, transparent 50%);
+  background-color: hsl(260 15% 5%);
+  background-attachment: fixed;
+}
 .theme-linear [data-ui="card"] { border-color: hsl(260 12% 15%); box-shadow: 0 0 0 1px hsl(260 12% 15%), 0 2px 8px hsl(0 0% 0% / 0.3); }
 .theme-linear [data-ui="card"]:hover { transform: translateY(-1px); border-color: hsl(265 80% 55% / 0.3); box-shadow: 0 0 0 1px hsl(265 80% 55% / 0.2), 0 4px 16px hsl(0 0% 0% / 0.4), 0 0 20px hsl(265 80% 55% / 0.05); }
 .theme-linear aside { background: hsl(260 15% 4%); border-color: hsl(260 12% 12%); }
@@ -212,6 +222,14 @@
 .theme-grafana aside { background: hsl(225 25% 4%); border-color: hsl(225 18% 12%); }
 .theme-grafana nav a[class*="bg-accent"] { background: hsl(var(--brand-primary) / 0.15) !important; border-left: 3px solid hsl(var(--brand-primary)); }
 .theme-grafana header[class*="border-b"] { border-color: hsl(225 18% 12%); }
+.theme-grafana body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(0deg, transparent 0px, transparent 3px, hsl(0 0% 0% / 0.03) 3px, hsl(0 0% 0% / 0.03) 4px);
+}
 .theme-grafana .status-dot-ok { box-shadow: 0 0 8px hsl(var(--status-ok) / 0.6), 0 0 16px hsl(var(--status-ok) / 0.2); }
 .theme-grafana .status-dot-warn { box-shadow: 0 0 8px hsl(var(--status-warn) / 0.6); }
 .theme-grafana .status-dot-down { box-shadow: 0 0 10px hsl(var(--status-down) / 0.7), 0 0 20px hsl(var(--status-down) / 0.3); animation: glow-pulse 1.5s ease-in-out infinite; }
@@ -228,11 +246,16 @@
   --status-ok: 160 60% 50%; --status-warn: 40 90% 55%; --status-down: 350 75% 58%; --status-info: 250 70% 65%;
 }
 .theme-railway body {
-  background-image: radial-gradient(at 10% 20%, hsl(280 70% 35% / 0.35) 0, transparent 50%), radial-gradient(at 90% 10%, hsl(210 80% 40% / 0.25) 0, transparent 50%), radial-gradient(at 50% 80%, hsl(330 60% 35% / 0.2) 0, transparent 50%);
-  background-color: hsl(250 30% 8%); background-attachment: fixed;
+  background-image:
+    radial-gradient(at 10% 20%, hsl(280 70% 35% / 0.3) 0, transparent 50%),
+    radial-gradient(at 90% 15%, hsl(210 80% 40% / 0.2) 0, transparent 50%),
+    radial-gradient(at 50% 85%, hsl(330 60% 35% / 0.15) 0, transparent 50%),
+    radial-gradient(at 80% 65%, hsl(170 70% 30% / 0.1) 0, transparent 50%);
+  background-color: hsl(250 30% 8%);
+  background-attachment: fixed;
 }
-.theme-railway [data-ui="card"] { background: hsl(250 20% 15% / 0.55); backdrop-filter: blur(10px) saturate(1.2); -webkit-backdrop-filter: blur(10px) saturate(1.2); border: 1px solid hsl(0 0% 100% / 0.08); box-shadow: 0 8px 32px hsl(0 0% 0% / 0.2), inset 0 1px 0 hsl(0 0% 100% / 0.05); }
-.theme-railway [data-ui="card"]:hover { transform: translateY(-2px); border-color: hsl(0 0% 100% / 0.14); box-shadow: 0 12px 40px hsl(0 0% 0% / 0.3); }
+.theme-railway [data-ui="card"] { background: hsl(250 20% 15% / 0.4); backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4); border: 1px solid hsl(0 0% 100% / 0.1); box-shadow: 0 8px 32px hsl(0 0% 0% / 0.2), inset 0 1px 0 hsl(0 0% 100% / 0.06); border-radius: 16px; }
+.theme-railway [data-ui="card"]:hover { transform: translateY(-2px); border-color: hsl(0 0% 100% / 0.16); box-shadow: 0 12px 40px hsl(0 0% 0% / 0.3), inset 0 1px 0 hsl(0 0% 100% / 0.1); }
 .theme-railway aside { background: hsl(250 30% 8% / 0.6); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-color: hsl(0 0% 100% / 0.06); }
 .theme-railway nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.08) !important; border-radius: 12px; }
 .theme-railway header[class*="border-b"] { background: hsl(250 30% 8% / 0.5); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border-color: hsl(0 0% 100% / 0.06); }
@@ -250,7 +273,7 @@
   --status-ok: 140 40% 35%; --status-warn: 35 70% 45%; --status-down: 0 55% 45%; --status-info: 30 60% 35%;
 }
 .theme-notion [data-ui="card"] { border: 1px solid hsl(30 15% 85%); box-shadow: none; }
-.theme-notion [data-ui="card"]:hover { box-shadow: 0 1px 4px hsl(30 20% 30% / 0.06); }
+.theme-notion [data-ui="card"]:hover { box-shadow: 0 2px 8px hsl(30 20% 30% / 0.08); transform: translateY(-1px); }
 .theme-notion aside { background: hsl(40 25% 97%); border-color: hsl(30 15% 85%); }
 .theme-notion nav a[class*="bg-accent"] { background: hsl(30 60% 35% / 0.06) !important; color: hsl(30 60% 30%) !important; }
 .theme-notion header[class*="border-b"] { background: hsl(40 25% 97%); border-color: hsl(30 15% 85%); }
@@ -273,7 +296,8 @@
 .theme-stripe aside a:hover * { color: white; }
 .theme-stripe nav a[class*="bg-accent"] { background: hsl(0 0% 100% / 0.1) !important; color: white !important; border-left: 3px solid hsl(40 90% 55%); border-radius: 0; }
 .theme-stripe nav a[class*="bg-accent"] * { color: white !important; }
-.theme-stripe header[class*="border-b"] { background: hsl(0 0% 100%); border-color: hsl(220 15% 88%); }
+.theme-stripe header[class*="border-b"] { background: linear-gradient(135deg, hsl(220 55% 22%) 0%, hsl(240 45% 30%) 100%); border-bottom: none; color: white; backdrop-filter: blur(12px); }
+.theme-stripe header[class*="border-b"] * { color: white !important; }
 .theme-stripe tbody tr:nth-child(even) { background: hsl(220 15% 98%); }
 .theme-stripe tbody tr:hover { background: hsl(220 70% 35% / 0.04); box-shadow: inset 3px 0 0 hsl(220 70% 35%); }
 
@@ -306,8 +330,8 @@
   --ring: 0 0% 12%; color-scheme: light;
 }
 .theme-supabase body { background: hsl(var(--brand-primary) / 0.03); }
-.theme-supabase [data-ui="card"] { border-color: hsl(var(--brand-primary) / 0.2); box-shadow: 0 2px 6px hsl(var(--brand-primary) / 0.1); }
-.theme-supabase [data-ui="card"]:hover { box-shadow: 0 2px 10px hsl(var(--brand-primary) / 0.12); border-color: hsl(var(--brand-primary) / 0.25); }
+.theme-supabase [data-ui="card"] { border-color: hsl(var(--brand-primary) / 0.15); box-shadow: 0 2px 8px hsl(var(--brand-primary) / 0.08); }
+.theme-supabase [data-ui="card"]:hover { box-shadow: 0 4px 16px hsl(var(--brand-primary) / 0.12), 0 0 20px hsl(var(--brand-primary) / 0.04); border-color: hsl(var(--brand-primary) / 0.25); }
 .theme-supabase aside { background: hsl(var(--brand-primary) / 0.03); border-color: hsl(var(--brand-primary) / 0.1); }
 .theme-supabase nav a[class*="bg-accent"] { background: hsl(var(--brand-primary) / 0.1) !important; color: hsl(var(--brand-primary)) !important; font-weight: 600; }
 .theme-supabase tbody tr:hover { background: hsl(var(--brand-primary) / 0.04); }
@@ -320,6 +344,11 @@
   --accent: 220 12% 14%; --accent-foreground: 210 15% 85%; --border: 220 12% 18%; --input: 220 12% 18%;
   --ring: 140 60% 45%; --radius: 6px; color-scheme: dark;
   --status-ok: 140 60% 45%; --status-warn: 38 90% 55%; --status-down: 0 70% 55%; --status-info: 210 60% 55%;
+}
+.theme-github body {
+  background-image: radial-gradient(circle, hsl(215 15% 12%) 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-color: hsl(220 14% 7%);
 }
 .theme-github [data-ui="card"] { border: 1px solid hsl(220 12% 18%); box-shadow: none; }
 .theme-github [data-ui="card"]:hover { border-color: hsl(220 12% 25%); }
@@ -339,8 +368,8 @@
   --status-ok: 140 65% 48%; --status-warn: 38 95% 55%; --status-down: 0 75% 55%; --status-info: 270 70% 58%;
 }
 .theme-datadog body { background: hsl(270 20% 5%); }
-.theme-datadog [data-ui="card"] { border: 1px solid hsl(270 15% 16%); box-shadow: 0 2px 6px hsl(0 0% 0% / 0.2); }
-.theme-datadog [data-ui="card"]:hover { border-color: hsl(270 70% 50% / 0.3); box-shadow: 0 4px 12px hsl(0 0% 0% / 0.3); }
+.theme-datadog [data-ui="card"] { border: 1px solid hsl(270 15% 16%); border-top: 2px solid transparent; border-image: linear-gradient(90deg, hsl(270 70% 55%), hsl(320 70% 55%)) 1; box-shadow: 0 2px 6px hsl(0 0% 0% / 0.2); }
+.theme-datadog [data-ui="card"]:hover { border-image: linear-gradient(90deg, hsl(270 80% 60%), hsl(320 80% 60%)) 1; box-shadow: 0 4px 12px hsl(0 0% 0% / 0.3); }
 .theme-datadog aside { background: hsl(270 20% 4%); border-color: hsl(270 15% 12%); }
 .theme-datadog nav a[class*="bg-accent"] { background: hsl(270 70% 55% / 0.12) !important; border-left: 2px solid hsl(270 70% 58%); }
 .theme-datadog header[class*="border-b"] { background: hsl(270 20% 5% / 0.9); border-color: hsl(270 15% 12%); }
@@ -360,7 +389,29 @@
   box-shadow: 0 2px 8px hsl(0 0% 0% / 0.25);
 }
 
-/* ── Table row transitions ───────────────────────────────────── */
+/* ── Global micro-interactions (2026 trends) ────────────────── */
+
+/* Smooth card entrance with stagger */
+[data-ui="card"]:nth-child(1) { animation-delay: 0s; }
+[data-ui="card"]:nth-child(2) { animation-delay: 0.05s; }
+[data-ui="card"]:nth-child(3) { animation-delay: 0.05s; }
+[data-ui="card"]:nth-child(4) { animation-delay: 0.15s; }
+[data-ui="card"]:nth-child(5) { animation-delay: 0.2s; }
+
+/* Interactive rows */
 tbody tr {
-  transition: background-color 0.15s ease;
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
+
+/* Focus rings for keyboard nav */
+a:focus-visible, button:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+  border-radius: var(--radius);
+}
+
+/* Smooth scrollbar for dark themes */
+.dark ::-webkit-scrollbar { width: 6px; height: 6px; }
+.dark ::-webkit-scrollbar-track { background: transparent; }
+.dark ::-webkit-scrollbar-thumb { background: hsl(0 0% 25%); border-radius: 3px; }
+.dark ::-webkit-scrollbar-thumb:hover { background: hsl(0 0% 35%); }
