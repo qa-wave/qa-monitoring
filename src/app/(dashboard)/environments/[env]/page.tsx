@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ExternalLink, Activity } from "lucide-react";
+import { ExternalLink, Activity, CheckCircle2 } from "lucide-react";
+import { EmptyState } from "@/components/dashboard/EmptyState";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { PipelineDiagram } from "@/components/dashboard/PipelineDiagram";
@@ -152,7 +153,7 @@ export default async function EnvironmentDetailPage({
               ariaLabel="p95 latence za posledních 24 hodin"
             />
             {data.errors.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Žádné chyby v tomto prostředí.</p>
+              <EmptyState title="Žádné chyby" description="V tomto prostředí nebyly nalezeny žádné chyby." icon={CheckCircle2} />
             ) : (
               <ul className="divide-y divide-border/60">
                 {data.errors.slice(0, 3).map((err) => (

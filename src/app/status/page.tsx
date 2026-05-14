@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Activity, AlertTriangle, CalendarClock, CheckCircle2, Clock, Rss, ShieldCheck } from "lucide-react";
+import { Activity, AlertTriangle, Bell, CalendarClock, CheckCircle2, Clock, Megaphone, Rss, ShieldCheck } from "lucide-react";
 import { SubscribeForm } from "./SubscribeForm";
 import { StatusDot } from "@/components/ui/status-dot";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +60,13 @@ export default async function PublicStatusPage() {
             <Clock className="h-3 w-3" />
             Poslední kontrola: {formatDateTime(lastCheck)}
           </span>
+          <a
+            href="#subscribe"
+            className="inline-flex items-center gap-1.5 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium text-foreground shadow-sm transition-colors hover:bg-accent"
+          >
+            <Bell className="h-3.5 w-3.5" />
+            Odebírat aktualizace
+          </a>
           <Link href="/login" className="text-xs text-muted-foreground hover:text-foreground">
             Interní přihlášení
           </Link>
@@ -191,21 +198,41 @@ export default async function PublicStatusPage() {
             Aktivní incidenty
           </h2>
           <ul className="space-y-3">
-            {data.activeIncidents.map((inc) => (
-              <li key={inc.id} className="rounded-lg border border-[hsl(var(--status-down)/0.4)] bg-[hsl(var(--status-down)/0.08)] p-4">
-                <div className="flex items-center gap-2">
-                  <Badge variant={inc.severity === "sev1" ? "danger" : "warning"}>{inc.severity.toUpperCase()}</Badge>
-                  <span className="font-medium">{inc.title}</span>
-                </div>
-                <p className="mt-1 text-sm text-muted-foreground">{inc.description}</p>
-                <div className="mt-2 space-y-1 text-xs text-muted-foreground">
-                  <div>Začátek: {formatDateTime(inc.startedAt)} ({formatRelativeTime(inc.startedAt)})</div>
-                  {inc.updates.slice(-1).map((u) => (
-                    <div key={u.at}>Poslední update ({formatRelativeTime(u.at)}): {u.message}</div>
-                  ))}
-                </div>
-              </li>
-            ))}
+            {data.activeIncidents.map((inc) => {
+              const affectedNames = inc.affectedAppIds
+                .map((id) => data.services.find((s) => s.app.id === id)?.app.name)
+                .filter(Boolean);
+              return (
+                <li key={inc.id} className="rounded-lg border border-[hsl(var(--status-down)/0.4)] bg-[hsl(var(--status-down)/0.08)] p-4">
+                  <div className="flex items-center gap-2">
+                    <Badge variant={inc.severity === "sev1" ? "danger" : "warning"}>{inc.severity.toUpperCase()}</Badge>
+                    <span className="font-medium">{inc.title}</span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">{inc.description}</p>
+                  <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
+                    <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--status-down)/0.12)] px-2.5 py-1 font-medium text-[hsl(var(--status-down))]">
+                      <Megaphone className="h-3 w-3" />
+                      {inc.status === "investigating" ? "Vyšetřuje se" : inc.status === "monitoring" ? "Monitoruje se" : "Otevřený"}
+                    </span>
+                    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
+                      <Clock className="h-3 w-3" />
+                      Trvá {formatRelativeTime(inc.startedAt)}
+                    </span>
+                    {affectedNames.length > 0 ? (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2.5 py-1 text-muted-foreground">
+                        Ovlivňuje: {affectedNames.join(", ")}
+                      </span>
+                    ) : null}
+                  </div>
+                  {inc.updates.length > 0 ? (
+                    <div className="mt-3 border-t border-[hsl(var(--status-down)/0.2)] pt-3 text-xs text-muted-foreground">
+                      <div className="font-medium">Poslední update ({formatRelativeTime(inc.updates[inc.updates.length - 1].at)}):</div>
+                      <p className="mt-0.5">{inc.updates[inc.updates.length - 1].message}</p>
+                    </div>
+                  ) : null}
+                </li>
+              );
+            })}
           </ul>
         </section>
       ) : null}
@@ -236,7 +263,9 @@ export default async function PublicStatusPage() {
         </section>
       ) : null}
 
-      <SubscribeForm />
+      <div id="subscribe">
+        <SubscribeForm />
+      </div>
 
       <footer className="mt-auto flex flex-col items-center gap-2 border-t border-border pt-6 text-xs text-muted-foreground">
         <div className="flex items-center gap-1.5 font-medium">

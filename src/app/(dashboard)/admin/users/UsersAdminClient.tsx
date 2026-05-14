@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { KeyRound, Pencil, Plus, Trash2, UserPlus, X } from "lucide-react";
+import { Eye, KeyRound, Pencil, Plus, ShieldCheck, Trash2, UserPlus, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -407,10 +407,15 @@ export function UsersAdminClient({
                       </td>
                       <td className="py-3 pr-4 font-mono text-xs text-muted-foreground">{u.email}</td>
                       <td className="py-3 pr-4">
-                        <Badge variant={u.role === "admin" ? "info" : "outline"}>{u.role}</Badge>
+                        <Badge variant={u.role === "admin" ? "info" : "outline"} className="gap-1">
+                          {u.role === "admin" ? <ShieldCheck className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
+                          {u.role === "admin" ? "Admin" : "Viewer"}
+                        </Badge>
                       </td>
-                      <td className="py-3 pr-4 text-xs text-muted-foreground">
-                        {personaLabel[u.personaPreference]}
+                      <td className="py-3 pr-4">
+                        <Badge variant="outline" className="text-xs font-normal">
+                          {personaLabel[u.personaPreference]}
+                        </Badge>
                       </td>
                       <td className="py-3">
                         <div className="flex items-center gap-1">

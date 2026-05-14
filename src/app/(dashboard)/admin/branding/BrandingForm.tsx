@@ -101,7 +101,7 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
                   type="button"
                   onClick={() => setStyle(key)}
                   className={cn(
-                    "group relative flex flex-col items-center gap-1.5 rounded-lg border p-2 text-center transition-all shrink-0 w-[100px]",
+                    "group relative flex flex-col items-center gap-1.5 rounded-lg border p-2 text-center transition-all shrink-0 w-[140px]",
                     selected
                       ? "border-[hsl(var(--brand-primary))] bg-[hsl(var(--brand-primary)/0.08)] ring-2 ring-[hsl(var(--brand-primary)/0.3)]"
                       : "border-border hover:border-accent hover:bg-accent/40"
@@ -109,6 +109,7 @@ export function BrandingForm({ initial }: { initial: BrandSettings }) {
                 >
                   <StyleSwatch styleKey={key} previewStyle={previewStyle} />
                   <span className="text-xs font-semibold leading-tight">{preset.label}</span>
+                  <span className="text-[10px] text-muted-foreground leading-tight">{preset.tagline}</span>
                   {selected && <Check className="absolute top-1 right-1 h-3.5 w-3.5 text-[hsl(var(--brand-primary))]" />}
                 </button>
               );
@@ -290,7 +291,7 @@ function StyleSwatch({
   previewStyle: React.CSSProperties;
 }) {
   const base: React.CSSProperties = {
-    height: 48,
+    height: 56,
     width: "100%",
     borderRadius: 6,
     border: "1px solid hsl(var(--border))",
@@ -365,6 +366,29 @@ function LivePreview({
       className="rounded-md p-4"
       style={{ ...wrapperStyle, ...wrapperBgByStyle[styleKey], minHeight: 320 }}
     >
+      {/* Mini nav bar preview */}
+      <div className="mb-3 flex items-center gap-2 rounded-md px-3 py-2" style={{ backgroundColor: `${primary}15` }}>
+        <span
+          className="inline-block h-6 w-6 rounded-md"
+          style={{ backgroundColor: primary }}
+          aria-hidden
+        />
+        <span className="text-xs font-semibold" style={{ color: primary }}>
+          {productName}
+        </span>
+        <div className="ml-auto flex gap-1">
+          {["Dashboard", "Releases", "Tests"].map((item) => (
+            <span
+              key={item}
+              className="rounded px-2 py-0.5 text-[10px]"
+              style={item === "Dashboard" ? { backgroundColor: `${primary}20`, color: primary, fontWeight: 600 } : { color: "inherit", opacity: 0.6 }}
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
+
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2 text-sm font-semibold">
@@ -462,6 +486,14 @@ function LivePreview({
           </div>
         ))}
       </div>
+
+      {/* Secondary gradient bar */}
+      <div
+        className="mt-4 h-1.5 w-full rounded-full"
+        style={{
+          backgroundImage: `linear-gradient(90deg, ${primary}, ${secondary}, ${tertiary})`,
+        }}
+      />
     </div>
   );
 }

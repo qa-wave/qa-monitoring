@@ -1,3 +1,5 @@
+import { Clock } from "lucide-react";
+import { EmptyState } from "@/components/dashboard/EmptyState";
 import { formatDateTime, formatRelativeTime } from "@/lib/utils";
 
 interface TimelineUpdate {
@@ -19,9 +21,7 @@ export function IncidentTimeline({
 }: IncidentTimelineProps) {
   if (updates.length === 0) {
     return (
-      <p className="text-sm text-muted-foreground">
-        Zatím žádné aktualizace.
-      </p>
+      <EmptyState title="Žádné aktualizace" description="Zatím nebyly zaznamenány žádné aktualizace." icon={Clock} className="py-8" />
     );
   }
 

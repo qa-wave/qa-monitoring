@@ -336,7 +336,7 @@ Located in `src/components/ui/`. Built on Radix UI + CVA (class-variance-authori
 
 ### Toast System
 
-Context-based toast notification system with three types: success, error, info. Auto-dismisses after 4 seconds.
+Context-based toast notification system with three types: success, error, info. Auto-dismisses after 4 seconds. Supports optional title, description, and action button.
 
 **API:**
 ```tsx
@@ -344,9 +344,19 @@ import { useToast } from "@/components/ui/toast";
 
 function MyComponent() {
   const { toast } = useToast();
+
+  // Simple (backwards-compatible)
   toast("success", "Changes saved.");
   toast("error", "Something went wrong.");
-  toast("info", "New data available.");
+
+  // With title + description
+  toast("success", "Integration is now active.", { title: "GitHub connected" });
+
+  // With action button
+  toast("info", "User was removed from the team.", {
+    title: "User deleted",
+    action: { label: "Undo", onClick: () => handleUndo() },
+  });
 }
 ```
 

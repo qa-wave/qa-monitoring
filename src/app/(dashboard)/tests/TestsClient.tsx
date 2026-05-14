@@ -36,6 +36,17 @@ export function TestsClient({ applications, environments, testRuns }: TestsClien
     return map;
   }, [testRuns]);
 
+  const summary = useMemo(() => {
+    let passed = 0, failed = 0, flaky = 0, skipped = 0;
+    for (const run of testRuns) {
+      passed += run.passed;
+      failed += run.failed;
+      flaky += run.flaky;
+      skipped += run.skipped;
+    }
+    return { passed, failed, flaky, skipped };
+  }, [testRuns]);
+
   const filteredSuites = suiteFilter === "all" ? suites : suites.filter((s) => s === suiteFilter);
 
   const filteredApps = useMemo(() => {
@@ -55,6 +66,30 @@ export function TestsClient({ applications, environments, testRuns }: TestsClien
 
   return (
     <div className="space-y-6">
+      {/* Summary bar */}
+      <div className="flex flex-wrap gap-3">
+        <div className="flex items-center gap-2 rounded-lg border border-[hsl(var(--status-ok)/0.3)] bg-[hsl(var(--status-ok)/0.08)] px-3 py-2">
+          <span className="h-2 w-2 rounded-full bg-[hsl(var(--status-ok))]" />
+          <span className="text-sm font-medium">{summary.passed}</span>
+          <span className="text-xs text-muted-foreground">prošlo</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-lg border border-[hsl(var(--status-down)/0.3)] bg-[hsl(var(--status-down)/0.08)] px-3 py-2">
+          <span className="h-2 w-2 rounded-full bg-[hsl(var(--status-down))]" />
+          <span className="text-sm font-medium">{summary.failed}</span>
+          <span className="text-xs text-muted-foreground">selhalo</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-lg border border-[hsl(var(--status-warn)/0.3)] bg-[hsl(var(--status-warn)/0.08)] px-3 py-2">
+          <span className="h-2 w-2 rounded-full bg-[hsl(var(--status-warn))]" />
+          <span className="text-sm font-medium">{summary.flaky}</span>
+          <span className="text-xs text-muted-foreground">flaky</span>
+        </div>
+        <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
+          <span className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+          <span className="text-sm font-medium">{summary.skipped}</span>
+          <span className="text-xs text-muted-foreground">přeskočeno</span>
+        </div>
+      </div>
+
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-3">
         <div className="flex items-center gap-2">

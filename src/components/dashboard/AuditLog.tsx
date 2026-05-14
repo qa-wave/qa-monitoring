@@ -1,4 +1,6 @@
+import { FileText } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { EmptyState } from "@/components/dashboard/EmptyState";
 import { formatRelativeTime } from "@/lib/utils";
 import type { AuditEntry } from "@/lib/types";
 
@@ -17,7 +19,7 @@ export function AuditLog({ entries }: { entries: AuditEntry[] }) {
       </CardHeader>
       <CardContent className="pt-0">
         {entries.length === 0 ? (
-          <p className="text-sm text-muted-foreground">Žádné události.</p>
+          <EmptyState title="Žádné události" description="Audit log je zatím prázdný." icon={FileText} />
         ) : (
           <ul className="divide-y divide-border/60">
             {entries.map((e) => (

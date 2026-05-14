@@ -22,6 +22,12 @@ import { getSessionUser } from "@/lib/auth";
 import { listApplications } from "@/lib/applications/store";
 import { deployments } from "@/data/deployments";
 import { getT } from "@/lib/i18n/server";
+import { DashboardFilterBar } from "@/components/dashboard/DashboardFilterBar";
+import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
+import { listIntegrations } from "@/lib/integrations/store";
+import { listPublicUsers } from "@/lib/users/store";
+import { listEnvironments } from "@/lib/environments/store";
+import { getBrandSettings, DEFAULT_BRAND } from "@/lib/branding";
 import { DashboardLayout } from "./DashboardLayout";
 
 export default async function OverviewPage({
@@ -45,6 +51,28 @@ export default async function OverviewPage({
     sections.push(<IncidentBanner key="incident-banner" incident={data.activePrimaryIncident} />);
   }
 
+  if (user?.role === "admin") {
+    const [integrations, allUsers, allEnvs, brand] = await Promise.all([
+      listIntegrations(),
+      listPublicUsers(),
+      listEnvironments(),
+      getBrandSettings(),
+    ]);
+    const brandCustomized =
+      brand.primary !== DEFAULT_BRAND.primary ||
+      brand.productName !== DEFAULT_BRAND.productName ||
+      brand.style !== DEFAULT_BRAND.style;
+    sections.push(
+      <OnboardingChecklist
+        key="onboarding"
+        brandCustomized={brandCustomized}
+        integrationCount={integrations.length}
+        userCount={allUsers.length}
+        envCount={allEnvs.length}
+      />
+    );
+  }
+
   if (widgets.has("kpis")) {
     sections.push(
       <section key="kpis" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -55,6 +83,7 @@ export default async function OverviewPage({
           delta={{ value: "+0,02 %", direction: "up", positive: true }}
           hint={t.kpi.vsLastWeek}
           icon={Activity}
+          href="/environments"
         />
         <KpiCard
           label={t.dashboard.latency}
@@ -64,6 +93,7 @@ export default async function OverviewPage({
           delta={{ value: "-12 ms", direction: "down", positive: true }}
           hint={t.kpi.vs24h}
           icon={Activity}
+          href="/environments"
         />
         <KpiCard
           label={t.dashboard.errors24h}
@@ -72,6 +102,7 @@ export default async function OverviewPage({
           delta={{ value: `+${data.errorCount}`, direction: "up", positive: false }}
           hint={t.kpi.uniqueEvents}
           icon={Bug}
+          href="/quality"
         />
         <KpiCard
           label={t.dashboard.deploysToday}
@@ -80,6 +111,7 @@ export default async function OverviewPage({
           delta={{ value: "+6", direction: "up", positive: true }}
           hint={t.kpi.acrossEnvs}
           icon={Rocket}
+          href="/releases"
         />
       </section>
     );
@@ -273,6 +305,7 @@ export default async function OverviewPage({
         description={`Pohled ${personaLabel[persona].toLowerCase()} · ${personaDescription[persona]} · Data k ${new Date().toLocaleDateString(locale === "en" ? "en-GB" : "cs-CZ")}`}
       />
 
+      <DashboardFilterBar environments={data.allEnvironments.map(e => e.name)} />
       <DashboardLayout>{sections}</DashboardLayout>
     </div>
   );

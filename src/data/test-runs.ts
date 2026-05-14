@@ -25,6 +25,7 @@ for (const app of applications.slice(0, 6)) {
       const defaults = suiteDefaults[suite];
       const fail = suite === "e2e" && app.id === "app-api" ? 2 : 0;
       const flaky = suite === "e2e" ? 3 : 0;
+      const skipped = suite === "unit" ? 8 : suite === "integration" ? 3 : 0;
       const status: TestRun["status"] = fail > 0 ? "warn" : "ok";
       runs.push({
         id: `tr-${id++}`,
@@ -34,6 +35,7 @@ for (const app of applications.slice(0, 6)) {
         passed: defaults.pass - fail,
         failed: fail,
         flaky,
+        skipped,
         coveragePct: defaults.coverage,
         durationSec: defaults.dur,
         runAt: envId === "env-prod" ? minutesAgo(3 + id) : hoursAgo(1 + (id % 5)),
@@ -53,6 +55,7 @@ runs.push({
   passed: 1,
   failed: 0,
   flaky: 0,
+  skipped: 0,
   coveragePct: null,
   durationSec: 900,
   runAt: hoursAgo(12),

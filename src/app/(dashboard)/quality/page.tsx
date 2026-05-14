@@ -2,7 +2,8 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ShieldCheck, Bug, FlaskConical, CheckCircle } from "lucide-react";
+import { ShieldCheck, Bug, FlaskConical, CheckCircle, TestTube2 } from "lucide-react";
+import { EmptyState } from "@/components/dashboard/EmptyState";
 import { securityVulnerabilities } from "@/data/security-vulnerabilities";
 import { testRuns } from "@/data/test-runs";
 import { applications } from "@/data/applications";
@@ -195,7 +196,7 @@ export default async function QualityPage() {
         </CardHeader>
         <CardContent className="pt-0 overflow-x-auto">
           {flakyRuns.length === 0 ? (
-            <p className="text-sm text-muted-foreground">Žádné flaky testy.</p>
+            <EmptyState title="Žádné flaky testy" description="Všechny testy běží stabilně." icon={TestTube2} />
           ) : (
             <table className="w-full text-sm">
               <thead>

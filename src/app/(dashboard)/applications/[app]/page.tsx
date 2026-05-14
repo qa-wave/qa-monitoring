@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ExternalLink, GitBranch, Users } from "lucide-react";
+import { ExternalLink, GitBranch, Users, CheckCircle2 } from "lucide-react";
+import { EmptyState } from "@/components/dashboard/EmptyState";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -124,7 +125,7 @@ export default async function ApplicationDetailPage({
           </CardHeader>
           <CardContent className="pt-0">
             {data.errors.length === 0 ? (
-              <p className="text-sm text-muted-foreground">Žádné chyby.</p>
+              <EmptyState title="Žádné chyby" description="Tato aplikace nemá žádné zaznamenané chyby." icon={CheckCircle2} />
             ) : (
               <ul className="divide-y divide-border/60">
                 {data.errors.map((err) => (

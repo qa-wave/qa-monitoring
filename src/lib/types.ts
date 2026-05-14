@@ -97,6 +97,7 @@ export interface TestRun {
   passed: number;
   failed: number;
   flaky: number;
+  skipped: number;
   coveragePct: number | null;
   durationSec: number;
   runAt: string;

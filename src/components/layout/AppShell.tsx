@@ -1,4 +1,5 @@
 import { Sidebar } from "./Sidebar";
+import { SidebarProvider } from "./SidebarContext";
 import { Header } from "./Header";
 import { MobileBottomNav } from "./MobileBottomNav";
 import { CommandPalette } from "./CommandPalette";
@@ -27,10 +28,11 @@ export function AppShell({
   navLabels: Translations["nav"];
 }) {
   return (
+    <SidebarProvider>
     <ToastProvider>
       <div className="flex min-h-screen bg-background">
         <Sidebar role={user.role} brand={brand} navLabels={navLabels} />
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col min-w-0">
           <Header defaultPersona={defaultPersona} user={user} currentStyle={brand.style} locale={locale} />
           <main className="flex-1 overflow-y-auto px-4 pb-20 pt-6 lg:px-8 lg:pb-8">
             <ErrorBoundary>
@@ -44,5 +46,6 @@ export function AppShell({
         {user.role === "admin" && <OnboardingWizard />}
       </div>
     </ToastProvider>
+    </SidebarProvider>
   );
 }

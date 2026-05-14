@@ -1,6 +1,7 @@
 import Link from "next/link";
 import {
   Activity,
+  CheckCircle2,
   Code2,
   ExternalLink,
   Eye,
@@ -11,6 +12,7 @@ import {
   Rocket,
   ShieldCheck,
   TestTube2,
+  XCircle,
 } from "lucide-react";
 import { PageHeader } from "@/components/dashboard/PageHeader";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -122,8 +124,9 @@ export default async function IntegrationsPage() {
                         <div className="text-xs text-muted-foreground">{c.lastTestMessage}</div>
                       ) : null}
                     </div>
-                    <Badge variant={c.enabled ? "success" : "outline"}>
-                      {c.enabled ? "Aktivní" : "Vypnuto"}
+                    <Badge variant={c.enabled ? "success" : "outline"} className="gap-1">
+                      {c.enabled ? <CheckCircle2 className="h-3 w-3" /> : <XCircle className="h-3 w-3" />}
+                      {c.enabled ? "Připojeno" : "Vypnuto"}
                     </Badge>
                     <span className="text-xs text-muted-foreground">
                       {c.lastTestedAt ? `test ${formatRelativeTime(c.lastTestedAt)}` : "netestováno"}
@@ -241,6 +244,12 @@ export default async function IntegrationsPage() {
                           <Badge variant="info">reálný</Badge>
                         ) : (
                           <Badge variant="outline">ukázka</Badge>
+                        )}
+                        {configs.some(c => c.enabled && c.providerKey === def.key) && (
+                          <Badge variant="success" className="gap-1">
+                            <CheckCircle2 className="h-3 w-3" />
+                            Připojeno
+                          </Badge>
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">
