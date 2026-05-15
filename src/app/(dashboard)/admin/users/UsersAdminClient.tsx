@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useRouter } from "next/navigation";
-import { Eye, KeyRound, Pencil, Plus, ShieldCheck, Trash2, UserPlus, X } from "lucide-react";
+import { AlertTriangle, Eye, KeyRound, Pencil, Plus, ShieldCheck, Trash2, UserPlus, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -221,13 +221,18 @@ function DeleteUserConfirmDialog({
   return (
     <Dialog open onOpenChange={(v) => !v && onClose()}>
       <DialogContent>
+        <div className="flex flex-col items-center gap-3 py-2">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+            <AlertTriangle className="h-6 w-6 text-destructive" />
+          </div>
+        </div>
         <DialogHeader>
           <DialogTitle>Smazat uživatele</DialogTitle>
           <DialogDescription>
-            Opravdu chceš smazat uživatele <strong>{user.name}</strong> ({user.email})? Tato akce
-            je nevratná.
+            Opravdu chceš smazat uživatele <strong>{user.name}</strong> ({user.email})?
           </DialogDescription>
         </DialogHeader>
+        <p className="text-sm font-medium text-destructive">Tato akce je nevratná.</p>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={onClose} disabled={isBusy}>
             Zrušit

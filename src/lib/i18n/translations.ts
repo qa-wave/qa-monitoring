@@ -132,6 +132,7 @@ const translations = {
       adminApps: { title: "Aplikace", description: "Správa seznamu aplikací (v MVP jen pro čtení)." },
       adminEnvs: { title: "Prostředí", description: "Správa prostředí (v MVP jen pro čtení)." },
       users: { title: "Uživatelé a role", description: "Spravuj, kdo se kam dostane. Role viewer vidí dashboard, role admin má navíc přístup do Nastavení." },
+      profile: { title: "Můj profil", description: "Osobní údaje, heslo a preference." },
     },
     kpi: {
       vsLastWeek: "vůči minulému týdnu",
@@ -280,6 +281,7 @@ const translations = {
       adminApps: { title: "Applications", description: "Application list management (read-only in MVP)." },
       adminEnvs: { title: "Environments", description: "Environment management (read-only in MVP)." },
       users: { title: "Users & Roles", description: "Manage who can access what. Viewer role sees dashboard, admin role also has access to Settings." },
+      profile: { title: "My Profile", description: "Personal details, password and preferences." },
     },
     kpi: {
       vsLastWeek: "vs last week",

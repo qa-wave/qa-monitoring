@@ -42,12 +42,13 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
             key={it.href}
             href={it.href}
             className={cn(
-              "flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs",
+              "relative flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs transition-colors duration-200 active:scale-95",
               active ? "text-foreground" : "text-muted-foreground"
             )}
           >
             <Icon className="h-5 w-5" />
             {navLabels[it.labelKey] ?? it.labelKey}
+            {active && <span className="absolute bottom-1 h-1 w-1 rounded-full bg-foreground" />}
           </Link>
         );
       })}
@@ -56,7 +57,7 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
           <button
             aria-label="Více možností navigace"
             className={cn(
-              "flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs",
+              "flex flex-1 flex-col items-center justify-center gap-1 py-2 text-xs transition-colors duration-200 active:scale-95",
               isMoreActive ? "text-foreground" : "text-muted-foreground"
             )}
           >
@@ -64,7 +65,7 @@ export function MobileBottomNav({ role, navLabels }: { role: UserRole; navLabels
             {navLabels.more ?? "Více"}
           </button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-48 mb-2">
+        <DropdownMenuContent align="end" className="w-48 mb-2 animate-fade-in">
           {visibleMore.map((it) => {
             const Icon = it.icon;
             const active = it.href === "/" ? pathname === "/" : pathname.startsWith(it.href);

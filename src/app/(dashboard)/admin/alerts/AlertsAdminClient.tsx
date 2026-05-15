@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { BellRing, Plus, Trash2 } from "lucide-react";
+import { AlertTriangle, BellRing, Plus, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,14 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   type AlertRule,
   METRIC_LABELS,
   OPERATOR_LABELS,
@@ -27,6 +35,7 @@ interface Props {
 export function AlertsAdminClient({ initialRules }: Props) {
   const [rules, setRules] = React.useState<AlertRule[]>(initialRules);
   const [showForm, setShowForm] = React.useState(false);
+  const [deleteTarget, setDeleteTarget] = React.useState<AlertRule | null>(null);
 
   // Form state
   const [name, setName] = React.useState("");
@@ -79,6 +88,7 @@ export function AlertsAdminClient({ initialRules }: Props) {
     const res = await fetch(`/api/alerts/${id}`, { method: "DELETE" });
     if (!res.ok) return;
     setRules((prev) => prev.filter((r) => r.id !== id));
+    setDeleteTarget(null);
   }
 
   return (
@@ -227,7 +237,7 @@ export function AlertsAdminClient({ initialRules }: Props) {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => deleteRule(rule.id)}
+                          onClick={() => setDeleteTarget(rule)}
                           aria-label="Smazat pravidlo"
                         >
                           <Trash2 className="h-4 w-4 text-destructive" />
@@ -241,6 +251,33 @@ export function AlertsAdminClient({ initialRules }: Props) {
           )}
         </CardContent>
       </Card>
+
+      {deleteTarget && (
+        <Dialog open onOpenChange={(v) => !v && setDeleteTarget(null)}>
+          <DialogContent>
+            <div className="flex flex-col items-center gap-3 py-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10">
+                <AlertTriangle className="h-6 w-6 text-destructive" />
+              </div>
+            </div>
+            <DialogHeader>
+              <DialogTitle>Smazat pravidlo alertu</DialogTitle>
+              <DialogDescription>
+                Opravdu chceš smazat pravidlo <strong>{deleteTarget.name}</strong>?
+              </DialogDescription>
+            </DialogHeader>
+            <p className="text-sm font-medium text-destructive">Tato akce je nevratná.</p>
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setDeleteTarget(null)}>
+                Zrušit
+              </Button>
+              <Button variant="destructive" onClick={() => deleteRule(deleteTarget.id)}>
+                Smazat
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   );
 }

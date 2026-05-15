@@ -120,7 +120,7 @@ export default async function ProductPage() {
           {featureAdoption.map((f) => (
             <div key={f.feature} className="flex items-center gap-3">
               <span className="w-40 text-sm font-medium truncate">{f.feature}</span>
-              <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden">
+              <div className="flex-1 h-2.5 rounded-full bg-muted overflow-hidden" title={`${f.feature}: ${f.adoptionPct} % adopce, ${formatNumber(f.weeklyActiveUsers)} WAU`}>
                 <div
                   className="h-full rounded-full bg-[hsl(var(--brand-primary))]"
                   style={{ width: `${f.adoptionPct}%` }}
@@ -150,7 +150,7 @@ export default async function ProductPage() {
           {conversionFunnel.map((step, i) => (
             <div key={step.step} className="flex items-center gap-3">
               <span className="w-48 text-sm truncate">{step.step}</span>
-              <div className="flex-1 h-6 rounded bg-muted overflow-hidden relative">
+              <div className="flex-1 h-6 rounded bg-muted overflow-hidden relative" title={`${step.step}: ${formatNumber(step.users)} uživatelů, konverze ${step.conversionPct.toFixed(1)} %`}>
                 <div
                   className="h-full rounded bg-[hsl(var(--brand-primary))] transition-all"
                   style={{

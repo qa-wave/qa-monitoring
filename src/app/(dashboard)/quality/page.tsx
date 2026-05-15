@@ -2,9 +2,11 @@ import { PageHeader } from "@/components/dashboard/PageHeader";
 import { KpiCard } from "@/components/dashboard/KpiCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { SortableTableHeader } from "@/components/ui/sortable-table-header";
 import { ShieldCheck, Bug, FlaskConical, CheckCircle, TestTube2 } from "lucide-react";
 import { EmptyState } from "@/components/dashboard/EmptyState";
 import { securityVulnerabilities } from "@/data/security-vulnerabilities";
+import type { SecurityVulnerability } from "@/lib/types";
 import { testRuns } from "@/data/test-runs";
 import { applications } from "@/data/applications";
 import { formatRelativeTime } from "@/lib/utils";
@@ -19,12 +21,55 @@ const severityVariant: Record<string, "danger" | "warning" | "info" | "outline">
   low: "outline",
 };
 
-export default async function QualityPage() {
+type VulnSortKey = "severity" | "cve" | "package" | "app" | "title" | "fix" | "discovered";
+const validSortKeys = new Set<string>(["severity", "cve", "package", "app", "title", "fix", "discovered"]);
+
+function sortVulnerabilities(
+  items: SecurityVulnerability[],
+  sortKey: VulnSortKey,
+  dir: "asc" | "desc",
+  appMap: Map<string, string>,
+): SecurityVulnerability[] {
+  const arr = [...items];
+  const mul = dir === "asc" ? 1 : -1;
+
+  arr.sort((a, b) => {
+    switch (sortKey) {
+      case "severity":
+        return mul * ((severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9));
+      case "cve":
+        return mul * a.cve.localeCompare(b.cve);
+      case "package":
+        return mul * `${a.package}@${a.currentVersion}`.localeCompare(`${b.package}@${b.currentVersion}`);
+      case "app":
+        return mul * (appMap.get(a.appId) ?? a.appId).localeCompare(appMap.get(b.appId) ?? b.appId);
+      case "title":
+        return mul * a.title.localeCompare(b.title);
+      case "fix":
+        return mul * (Number(b.fixAvailable) - Number(a.fixAvailable));
+      case "discovered":
+        return mul * (new Date(a.discoveredAt).getTime() - new Date(b.discoveredAt).getTime());
+      default:
+        return 0;
+    }
+  });
+
+  return arr;
+}
+
+export default async function QualityPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ sort?: string; dir?: string }>;
+}) {
+  const sp = await searchParams;
   const { t } = await getT();
   const appMap = new Map(applications.map((a) => [a.id, a.name]));
-  const sorted = [...securityVulnerabilities].sort(
-    (a, b) => (severityOrder[a.severity] ?? 9) - (severityOrder[b.severity] ?? 9)
-  );
+
+  const sortKey: VulnSortKey = validSortKeys.has(sp.sort ?? "") ? (sp.sort as VulnSortKey) : "severity";
+  const sortDir: "asc" | "desc" = sp.dir === "desc" ? "desc" : "asc";
+
+  const sorted = sortVulnerabilities(securityVulnerabilities, sortKey, sortDir, appMap);
 
   const fixableCount = securityVulnerabilities.filter((v) => v.fixAvailable).length;
 
@@ -104,13 +149,13 @@ export default async function QualityPage() {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left text-xs font-medium text-muted-foreground">
-                <th className="pb-2 pr-3">Závažnost</th>
-                <th className="pb-2 pr-3">CVE</th>
-                <th className="pb-2 pr-3">Balíček</th>
-                <th className="pb-2 pr-3">Aplikace</th>
-                <th className="pb-2 pr-3">Popis</th>
-                <th className="pb-2 pr-3">Fix</th>
-                <th className="pb-2 text-right">Objeveno</th>
+                <SortableTableHeader column="severity" label="Závažnost" currentSort={sortKey} currentDir={sortDir} basePath="/quality" />
+                <SortableTableHeader column="cve" label="CVE" currentSort={sortKey} currentDir={sortDir} basePath="/quality" />
+                <SortableTableHeader column="package" label="Balíček" currentSort={sortKey} currentDir={sortDir} basePath="/quality" />
+                <SortableTableHeader column="app" label="Aplikace" currentSort={sortKey} currentDir={sortDir} basePath="/quality" />
+                <SortableTableHeader column="title" label="Popis" currentSort={sortKey} currentDir={sortDir} basePath="/quality" />
+                <SortableTableHeader column="fix" label="Fix" currentSort={sortKey} currentDir={sortDir} basePath="/quality" />
+                <SortableTableHeader column="discovered" label="Objeveno" currentSort={sortKey} currentDir={sortDir} basePath="/quality" align="right" className="!pr-0" />
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60">

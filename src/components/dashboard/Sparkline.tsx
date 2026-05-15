@@ -55,6 +55,18 @@ export function Sparkline({
     >
       {fill ? <path d={fillPath} fill={color} opacity={0.15} /> : null}
       <path d={linePath} fill="none" stroke={color} strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" />
+      {coords.map(([x, y], i) => (
+        <circle
+          key={i}
+          cx={x}
+          cy={y}
+          r={8}
+          fill="transparent"
+          className="cursor-crosshair"
+        >
+          <title>{points[i]}</title>
+        </circle>
+      ))}
     </svg>
   );
 }

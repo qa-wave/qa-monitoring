@@ -5,7 +5,9 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { StatusDot } from "@/components/ui/status-dot";
 import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ArrowUpRight, Search } from "lucide-react";
 import type { Application, Environment, HealthCheck } from "@/lib/types";
 
 interface AppsClientProps {
@@ -46,32 +48,30 @@ export function AppsClient({ applications, environments, healthChecks }: AppsCli
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <input
+          <Input
             type="text"
             placeholder="Hledat aplikaci..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="rounded-md border border-border bg-card py-1.5 pl-9 pr-3 text-sm placeholder:text-muted-foreground"
+            className="h-9 w-auto pl-9 pr-3"
           />
         </div>
 
         <div className="flex items-center gap-2">
-          <label htmlFor="lang-filter" className="text-sm font-medium text-muted-foreground">
-            Jazyk
-          </label>
-          <select
-            id="lang-filter"
-            value={langFilter}
-            onChange={(e) => setLangFilter(e.target.value)}
-            className="rounded-md border border-border bg-card px-3 py-1.5 text-sm"
-          >
-            <option value="all">Vše</option>
-            {languages.map((lang) => (
-              <option key={lang} value={lang}>
-                {lang}
-              </option>
-            ))}
-          </select>
+          <span className="text-sm font-medium text-muted-foreground">Jazyk</span>
+          <Select value={langFilter} onValueChange={setLangFilter}>
+            <SelectTrigger className="h-9 w-[130px]">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Vše</SelectItem>
+              {languages.map((lang) => (
+                <SelectItem key={lang} value={lang}>
+                  {lang}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -83,8 +83,9 @@ export function AppsClient({ applications, environments, healthChecks }: AppsCli
           const hasWarn = appHealth.some((h) => h.status === "warn");
           const overall = hasDown ? "down" : hasWarn ? "warn" : "ok";
           return (
-            <Link key={app.id} href={`/applications/${app.slug}`}>
-              <Card className="transition-colors hover:border-accent">
+            <Link key={app.id} href={`/applications/${app.slug}`} className="group block">
+              <Card className="relative transition-all duration-200 hover:border-accent hover:shadow-md hover:-translate-y-0.5">
+                <ArrowUpRight className="absolute top-3 right-3 h-4 w-4 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                 <CardHeader className="flex-row items-start justify-between gap-3">
                   <div>
                     <CardTitle className="flex items-center gap-2">

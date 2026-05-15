@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { Keyboard } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { KeyboardShortcutsHelp } from "./KeyboardShortcutsHelp";
 
 const shortcuts = [
   { keys: ["g", "h"], label: "Přehled (Home)", href: "/" },
@@ -91,61 +91,7 @@ export function KeyboardShortcuts() {
       )}
 
       {/* Help dialog */}
-      <Dialog open={helpOpen} onOpenChange={setHelpOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogTitle className="text-base font-semibold">Klávesové zkratky</DialogTitle>
-
-          <div className="mt-2 space-y-3">
-            <div>
-              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Navigace
-              </p>
-              <div className="space-y-1">
-                {shortcuts.map((s) => (
-                  <div key={s.href} className="flex items-center justify-between text-sm">
-                    <span>{s.label}</span>
-                    <div className="flex items-center gap-1">
-                      {s.keys.map((k) => (
-                        <kbd
-                          key={k}
-                          className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground"
-                        >
-                          {k}
-                        </kbd>
-                      ))}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                Obecné
-              </p>
-              <div className="space-y-1">
-                <div className="flex items-center justify-between text-sm">
-                  <span>Vyhledávání</span>
-                  <div className="flex items-center gap-1">
-                    <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
-                      ⌘
-                    </kbd>
-                    <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
-                      K
-                    </kbd>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span>Tato nápověda</span>
-                  <kbd className="rounded border border-border bg-muted px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground">
-                    ?
-                  </kbd>
-                </div>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <KeyboardShortcutsHelp open={helpOpen} onOpenChange={setHelpOpen} />
     </>
   );
 }
