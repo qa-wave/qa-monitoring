@@ -15,20 +15,28 @@ import { pipelineRuns } from "@/data/pipeline-runs";
 import { plannedMaintenance } from "@/data/maintenance";
 import { releases } from "@/data/releases";
 import { computeOverallPassRate, testRuns } from "@/data/test-runs";
+import { readIngestedData } from "@/lib/ingest/store";
 import type { Deployment, StatusKind } from "@/lib/types";
 
 export async function overviewData(envSlug?: string) {
   const applications = await listApplications();
   const environments = await listEnvironments();
+  const ingested = await readIngestedData();
   const filteredEnv = envSlug ? environments.find((e) => e.slug === envSlug) : undefined;
+  const allDeployments = [...deployments, ...ingested.deployments];
+  const allErrors = [...errorSummaries, ...ingested.errorSummaries];
+  const allHealthChecks = [...healthChecks, ...ingested.healthChecks];
+  const allIncidents = [...activeIncidents(), ...ingested.incidents.filter((i) => i.status !== "resolved")];
+  const allTestRuns = [...testRuns, ...ingested.testRuns];
+  const allFlags = [...featureFlags, ...ingested.featureFlags];
 
   const uptime = computeOverallUptime();
   const p95 = computeAverageLatency(filteredEnv?.slug);
-  const errorCount = errorSummaries.reduce((a, e) => a + e.count24h, 0);
+  const errorCount = allErrors.reduce((a, e) => a + e.count24h, 0);
   const requestsEstimate = 50_000;
   const errorRate = (errorCount / requestsEstimate) * 100;
   const now = new Date();
-  const deploysToday = deployments.filter((d) => {
+  const deploysToday = allDeployments.filter((d) => {
     const ds = new Date(d.startedAt);
     return ds.toDateString() === now.toDateString();
   }).length;
@@ -39,34 +47,37 @@ export async function overviewData(envSlug?: string) {
     errorRate,
     errorCount,
     deploysToday,
+    deployments: allDeployments,
     passRate: computeOverallPassRate(),
     environments: filteredEnv ? [filteredEnv] : environments,
     allEnvironments: environments,
     applications,
-    healthChecks,
-    incidents: activeIncidents(),
+    healthChecks: allHealthChecks,
+    incidents: allIncidents,
     recentReleases: releases.slice(0, 5),
-    recentTestRuns: testRuns.filter((t) => t.envId === "env-prod").slice(0, 6),
-    flags: featureFlags,
-    activePrimaryIncident: activeIncidents().find((i) => i.severity === "sev1") ?? activeIncidents()[0],
+    recentTestRuns: allTestRuns.filter((t) => t.envId === "env-prod").slice(0, 6),
+    flags: allFlags,
+    activePrimaryIncident: allIncidents.find((i) => i.severity === "sev1") ?? allIncidents[0],
     auditLog: auditLog.slice(0, 8),
-    errorSummaries,
+    errorSummaries: allErrors,
+    ingestedUpdatedAt: ingested.updatedAt,
   };
 }
 
 export async function environmentDetailData(envSlug: string) {
   const applications = await listApplications();
   const environments = await listEnvironments();
+  const ingested = await readIngestedData();
   const env = environments.find((e) => e.slug === envSlug);
   if (!env) return null;
   const envApps = applications.filter((a) => a.environmentIds.includes(env.id));
-  const envHealthChecks = healthChecks.filter((h) => h.envId === env.id);
-  const envTestRuns = testRuns.filter((t) => t.envId === env.id);
-  const envFlags = featureFlags.filter((f) => f.envStates.some((s) => s.envId === env.id));
-  const envDeployments = deployments.filter((d) => d.envId === env.id);
-  const envIncidents = incidents.filter((i) => i.affectedEnvIds.includes(env.id));
-  const envPipelineRuns = pipelineRuns.filter((p) => p.envId === env.id);
-  const envErrors = errorSummaries.filter((e) => e.envId === env.id);
+  const envHealthChecks = [...healthChecks, ...ingested.healthChecks].filter((h) => h.envId === env.id);
+  const envTestRuns = [...testRuns, ...ingested.testRuns].filter((t) => t.envId === env.id);
+  const envFlags = [...featureFlags, ...ingested.featureFlags].filter((f) => f.envStates.some((s) => s.envId === env.id));
+  const envDeployments = [...deployments, ...ingested.deployments].filter((d) => d.envId === env.id);
+  const envIncidents = [...incidents, ...ingested.incidents].filter((i) => i.affectedEnvIds.includes(env.id));
+  const envPipelineRuns = [...pipelineRuns, ...ingested.pipelineRuns].filter((p) => p.envId === env.id);
+  const envErrors = [...errorSummaries, ...ingested.errorSummaries].filter((e) => e.envId === env.id);
 
   return {
     environment: env,
@@ -84,9 +95,11 @@ export async function environmentDetailData(envSlug: string) {
 
 export async function pipelineLatestByEnv(): Promise<Record<string, { status: StatusKind; version: string; when: string }>> {
   const environments = await listEnvironments();
+  const ingested = await readIngestedData();
+  const allDeployments = [...deployments, ...ingested.deployments];
   const out: Record<string, { status: StatusKind; version: string; when: string }> = {};
   for (const env of environments) {
-    const envDeployments = deployments.filter((d) => d.envId === env.id).sort(sortByStartedDesc);
+    const envDeployments = allDeployments.filter((d) => d.envId === env.id).sort(sortByStartedDesc);
     const latest: Deployment | undefined = envDeployments[0];
     if (!latest) continue;
     const status: StatusKind =
@@ -114,20 +127,21 @@ function sortByStartedDesc(a: Deployment, b: Deployment) {
 export async function applicationDetailData(appSlug: string) {
   const applications = await listApplications();
   const environments = await listEnvironments();
+  const ingested = await readIngestedData();
   const app = applications.find((a) => a.slug === appSlug);
   if (!app) return null;
   const perEnv = environments
     .filter((e) => app.environmentIds.includes(e.id))
     .map((env) => {
       const hc = getHealth(app.id, env.id);
-      const latestDeploy = deployments
+      const latestDeploy = [...deployments, ...ingested.deployments]
         .filter((d) => d.appId === app.id && d.envId === env.id)
         .sort(sortByStartedDesc)[0];
-      const tests = testRuns.filter((t) => t.appId === app.id && t.envId === env.id);
+      const tests = [...testRuns, ...ingested.testRuns].filter((t) => t.appId === app.id && t.envId === env.id);
       return { env, health: hc, latestDeploy, tests };
     });
-  const appIncidents = incidents.filter((i) => i.affectedAppIds.includes(app.id));
-  const appErrors = errorSummaries.filter((e) => e.appId === app.id);
+  const appIncidents = [...incidents, ...ingested.incidents].filter((i) => i.affectedAppIds.includes(app.id));
+  const appErrors = [...errorSummaries, ...ingested.errorSummaries].filter((e) => e.appId === app.id);
   return { application: app, perEnv, incidents: appIncidents, errors: appErrors };
 }
 

@@ -118,7 +118,8 @@ Themes: Vercel, Linear, Grafana, Datadog, Stripe, GitHub, Notion, Supabase, Plan
 
 ### Persistence
 Brand settings are stored via `src/lib/storage.ts`:
-- **Vercel (prod):** `@vercel/blob` (detects `BLOB_READ_WRITE_TOKEN`)
+- **Postgres (prod):** `app_storage` JSONB table when `DATABASE_URL` is configured
+- **Vercel Blob (fallback):** `@vercel/blob` when `BLOB_READ_WRITE_TOKEN` is configured
 - **Local (dev):** JSON files in `.data/` directory
 
 ## i18n Architecture
@@ -138,17 +139,18 @@ src/lib/i18n/
 ## Persistence Layers
 
 ### Current (MVP)
-1. **Vercel Blob** -- brand settings, integration instances, users (prod)
-2. **Local JSON** -- `.data/*.json` files (dev, via `src/lib/storage.ts`)
-3. **TypeScript fixtures** -- `src/data/*.ts` (read-only demo data)
+1. **Postgres `app_storage`** -- JSON-backed settings and admin-managed data when `DATABASE_URL` is configured
+2. **Vercel Blob** -- fallback for production deployments without Postgres
+3. **Local JSON** -- `.data/*.json` files (dev, via `src/lib/storage.ts`)
+4. **TypeScript fixtures** -- `src/data/*.ts` (read-only demo data)
 
 ### Migration Path
-1. Vercel Blob (current) -- simple key-value JSON storage
-2. Vercel Edge Config -- for read-heavy / rare-write data
-3. Postgres via Neon -- for relational data (planned Wave 1, step 3)
+1. Postgres `app_storage` -- current key-value JSON storage for small mutable datasets
+2. Relational Postgres tables -- move high-value datasets out of JSON as workflows mature
+3. Vercel Edge Config -- optional for read-heavy / rare-write configuration
 
 ### Read-Only Filesystem Constraint
-Vercel Functions have a read-only filesystem outside `/tmp`. The `storage.ts` module detects Vercel via `BLOB_READ_WRITE_TOKEN` and routes writes to Blob instead of the local filesystem.
+Vercel Functions have a read-only filesystem outside `/tmp`. The `storage.ts` module routes writes to Postgres first when `DATABASE_URL` is present, then Blob when `BLOB_READ_WRITE_TOKEN` is present, and only uses local files in development.
 
 ## RBAC Model
 

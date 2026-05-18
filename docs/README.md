@@ -52,7 +52,7 @@ src/
 │   ├── auth.ts             # Autentizace + session
 │   ├── rbac.ts             # RBAC -- 3 role, 17 granularnich opravneni
 │   ├── logger.ts           # Structured JSON logger
-│   ├── storage.ts          # Vercel Blob / lokalni JSON
+│   ├── storage.ts          # Postgres / Vercel Blob / lokalni JSON
 │   ├── db.ts               # Postgres (Neon) klient
 │   ├── export.ts           # CSV export
 │   ├── alerts/             # Alert pravidla + evaluation engine
@@ -165,12 +165,15 @@ Vsechny list endpointy podporuji `?limit=N&offset=M` a vracejici `X-Total-Count`
 - GET/POST /api/integrations -- CRUD integraci
 - GET/PATCH/DELETE /api/integrations/[id]
 - POST /api/integrations/[id]/test -- test pripojeni
+- POST /api/integrations/[id]/sync -- sync jedne integrace do ingest store
+- POST /api/integrations/sync -- sync vsech aktivnich integraci
 - GET /api/status/public -- verejny status (ISR 30s)
 - POST /api/status/subscribe -- email odber
 - POST /api/webhooks/github -- GitHub webhook
 - POST /api/webhooks/sentry -- Sentry webhook
 - GET /api/stream/health -- SSE health stream
 - GET /api/cron/health-check -- Vercel Cron
+- GET /api/cron/ingest -- Vercel Cron pro sync integraci
 - GET /api/db/migrate -- DB migrace
 - GET /api/health -- health check
 
@@ -221,7 +224,7 @@ vercel deploy --prod --yes
 | SESSION_SECRET | HMAC secret pro cookie session | Ano (prod) |
 | INTEGRATION_ENC_KEY | Sifrovaci klic pro integration credentials | Ano (prod) |
 | BLOB_READ_WRITE_TOKEN | Vercel Blob token | Auto (Vercel) |
-| DATABASE_URL | Postgres (Neon) connection string | Ne |
+| DATABASE_URL | Postgres (Neon) connection string; aktivuje app_storage backend | Ne |
 | GITHUB_WEBHOOK_SECRET | GitHub webhook HMAC secret | Ne |
 | SENTRY_WEBHOOK_SECRET | Sentry webhook secret | Ne |
 | SLACK_WEBHOOK_URL | Slack incoming webhook URL | Ne |

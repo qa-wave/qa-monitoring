@@ -380,6 +380,43 @@ Or on failure (still 200):
 
 ---
 
+### POST /api/integrations/[id]/sync
+
+Synchronize one integration into the persistent ingest store. Requires admin role.
+
+**Response (200):**
+```json
+{
+  "ok": true,
+  "run": {
+    "id": "ingest-a1b2c3d4",
+    "integrationId": "int-a1b2c3d4",
+    "providerKey": "github",
+    "status": "success",
+    "counts": {
+      "deployments": 10,
+      "pipelineRuns": 20
+    }
+  }
+}
+```
+
+---
+
+### POST /api/integrations/sync
+
+Synchronize all enabled integrations into the persistent ingest store. Requires admin role.
+
+**Response (200):**
+```json
+{
+  "ok": true,
+  "runs": []
+}
+```
+
+---
+
 ## Applications
 
 ### GET /api/applications
@@ -833,6 +870,33 @@ Vercel Cron endpoint for periodic health checks. Protected by `CRON_SECRET`.
   "down": 1,
   "total": 12,
   "checkedAt": "2026-04-17T12:00:00Z"
+}
+```
+
+---
+
+### GET /api/cron/ingest
+
+Vercel Cron endpoint for synchronizing all enabled integrations into the persistent ingest store. Protected by `CRON_SECRET`.
+
+**Auth:** Bearer token in Authorization header matching `CRON_SECRET` env var.
+
+**Response (200):**
+```json
+{
+  "ok": true,
+  "runs": [
+    {
+      "id": "ingest-a1b2c3d4",
+      "integrationId": "int-a1b2c3d4",
+      "providerKey": "github",
+      "status": "success",
+      "counts": {
+        "deployments": 10,
+        "pipelineRuns": 20
+      }
+    }
+  ]
 }
 ```
 

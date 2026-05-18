@@ -20,7 +20,6 @@ import { computeDoraMetrics } from "@/data/dora-metrics";
 import { parsePersona, personaDescription, personaLabel, personaWidgets } from "@/lib/personas";
 import { getSessionUser } from "@/lib/auth";
 import { listApplications } from "@/lib/applications/store";
-import { deployments } from "@/data/deployments";
 import { getT } from "@/lib/i18n/server";
 import { DashboardFilterBar } from "@/components/dashboard/DashboardFilterBar";
 import { OnboardingChecklist } from "@/components/dashboard/OnboardingChecklist";
@@ -133,7 +132,7 @@ export default async function OverviewPage({
   }
 
   if (widgets.has("deploys") || widgets.has("dora")) {
-    sections.push(<DeployHeatmap key="heatmap" deployments={deployments} locale={locale} />);
+    sections.push(<DeployHeatmap key="heatmap" deployments={data.deployments} locale={locale} />);
   }
 
   if (widgets.has("matrix")) {
